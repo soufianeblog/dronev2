@@ -2,6 +2,8 @@
 
 > **Start here:** guides in the browser → **https://soufianeblog.github.io/dronev2/** (or open `index.html` after downloading) · short task lists → [`quick/`](quick/README.md) · parameter backups → [`backups/`](backups/)
 
+**Contents:** [Repository layout](#repository-layout-github-ready) · [Components](#components) · [Current state](#current-state-as-of-2026-10-17) · [Working rules](#how-claude-helps-working-rules) · [Known facts](#known-facts-verified-on-the-real-hardware) · [Roadmap](#roadmap-planned-guides-may-change-as-we-learn) · [Progress log](#progress-log)
+
 A tilt-rotor **tricopter VTOL** (3 brushless motors) that takes off and lands like a drone and flies like an airplane.
 
 - **2 front motors** sit on the wings, each on a **tilt servo**. They point **up** in drone mode and tilt **90° forward** in airplane mode. To land, they tilt back up.
@@ -401,6 +403,8 @@ Downloaded copy: open `index.html` in any browser; all links and images are rela
 - 2026-10-17 20:51 — **GitHub prep:** `.gitignore` (macOS/editor junk), deleted `guides/.DS_Store`, renamed the 2 root screenshots to ASCII names (they had a hidden U+202F space): `screenshots/qgc-firmware-update-popup_2026-10-17_0101.png`, `screenshots/qgc-first-screenshot_2026-10-17_0030.png`. New `index.html` start page and a 'Repository layout' section. Checked: no EXIF GPS in photos, no personal paths/emails in the files. ⚠️ Privacy note for the user: `guides/guide4_screenshots/arm-test-safety-switch_2032.png` (and faintly `sensor-status_2008.png`) show the QGC satellite map around the user's location.
 
 - 2026-10-17 20:53 — Added `quick/` (short Markdown task lists for Guides 01–05), a 'Start here' line at the top of this README, `.nojekyll` (GitHub Pages serves files as they are, so links work the same online and offline), and links from `index.html`. Repo: https://github.com/soufianeblog/dronev2 (public, user OK with the map screenshots).
+
+- 2026-10-17 21:46 — `quick/` rewritten in a user-friendly format: the same layout in every file (navigation ← Index →, link to the full guide, Goal / You need, ☐ checkbox steps, ✅ Done when, Problems table), plus a quick/README with an aircraft summary, ordered list (05 before 04), times and rules. Rendering checked with the GitHub Markdown API (tables + 52 checkboxes). README: Contents line.
 
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.

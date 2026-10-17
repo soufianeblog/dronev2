@@ -1,16 +1,37 @@
-# VTOL Y3: quick task lists
+# VTOL Y3 · Quick task lists
 
-Short, do-this-then-that versions of the guides. Full explanations, logs and screenshots are in the HTML guides (`../guides/`, or `../index.html`).
+Do-this-then-that checklists for setting up the VTOL Y3. Each one takes a few minutes to read.
+Want the reasons, screenshots and logs too? Open the **[full guides in the browser](https://soufianeblog.github.io/dronev2/)**.
 
-| # | Task list | Status |
-|---|---|---|
-| 01 | [Connect and check ArduPlane](01-connect-and-check.md) | ✅ |
-| 02 | [Update to ArduPlane 4.7.2](02-update-firmware.md) | ✅ |
-| 03 | [Orientation, accelerometer, level, compass](03-orientation-calibration.md) | 🟡 compass after wiring |
-| 04 | [Radio: calibration, flight modes, arm switch](04-radio-modes-arming.md) | ✅ |
-| 05 | [FlySky i6X transmitter setup](05-flysky-i6x.md) | ✅ |
-| 06 | Wiring | ⏳ |
+## The aircraft
 
-**Setup:** ArduPlane 4.7.2 (QuadPlane, Tri, tilt-rotor VectoredYaw, V-tail) · Pixhawk 2.4.8 (`Pixhawk1`) · QGroundControl 5.1.5 (macOS) · FlySky i6X + iA10B → PPM encoder → RC IN · M8N GPS.
+| | |
+|---|---|
+| Airframe | Tilt-rotor tricopter VTOL: 2 tilting front motors, 1 fixed tail motor, ailerons, V-tail |
+| Flight controller | Pixhawk 2.4.8 (firmware target `Pixhawk1`) running **ArduPlane 4.7.2** (QuadPlane) |
+| Ground station | QGroundControl 5.1.5 on macOS |
+| Radio | FlySky i6X → iA10B receiver → PPM encoder → Pixhawk **RC IN** |
+| GPS | M8N with compass |
 
-**Rules:** USB only, **no LiPo, no props** until a guide says otherwise. Save a parameter backup before and after each guide. After every reboot/connect: wait 30 s → **Parameters → Tools → Refresh** before editing or saving.
+## Task lists, in order
+
+| # | Task list | Time | Status |
+|---|---|---|---|
+| 01 | [Connect and check ArduPlane](01-connect-and-check.md) | 15 min | ✅ Done |
+| 02 | [Update to ArduPlane 4.7.2](02-update-firmware.md) | 15 min | ✅ Done |
+| 03 | [Orientation and calibration](03-orientation-calibration.md) | 20 min | 🟡 Compass left (after wiring) |
+| 05 | [FlySky i6X transmitter setup](05-flysky-i6x.md) | 25 min | ✅ Done |
+| 04 | [Radio calibration, flight modes, arm switch](04-radio-modes-arming.md) | 30 min | ✅ Done |
+| 06 | Wiring | | ⏳ Next |
+
+> Do **05 before 04**: the transmitter must be set up before the Pixhawk can calibrate it.
+
+## Rules for every task list
+
+- 🔌 **USB only:** no LiPo, no propellers, unless a list says otherwise.
+- 💾 **Backup before and after:** *Parameters → Tools → Save to file…* into `backups/`.
+- 🔄 **Refresh after every reboot:** wait 30 s, then *Parameters → Tools → Refresh*, before you change or save anything. Otherwise ~144 VTOL settings are missing from the list.
+- 🧭 **Where things are in QGC 5.1.5:**
+  - **Setup pages:** click the purple **Q** icon (top-left) → **Vehicle Configuration**.
+  - **Main map screen:** **Q** icon → **Fly**.
+  - **Messages:** the message icon in the top bar.
