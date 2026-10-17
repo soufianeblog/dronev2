@@ -1,0 +1,56 @@
+Vehicle Messages — Guide 01 step 3c (after replugging USB). Pasted by the user 2026-10-17 ~01:50.
+QGC top bar: "Not Ready" (stable link, no more "Comms Lost").
+Oldest first.
+
+[01:47:10.818 ] Info: Initialising ArduPilot
+[01:47:11.959 ] Info: ArduPlane V4.7.1 (dbe79216)
+[01:47:11.959 ] Info: ChibiOS: d103983f
+[01:47:11.959 ] Info: Pixhawk1 00200035 3238510A 32373737
+[01:47:11.959 ] Info: IOMCU: 420 1001 411FC231
+[01:47:11.959 ] Info: RCOut: Initialising
+[01:47:12.668 ] Info: QuadPlane initialised, Frame: TRI
+[01:47:12.668 ] Info: Ground start
+[01:47:12.668 ] ALERT: Beginning INS calibration. Do not move plane
+[01:47:14.237 ] Info: Calibrating barometer
+[01:47:15.812 ] Info: Initialising ArduPilot
+[01:47:15.875 ] Info: Barometer 1 calibration complete
+[01:47:15.875 ] Info: No airspeed sensor
+[01:47:15.875 ] Info: ArduPilot Ready
+[01:47:15.875 ] Info: AHRS: DCM active
+[01:47:15.876 ] Info: RCOut: PWM:1-14
+[01:47:16.063 ] Warning: Throttle failsafe on
+[01:47:16.063 ] Warning: RC Short Failsafe: switched to QLand
+[01:47:16.210 ] Warning: RC Long Failsafe On: switched to QLand
+[01:47:17.883 ] Info: EKF3 IMU0 initialised
+[01:47:17.883 ] Info: EKF3 IMU1 initialised
+[01:47:19.448 ] Info: EKF3 IMU1 tilt alignment complete
+[01:47:19.454 ] Info: EKF3 IMU0 tilt alignment complete
+[01:47:19.535 ] Info: EKF3 IMU1 MAG0 initial yaw alignment complete
+[01:47:19.559 ] Info: EKF3 IMU0 MAG0 initial yaw alignment complete
+[01:47:21.058 ] Info: Land complete
+[01:47:23.162 ] Info: GPS 1: probing for u-blox at 230400 baud
+[01:47:23.343 ] Info: GPS 1: detected u-blox
+[01:47:26.870 ] Info: GPS 1: u-blox saving config
+[01:47:30.896 ] Info: u-blox 1 HW: 00070000 SW: 1.00 (59842)
+[01:47:35.935 ] Critical: PreArm: Hardware safety switch
+[01:47:35.937 ] Critical: PreArm: Gyros inconsistent        <- only once, at startup
+[01:47:35.938 ] Critical: PreArm: Compass not calibrated
+[01:47:35.939 ] Critical: PreArm: GPS 1: Bad fix
+[01:47:35.939 ] Critical: PreArm: Battery 1 low voltage failsafe
+[01:47:35.940 ] Critical: PreArm: Radio failsafe on
+[01:47:35.944 ] Critical: PreArm: QLand mode not armable
+... then every 30 s (01:48:05, 01:48:35, 01:49:06, 01:49:36, 01:50:06) the same list, with
+"AHRS: not using configured AHRS type" in place of "Gyros inconsistent":
+  Hardware safety switch
+  AHRS: not using configured AHRS type
+  Compass not calibrated
+  GPS 1: Bad fix
+  Battery 1 low voltage failsafe
+  Radio failsafe on
+  QLand mode not armable
+
+Sensor Status panel (sensor-status_2026-10-17_0150.png):
+  Error:    GPS, RC receiver, AHRS, Pre-Arm Check
+  Normal:   Gyro, Accelerometer, Magnetometer, Absolute pressure, Angular rate control,
+            Attitude stabilization, Logging, Battery
+  Disabled: Yaw position, Z/altitude control, X/Y position control, Motor outputs / control

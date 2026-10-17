@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide 01 — Connect &amp; Check ArduPlane</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">
+    <span class="pill">Guide 01 / ~10</span>
+    <span class="pill">Created 2026-10-17 · 01:13</span>
+    <span class="pill">Rev 8 · 2026-10-17 · 02:20</span>
+    <span class="pill">Status: ✅ COMPLETE (all 6 steps)</span>
+    <span class="pill">⏱ ~20 min</span>
+  </div>
+  <h1>Connect the Pixhawk and check your ArduPlane setup</h1>
+  <p class="lead">Goal: connect the board to QGroundControl, confirm it runs <strong>ArduPlane 4.7.1</strong>, see what is left over from your old Mission Planner setup, and <strong>save a backup</strong> of it. <strong>You won't change any settings in this guide.</strong> The firmware update to 4.7.2 is Guide 02.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>Status now (20:39), what changed after this guide:</strong>
+<ul>
+<li>Firmware is now <strong>ArduPlane 4.7.2</strong> (Guide 02).</li>
+<li>Board orientation fixed to <code>AHRS_ORIENTATION=0</code>, accelerometer + level calibrated (Guide 03).</li>
+<li>The small black board on RC IN is confirmed as a <strong>PPM encoder</strong>; the radio works with i6X Output mode <strong>PWM</strong> (Guides 04/05). "Radio failsafe on" is gone.</li>
+<li>The tail is confirmed as a <strong>V-tail</strong>: pitch = both tail wings together, yaw = opposite (you, 19:46).</li>
+<li>Drawing below redrawn 20:39 (tail surfaces on the tail wings, tilt servos shown).</li>
+</ul></div>
+
+
+<div class="box danger">
+  <strong>Safety for this guide</strong>
+  <ul>
+    <li>Connect the Pixhawk by <strong>USB only</strong>. <strong>No LiPo</strong> plugged in.</li>
+    <li>No motors, ESCs, servos or propellers connected.</li>
+  </ul>
+</div>
+
+<h2>What we know so far</h2>
+<div class="box info">
+  <ul>
+    <li>You used <strong>ArduPlane</strong> before (with Mission Planner), so the board most likely runs <strong>ArduPlane 4.7.1</strong>. QGC says 4.7.2 is the latest stable version.</li>
+    <li>QGC preferences: <strong>Firmware = ArduPilot</strong>, <strong>Vehicle = VTOL</strong>. ✅ Correct.</li>
+    <li>The board may still hold <strong>old parameters</strong> from the Mission Planner days. Today we look at them and back them up. Guide 02 decides whether to keep them or start clean.</li>
+  </ul>
+</div>
+
+<h2>"QuadPlane": why that word, when we only have 3 motors?</h2>
+<p><strong>QuadPlane is just ArduPlane's name for its VTOL feature.</strong> It does <em>not</em> mean 4 motors. It's the part of ArduPlane that lets a plane take off and land vertically with lift motors, then fly on its wings. It supports many motor layouts: quad, hexa, octa, tailsitter, <strong>tricopter</strong> and <strong>tilt-rotor</strong>.</p>
+
+<p>Your VTOL Y3 is a <strong>tilt-rotor tricopter QuadPlane</strong>:</p>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="Top view of the VTOL Y3 with motors, tilt servos, ailerons and V-tail">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">nose</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="act"/><rect x="275" y="133" width="80" height="9" class="act"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="act"/><rect x="210" y="287" width="54" height="9" class="act"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="110" cy="80" r="18" class="wing"/>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="290" cy="80" r="18" class="wing"/>
+  <circle cx="200" cy="236" r="15" class="wing"/>
+  <text x="360" y="22" text-anchor="middle" class="t">VTOL Y3 seen from above</text>
+  <text x="110" y="52" text-anchor="middle">M2 front-left</text><text x="290" y="52" text-anchor="middle">M1 front-right</text>
+  <path class="ln" d="M117 103 L150 96"/><text x="152" y="99" class="m">tilt servo</text>
+  <text x="85" y="160" text-anchor="middle" class="m">aileron (servo)</text><text x="315" y="160" text-anchor="middle" class="m">aileron (servo)</text>
+  <text x="222" y="240" class="m">M4 tail motor (fixed)</text>
+  <text x="122" y="294" text-anchor="end" class="m">tail wing L (servo)</text><text x="278" y="294" class="m">tail wing R (servo)</text>
+  <text x="420" y="74" class="t">6 servos</text>
+  <text x="420" y="94"><tspan fill="var(--accent)" font-weight="700">■</tspan> 2 tilt servos: front motors up ↔ forward</text>
+  <text x="434" y="110" class="m">(and yaw in drone mode)</text>
+  <text x="420" y="130"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 ailerons, wing trailing edge: roll</text>
+  <text x="420" y="150"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 tail wings (V-tail):</text>
+  <text x="434" y="166" class="m">pitch = together, yaw = opposite</text>
+  <text x="420" y="192" class="t">3 motors</text>
+  <text x="420" y="210">M1 + M2 front: tilt with their servos</text>
+  <text x="420" y="226">M4 tail: fixed, off in airplane mode</text>
+  <text x="420" y="254" class="t">V-tail seen from behind</text>
+  <line x1="500" y1="310" x2="460" y2="276" class="ln" stroke-width="4"/><line x1="500" y1="310" x2="540" y2="276" class="ln" stroke-width="4"/>
+  <circle cx="500" cy="312" r="7" class="body"/>
+  <text x="556" y="298" class="m">the 2 tail wings form a "V"</text>
+</svg>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Part</th><th>Servo?</th><th>Job</th></tr>
+  <tr><td>Front left + front right motors</td><td>✅ 1 tilt servo each</td><td>Lift (pointing up) ↔ thrust (pointing forward)</td></tr>
+  <tr><td>Tail motor</td><td>❌ none</td><td>Lift in drone mode only, off in airplane mode</td></tr>
+  <tr><td>Main wing, left + right</td><td>✅ 1 servo each</td><td>Ailerons: roll in airplane mode</td></tr>
+  <tr><td><strong>Tail wings, left + right</strong> (2 small wings at the back)</td><td>✅ 1 servo each</td><td><strong>V-tail</strong> (confirmed): pitch = both move together, yaw = they move opposite.</td></tr>
+</table>
+</div>
+<p><strong>Total: 6 servos</strong> = 2 tilt + 2 ailerons + 2 tail wings.</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Phase</th><th>Front motors</th><th>Tail motor</th><th>Who controls the aircraft</th></tr>
+  <tr><td><strong>Drone mode</strong> (takeoff / hover / landing): <code>Q</code> modes like QSTABILIZE, QHOVER, QLAND</td><td>Tilted <strong>up</strong>, providing lift</td><td><strong>On</strong>, providing lift</td><td>The 3 motors (with the tilt servos for yaw)</td></tr>
+  <tr><td><strong>Transition</strong></td><td>Tilt from up → forward</td><td>Slowing down</td><td>Mixed: motors + wings, until airspeed is reached</td></tr>
+  <tr><td><strong>Airplane mode</strong>: MANUAL, FBWA, CRUISE, AUTO…</td><td><strong>Forward</strong>, providing thrust</td><td><strong>Off</strong></td><td>Wings: ailerons + 2 tail wings</td></tr>
+</table>
+</div>
+
+<p>In ArduPlane this is configured with a few <code>Q_</code> parameters. These are for reference only; <strong>don't set anything now</strong>:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Parameter</th><th>Meaning for your Y3</th></tr>
+  <tr><td><code>Q_ENABLE = 1</code></td><td>Turn on the VTOL (QuadPlane) feature of ArduPlane</td></tr>
+  <tr><td><code>Q_FRAME_CLASS = 7</code></td><td>Lift-motor layout = <strong>Tricopter</strong> (3 motors)</td></tr>
+  <tr><td><code>Q_TILT_ENABLE = 1</code></td><td>Some motors tilt</td></tr>
+  <tr><td><code>Q_TILT_MASK = 3</code></td><td>Which motors tilt: motor 1 + motor 2 = the two front motors (1 + 2 = 3)</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td>How they tilt (continuous, binary or <strong>vectored</strong>). Vectored means the left and right tilt servos move separately to steer yaw. We pick the type in a later guide.</td></tr>
+</table>
+</div>
+<p><strong>Without QuadPlane enabled</strong>, ArduPlane treats the aircraft as a normal airplane and would never lift it vertically.</p>
+
+<h2>Steps</h2>
+
+<div class="step"><div class="num">1</div><div>
+  <h3>Use the right USB cable</h3>
+  <ul>
+    <li>The Pixhawk 2.4.8 has a <strong>micro-USB</strong> port on its side.</li>
+    <li>Use a <strong>data</strong> cable. Charge-only cables light the board but QGC never connects.</li>
+    <li>Plug it <strong>directly</strong> into the Mac (a simple USB-C adapter is OK), <strong>not through a hub or dock</strong>.</li>
+    <li>macOS needs <strong>no driver</strong>.</li>
+  </ul>
+</div></div>
+
+<div class="step"><div class="num">2</div><div>
+  <h3>Open QGroundControl, then plug in the Pixhawk</h3>
+  <ol>
+    <li>Quit <strong>Mission Planner</strong> if it's still open anywhere (only one app can use the port).</li>
+    <li>Open QGroundControl → plug in USB → wait about 10 seconds.</li>
+  </ol>
+  <div class="expect">You should see: the top bar change from <em>"Disconnected"</em> to vehicle status icons. The <em>"Running 4.7.1, latest stable is 4.7.2"</em> popup may appear. Click <strong>Ok</strong> and <strong>don't update yet</strong> (Guide 02).</div>
+</div></div>
+
+<div class="step"><div class="num">3</div><div>
+  <h3>Read the Vehicle Messages, and get a stable connection</h3>
+  <p>This step has 3 small parts: <strong>3a</strong> open the messages, <strong>3b</strong> understand them, <strong>3c</strong> make sure the connection stays up.</p>
+
+  <p><strong>3a. Open the messages.</strong> Click the <strong>Q logo / vehicle status area at the top-left</strong> of QGC (where it says "Comms Lost", "Ready" or "Not Ready"). A <strong>Vehicle Messages</strong> panel opens.</p>
+
+  <p><strong>3b. What your screenshot shows ✅ (already done)</strong></p>
+  <img src="guide1_screenshots/vehicle-messages-2_2026-10-17_0143.png" alt="Your Vehicle Messages screenshot: INS calibration, Ground start, QuadPlane initialised, Frame: TRI" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <div class="table-wrap">
+  <table>
+    <tr><th>Line</th><th>What it means</th></tr>
+    <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td>🎉 <strong>The board runs ArduPlane</strong> (only ArduPlane has QuadPlane), <strong>QuadPlane is already enabled</strong> (<code>Q_ENABLE = 1</code>), and the frame is already <strong>Tricopter</strong> (<code>Q_FRAME_CLASS = 7</code>). This is left over from your old Mission Planner setup, and it's correct for the Y3.</td></tr>
+    <tr><td><code>Ground start</code></td><td>Normal: the board booted on the ground.</td></tr>
+    <tr><td><span style="color:var(--danger)"><code>ALERT: Beginning INS calibration. Do not move plane</code></span></td><td>Normal at every boot: it calibrates the gyros for a few seconds. <strong>Keep the Pixhawk still on the desk while it powers up.</strong> Red here doesn't mean an error.</td></tr>
+  </table>
+  </div>
+  <div class="box info">
+    <strong>Correction (rev 5):</strong> rev 4 said QGC never shows the "ArduPlane V4.7.1 / board" lines. <strong>That was wrong.</strong> They appear when QGC is <strong>already open while the board boots</strong>. That's what happened in 3c below, and we got them. The first screenshot was missing them only because QGC had connected after the boot.
+  </div>
+
+  <p><strong>3c. Fix "Comms Lost" (red top bar)</strong></p>
+  <p>Your screenshot shows <strong>"Comms Lost"</strong> with a red bar. QGC stopped receiving data from the Pixhawk. We need a <strong>stable</strong> connection before Guide 02 (flashing over a bad link can fail).</p>
+  <ol>
+    <li>Click <strong>Disconnect</strong>, then unplug the USB cable.</li>
+    <li>Wait 5 seconds. Plug it back in, <strong>directly into the Mac</strong> (no hub), and <strong>don't touch the board</strong> while it boots.</li>
+    <li>Watch the top bar for <strong>1–2 minutes</strong>.</li>
+  </ol>
+  <div class="expect">Good: the top bar shows <strong>"Not Ready"</strong> or <strong>"Ready to Fly"</strong> (yellow or green), <em>not</em> red "Comms Lost". "Not Ready" is normal for now, because nothing is calibrated or wired.</div>
+  <p>If it goes back to <strong>Comms Lost</strong>: try another USB cable (data cable), then another port. Tell me what happened in the report.</p>
+
+  <div class="box ok">
+    <strong>✅ Step 3 done (01:47–01:50).</strong> The top bar shows <strong>"Not Ready"</strong> and the link is stable. The full message log is saved in <code>guide1_screenshots/vehicle-messages-full_2026-10-17_0147.txt</code>. The results are explained in <a href="#results">Results: what the board told us</a> below.
+  </div>
+</div></div>
+
+<div class="step"><div class="num">4</div><div>
+  <h3>Read the leftover VTOL settings (read only)</h3>
+  <div class="box info">
+    <strong>Correction (rev 6):</strong> the menu path in rev 5 was too vague, and in newer QGC versions the menu is called <strong>"Vehicle Configuration"</strong>, not "Vehicle Setup". Here is the exact click path:
+  </div>
+
+  <p><strong>4a. If this popup appears, click Ok and carry on. It's harmless:</strong></p>
+  <img src="guide1_screenshots/missing-params-popup_2026-10-17_0153.png" alt="QGC popup: Parameters are missing from firmware. Missing params: 1:FS_OPTIONS, 1:FS_GCS_TIMEOUT, 1:FS_GCS_ENABLE" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <p>QGC is looking for <code>FS_GCS_ENABLE</code>, <code>FS_GCS_TIMEOUT</code> and <code>FS_OPTIONS</code>. Those are <strong>ArduCopter-style</strong> names. <strong>ArduPlane spells it differently</strong> (for example <code>FS_GCS_ENABL</code>, without the final E), so QGC doesn't find them. It's a <strong>QGC ↔ ArduPlane naming mismatch</strong>. Your firmware is fine and nothing is missing on the board. Click <strong>Ok</strong>.</p>
+
+  <p><strong>4b. Open the Parameters screen:</strong></p>
+  <ol>
+    <li>Click the <strong>purple Q icon</strong> in the <strong>top-left corner</strong> (the same icon next to "Not Ready").</li>
+    <li>A panel opens titled <strong>"Select Tool"</strong> with big buttons: <em>Plan Flight</em> · <em>Analyze Tools</em> · <strong><em>Vehicle Configuration</em></strong> (older QGC: <em>Vehicle Setup</em>) · <em>Application Settings</em>. The QGC <strong>version number</strong> is shown at the bottom of this panel (you need it for step 6).</li>
+    <li>Click <strong>Vehicle Configuration</strong>.</li>
+    <li>A list appears down the <strong>left side</strong>: Summary, Firmware, Frame, Sensors, Radio, Flight Modes, Power, Safety, Tuning… <strong>Parameters is the last item</strong>. <strong>Scroll down that left list</strong> if you can't see it.</li>
+    <li>Click <strong>Parameters</strong>. You get a big table of names and values with a <strong>Search</strong> box at the top.</li>
+  </ol>
+  <div class="expect">You should see: a search box at the top, groups on the left (Q, SERVO, FS…), and a <strong>Tools</strong> button at the <strong>top-right</strong>.</div>
+
+  <p><strong>4c. Search and write down each value</strong> (or "not found"). The easiest way to send them is a screenshot after each search:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Search</th><th>Write down</th></tr>
+    <tr><td><code>Q_ENABLE</code></td><td>0 or 1</td></tr>
+    <tr><td><code>Q_FRAME_CLASS</code></td><td>value (7 = Tri)</td></tr>
+    <tr><td><code>Q_TILT_ENABLE</code></td><td>value</td></tr>
+    <tr><td><code>Q_TILT_MASK</code></td><td>value</td></tr>
+    <tr><td><code>Q_TILT_TYPE</code></td><td>value</td></tr>
+    <tr><td><code>SERVO1_FUNCTION</code> … <code>SERVO14_FUNCTION</code></td><td>Screenshot of the list (search <code>_FUNCTION</code>)</td></tr>
+  </table>
+  </div>
+  <p>Note: <code>Q_FRAME_CLASS</code> and the <code>Q_TILT_*</code> parameters <strong>only appear when <code>Q_ENABLE = 1</code></strong> (after a reboot). Your messages say QuadPlane is already on with Frame TRI, so expect <code>Q_ENABLE = 1</code> and <code>Q_FRAME_CLASS = 7</code>. The <code>Q_TILT_*</code> values are the interesting part: they show whether the tilt was set up before.</p>
+  <div class="box warn"><strong>Don't edit anything here.</strong> Just read.</div>
+  <div class="box ok"><strong>✅ Step 4 done (02:01–02:09).</strong> 4 screenshots received. The old setup is a <strong>complete Y3 tilt-rotor configuration</strong>. See <a href="#results-params">Results: the old setup</a> below.</div>
+</div></div>
+
+<div class="step"><div class="num">5</div><div>
+  <h3>Save a backup of the current parameters</h3>
+  <ol>
+    <li>On the same <strong>Parameters</strong> page, click <strong>Tools</strong> (top-right).</li>
+    <li>Choose <strong>Save to file…</strong></li>
+    <li>Save it as <code>params-backup_2026-10-17_before-guide02.params</code> in your <code>dronev2</code> folder.</li>
+  </ol>
+  <div class="expect">You should see: a <code>.params</code> file in the folder. If anything goes wrong later, this lets us compare with or restore the old setup.</div>
+  <div class="box ok"><strong>✅ Step 5 done (02:10).</strong> Backup saved: 1,276 parameters, header <em>"Vehicle: Fixed Wing · Version 4.7.1"</em>. I moved it to <code>dronev2/backups/params-backup_2026-10-17_before-guide02.params</code>. <strong>Don't edit or delete it.</strong></div>
+</div></div>
+
+<div class="step"><div class="num">6</div><div>
+  <h3>QGC version + 2 photos of the board</h3>
+  <ul>
+    <li><strong>Purple Q icon</strong> → the <strong>Select Tool</strong> panel → the version number (e.g. <code>v5.x.x</code>) is shown at the bottom.</li>
+    <li>Photo of the Pixhawk <strong>top</strong> (label) and of the <strong>pin-header end</strong> (MAIN OUT / AUX OUT / RC IN).</li>
+  </ul>
+  <p>The 1 MB flash question is already answered: the board runs the full <code>Pixhawk1</code> build ✅. The photos are now for <strong>Guide 04 (wiring)</strong>, so I can match the exact port labels on <em>your</em> board, and see what's already plugged in (the GPS?).</p>
+  <div class="box ok"><strong>✅ Step 6 done (02:17).</strong> QGC <strong>5.1.5</strong>, 2 photos received. See <a href="#results-board">Results: step 6</a>.</div>
+</div></div>
+
+<h2 id="results">Results: what the board told us (step 3, 01:47)</h2>
+
+<h3>Board identity ✅</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Message</th><th>Meaning</th></tr>
+  <tr><td><code>ArduPlane V4.7.1 (dbe79216)</code></td><td>Firmware = <strong>ArduPlane 4.7.1</strong>, confirmed.</td></tr>
+  <tr><td><code>Pixhawk1 00200035 …</code></td><td><strong>Board target = <code>Pixhawk1</code></strong>. This is the normal full-memory (2 MB) build, <em>not</em> the limited <code>Pixhawk1-1M</code>. So <strong>no 1 MB flash problem</strong>. In Guide 02 we install the <code>Pixhawk1</code> build.</td></tr>
+  <tr><td><code>IOMCU: 420 1001 …</code></td><td>The second processor that drives the <strong>MAIN OUT</strong> pins is working.</td></tr>
+  <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td>VTOL is on, with the tricopter frame. Correct for the Y3.</td></tr>
+  <tr><td><code>RCOut: PWM:1-14</code></td><td>All <strong>14 outputs</strong> (MAIN 1–8 + AUX 1–6) are in PWM mode, ready for ESCs and servos.</td></tr>
+  <tr><td><code>No airspeed sensor</code></td><td>No airspeed sensor is fitted. Flying VTOL without one is possible, but ArduPilot recommends one for transitions. We'll decide later.</td></tr>
+  <tr><td><code>GPS 1: detected u-blox</code> · <code>HW: 00070000</code></td><td>⚠️ <strong>A GPS is plugged in and works</strong> (u-blox, hardware ID 00070000). You said nothing was wired, so please check: is the GPS from the combo connected? "Bad fix" just means it's indoors.</td></tr>
+</table>
+</div>
+
+<h3>"Not Ready": the 7 PreArm messages, explained</h3>
+<p>These repeat every 30 seconds. <strong>All of them are expected right now</strong>, because nothing is wired or calibrated yet. None is a fault. Each one goes away in a later guide:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>PreArm message</th><th>Why it appears now</th><th>Fixed in</th></tr>
+  <tr><td><code>Hardware safety switch</code></td><td>The safety button (red flashing button) isn't connected or pressed.</td><td>Guide 04 (wiring)</td></tr>
+  <tr><td><code>Compass not calibrated</code></td><td>Compass calibration hasn't been done in QGC yet.</td><td>Guide 03 (sensors)</td></tr>
+  <tr><td><code>GPS 1: Bad fix</code></td><td>Indoors, with no sky view. Normal.</td><td>Outdoors later</td></tr>
+  <tr><td><code>AHRS: not using configured AHRS type</code></td><td>The navigation filter (EKF3) waits for a good GPS fix and calibrated sensors. Until then the board uses a simpler backup (<code>AHRS: DCM active</code>).</td><td>Guide 03 + outdoors</td></tr>
+  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>Powered by USB only, so it reads almost 0 V instead of 11.1 V from the LiPo.</td><td>Guide 04 (power module)</td></tr>
+  <tr><td><code>Radio failsafe on</code></td><td>No receiver connected. The board also switched itself to <strong>QLAND</strong> (<code>RC Long Failsafe On: switched to QLand</code>), which is the correct safe reaction.</td><td>Guide 05 (FlySky)</td></tr>
+  <tr><td><code>QLand mode not armable</code></td><td>A side effect of the radio failsafe putting it in QLAND.</td><td>Guide 05</td></tr>
+</table>
+</div>
+<div class="box warn">
+  <strong>Watch item:</strong> <code>PreArm: Gyros inconsistent</code> appeared <strong>once</strong>, just after boot, then went away. That's usually because the board was still warming up or was moved during startup. Not a problem if it doesn't return. We'll check it again during calibration in Guide 03.
+</div>
+
+<h3>Sensor Status panel</h3>
+<img src="guide1_screenshots/sensor-status_2026-10-17_0150.png" alt="Sensor status: GPS, RC receiver, AHRS, Pre-Arm Check in Error; gyro, accel, magnetometer, barometer, logging, battery Normal" style="width:100%;max-width:480px;border-radius:8px;border:1px solid var(--border)">
+<p><strong>Normal ✅</strong> gyro, accelerometer, magnetometer, barometer, logging and battery monitoring. All the core sensors work. <strong>Error</strong> GPS, RC receiver, AHRS and Pre-Arm Check, which are exactly the items in the table above. <strong>Disabled</strong> position control and motor outputs, normal while disarmed.</p>
+
+<h2 id="results-params">Results: the old setup (steps 4–5, 02:01–02:10)</h2>
+<p>Sources: your 4 screenshots (<code>guide1_screenshots/params-*.png</code>) and the full backup file. In QGC, an <span style="color:var(--warn)"><strong>orange</strong></span> value means it was <strong>changed from the default</strong>, so someone configured it on purpose.</p>
+
+<h3>VTOL / tilt settings ✅ all match the Y3</h3>
+<img src="guide1_screenshots/params-q-tilt_2026-10-17_0201.png" alt="Q_TILT parameters screenshot" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<div class="table-wrap">
+<table>
+  <tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr>
+  <tr><td><code>Q_ENABLE</code></td><td>Enable</td><td>VTOL on ✅</td></tr>
+  <tr><td><code>Q_FRAME_CLASS</code></td><td>Tri</td><td>3 lift motors ✅</td></tr>
+  <tr><td><code>Q_TILT_ENABLE</code></td><td>Enable</td><td>Tilting motors on ✅</td></tr>
+  <tr><td><code>Q_TILT_MASK</code></td><td>3</td><td>Motors 1 + 2 (the two front motors) tilt ✅</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td>VectoredYaw (2)</td><td>Left and right tilt servos move separately to steer yaw in drone mode, so no extra yaw servo is needed ✅</td></tr>
+  <tr><td><code>Q_TILT_YAW_ANGLE</code></td><td>10</td><td>How far (°) the motors can tilt back past vertical for yaw</td></tr>
+  <tr><td><code>Q_TILT_MAX</code></td><td>70°</td><td>Maximum forward tilt while still in VTOL modes</td></tr>
+  <tr><td><code>Q_TILT_RATE_UP</code> / <code>_DN</code></td><td>80 / 25 °/s</td><td>Tilt speed: back to vertical (fast) / forward (slow)</td></tr>
+  <tr><td><code>Q_TILT_FIX_ANGLE</code> / <code>_FIX_GAIN</code></td><td>10° / 0.6</td><td>Lets the tilt help steer in airplane mode</td></tr>
+</table>
+</div>
+
+<h3>Output map: what each pin on the Pixhawk does</h3>
+<img src="guide1_screenshots/params-servo-functions_2026-10-17_0202.png" alt="SERVOx_FUNCTION screenshot" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<p>On a Pixhawk 2.4.8, <strong>MAIN OUT 1–8 = SERVO1–8</strong> and <strong>AUX OUT 1–6 = SERVO9–14</strong>. So the old setup expects:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Pixhawk pin</th><th>Parameter</th><th>Function</th><th>Plug in here</th></tr>
+  <tr><td><strong>MAIN 1</strong></td><td>SERVO1</td><td>Aileron</td><td>Aileron servo (one wing)</td></tr>
+  <tr><td><strong>MAIN 2</strong></td><td>SERVO2</td><td>Aileron</td><td>Aileron servo (other wing)</td></tr>
+  <tr><td><strong>MAIN 3</strong></td><td>SERVO3</td><td><strong>VTailLeft</strong></td><td>Left tail wing servo</td></tr>
+  <tr><td><strong>MAIN 4</strong></td><td>SERVO4</td><td><strong>VTailRight</strong></td><td>Right tail wing servo</td></tr>
+  <tr><td><strong>MAIN 5</strong></td><td>SERVO5</td><td>Motor1</td><td>ESC of the <strong>front RIGHT</strong> motor</td></tr>
+  <tr><td><strong>MAIN 6</strong></td><td>SERVO6</td><td>Motor2</td><td>ESC of the <strong>front LEFT</strong> motor</td></tr>
+  <tr><td>MAIN 7</td><td>SERVO7</td><td>Disabled</td><td>(empty)</td></tr>
+  <tr><td><strong>MAIN 8</strong></td><td>SERVO8</td><td>Motor4</td><td>ESC of the <strong>TAIL</strong> motor</td></tr>
+  <tr><td><strong>AUX 1</strong></td><td>SERVO9</td><td>TiltMotorFrontLeft</td><td>Tilt servo, front LEFT motor</td></tr>
+  <tr><td><strong>AUX 2</strong></td><td>SERVO10</td><td>TiltMotorFrontRight</td><td>Tilt servo, front RIGHT motor</td></tr>
+  <tr><td>AUX 3–6</td><td>SERVO11–14</td><td>Disabled</td><td>(empty)</td></tr>
+</table>
+</div>
+<p>In ArduPilot's tricopter layout, <strong>Motor1 = front right, Motor2 = front left, Motor4 = tail</strong> (there's no Motor3). That's why <code>Q_TILT_MASK = 3</code> (motors 1 + 2) means "the two front motors". All <strong>6 servos + 3 ESCs = 9 outputs</strong> are assigned, which is exactly your hardware. <strong>This answers the tail question: the old setup treats your 2 tail wings as a V-tail</strong> (please still confirm by looking at the plane).</p>
+
+<h3>Other findings in the backup file</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Finding</th><th>Value</th><th>Meaning / action</th></tr>
+  <tr><td>⚠️ <strong>Board orientation</strong></td><td><code>AHRS_ORIENTATION = 2</code> (Yaw90)</td><td>The old setup expects the Pixhawk mounted <strong>rotated 90°</strong> (its arrow pointing sideways, not to the nose). It <strong>must match how the board sits in the plane</strong>. Checked in Guide 03.</td></tr>
+  <tr><td>Tilt servo endpoints</td><td>SERVO9: 800–1940 µs, <strong>reversed</strong> · SERVO10: 700–2100 µs</td><td>Someone tuned these to the real mechanism. 700/2100 is past the normal servo range, so we check for servo buzzing or straining at the ends in Guide 07 (props off).</td></tr>
+  <tr><td>Aileron ranges differ</td><td>SERVO1: 1100–1900 · SERVO2: 1000–2000</td><td>Probably not intentional. Reviewed in Guide 07.</td></tr>
+  <tr><td>Flight modes</td><td><code>FLTMODE_CH = 8</code>: QStabilize · QLoiter · FBWA · QStabilize · RTL · FBWA</td><td>Modes are switched with <strong>channel 8</strong> on the radio. Reviewed with the FlySky in Guide 06.</td></tr>
+  <tr><td>⚠️ Receiver port</td><td><code>SERIAL2_PROTOCOL = 23</code> (RC input on <strong>TELEM2</strong>)</td><td>The old setup may have plugged the FlySky receiver into <strong>TELEM2</strong> (serial i-BUS) instead of RC IN. Decided in Guide 05.</td></tr>
+  <tr><td>Radio switches</td><td><code>RC5_OPTION = 153</code> (arm/disarm), <code>RC6_OPTION = 4</code> (RTL), plus leftover options on RC9–RC16</td><td>Cleaned up in Guide 06.</td></tr>
+  <tr><td>Arming</td><td><code>ARMING_RUDDER = 2</code></td><td>Arm/disarm with the rudder stick is allowed.</td></tr>
+  <tr><td>Battery monitor</td><td><code>BATT_MONITOR = 4</code>, capacity 3000 mAh, low 10.5 V → RTL</td><td>Standard Pixhawk power module values, matching your 3S 3000 mAh battery ✅</td></tr>
+  <tr><td>Safety switch</td><td><code>BRD_SAFETY_DEFLT = 1</code></td><td>The safety button is required. That's why "PreArm: Hardware safety switch" appears.</td></tr>
+  <tr><td>Compasses</td><td>2 known: <code>466441</code> (external I²C, primary) + <code>131594</code></td><td>The primary compass is an <strong>external</strong> one, most likely in the GPS module. That also suggests the GPS+compass is plugged in. "Not calibrated" probably means the compass changed or needs recalibrating. Guide 03.</td></tr>
+  <tr><td>Airspeed</td><td><code>ARSPD_TYPE = 0</code></td><td>No airspeed sensor configured (matches the boot message).</td></tr>
+  <tr><td>Throttle limit</td><td><code>THR_MAX = 80</code></td><td>Forward throttle capped at 80%.</td></tr>
+</table>
+</div>
+
+<div class="box info">
+  <strong>What this means for Guide 02 (my recommendation):</strong> the old setup is coherent and built for exactly this aircraft (Tri, vectored-yaw tilt, V-tail, all 9 outputs assigned, tuned tilt endpoints). So <strong>keep these parameters</strong> and update the firmware from 4.7.1 to 4.7.2. ArduPilot keeps the parameters through a normal update. We then <strong>verify each item</strong> in Guides 03–07 instead of rebuilding from zero. The backup lets us undo anything. <strong>Tell me if you'd rather start completely clean.</strong>
+</div>
+
+<h2 id="results-board">Results: step 6, your board and what's plugged in (02:17)</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+  <img src="guide1_screenshots/board-top_2026-10-17_0217.jpg" alt="Pixhawk 2.4.8 top view with cables" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <img src="guide1_screenshots/board-header-end_2026-10-17_0217.jpg" alt="Pixhawk servo header end" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+</div>
+<p>My reading of the photos. <strong>Please correct me if any line is wrong:</strong></p>
+<div class="table-wrap">
+<table>
+  <tr><th>Pixhawk port</th><th>What's plugged in</th><th>Status</th></tr>
+  <tr><td>USB</td><td>Cable to the Mac</td><td>✅</td></tr>
+  <tr><td>POWER</td><td>6-wire cable to the <strong>power module</strong></td><td>✅ (no LiPo yet, so "low voltage" is expected)</td></tr>
+  <tr><td>GPS</td><td><strong>M8N GPS</strong> (data)</td><td>✅ matches "detected u-blox"</td></tr>
+  <tr><td>I2C</td><td><strong>M8N compass</strong></td><td>✅ matches the external primary compass</td></tr>
+  <tr><td>BUZZER</td><td>Buzzer (black round part)</td><td>✅</td></tr>
+  <tr><td>SWITCH</td><td>Safety switch (the black part with the clear button, photo 2)</td><td>✅ Probably. Pressing it comes in Guide 04</td></tr>
+  <tr><td><strong>RC IN</strong> (end of the pin row)</td><td>A 3-pin plug whose wires go to a <strong>small black circuit board</strong>, which connects to the <strong>receiver box</strong> (top-right)</td><td>❓ The small board looks like a <strong>PPM encoder</strong> (converts separate receiver channels into one signal for RC IN). To confirm</td></tr>
+  <tr><td>TELEM1 / TELEM2 / SERIAL 4/5 / SPKT/DSM / CAN / ADC</td><td>Empty</td><td>Note: the old param <code>SERIAL2_PROTOCOL=23</code> (receiver on TELEM2) doesn't match. TELEM2 is empty, so it's a leftover. Fixed in Guide 05</td></tr>
+  <tr><td>MAIN OUT 1–8 / AUX OUT 1–6</td><td>Empty (no ESCs or servos yet)</td><td>✅ Correct for now</td></tr>
+</table>
+</div>
+<div class="box info">
+  <strong>About the small board (PPM encoder, confirmed 19:27, see Guide 04 C5):</strong> your FlySky <strong>iA10B</strong> receiver can output <strong>PPM</strong> or <strong>i-BUS</strong> on a single cable by itself, so an extra encoder board is usually <strong>not needed</strong>. Fewer parts means fewer failure points. We'll decide in Guide 05 (radio). For now, leave it as is.
+</div>
+<div class="box warn">
+  <strong>Mounting / orientation:</strong> you said the board is <strong>flat with the LEDs facing up</strong> ✅. The remaining question is the <strong>direction of the white arrow</strong> printed on the board (in photo 1, near the bottom, between POWER and I2C). It must point to the <strong>nose</strong> of the plane. If it does, <code>AHRS_ORIENTATION</code> must be changed from <code>2</code> (Yaw90) to <code>0</code> (None). We do this in <strong>Guide 03</strong>, before calibration. Also: in the photo the board sits on a test plate on the desk. Is it installed in the plane yet?
+</div>
+
+<h2>Troubleshooting</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Problem</th><th>Try this</th></tr>
+  <tr><td>Stays "Disconnected"</td><td>Different (data) cable → different port, no hub → quit Mission Planner → restart QGC with the board plugged in.</td></tr>
+  <tr><td>Connects, then drops repeatedly</td><td>Usually the cable or a hub. Use a direct port.</td></tr>
+  <tr><td>Red messages / "PreArm" errors</td><td>Normal now (no GPS, no radio, not calibrated). Ignore them for this guide.</td></tr>
+  <tr><td>Popup "Parameters are missing from firmware … FS_OPTIONS, FS_GCS_TIMEOUT, FS_GCS_ENABLE"</td><td>Harmless QGC/ArduPlane naming mismatch (see step 4a). Click Ok.</td></tr>
+  <tr><td>Can't find Parameters</td><td>Purple Q icon (top-left) → <strong>Vehicle Configuration</strong> → scroll to the <strong>bottom</strong> of the left list → Parameters.</td></tr>
+  <tr><td>Check the Mac sees the board</td><td>In Terminal: <code>ls /dev/cu.usbmodem*</code>. A line appears when the board is plugged in.</td></tr>
+</table>
+</div>
+
+<h2>Report back</h2>
+<div class="box ok">
+  <strong>✅ Guide 01 complete (02:20). Everything received:</strong>
+  <ul class="check">
+    <li><s>Messages / stable link</s> ✅ ArduPlane 4.7.1, Pixhawk1, QuadPlane TRI, stable "Not Ready"</li>
+    <li><s>Q_TILT + SERVOx_FUNCTION values</s> ✅ complete Y3 config</li>
+    <li><s>Backup .params</s> ✅ <code>backups/params-backup_2026-10-17_before-guide02.params</code></li>
+    <li><s>GPS plugged?</s> ✅ Yes, <strong>M8N GPS module with compass</strong></li>
+    <li><s>Mounting</s> ✅ Flat, LEDs facing up. Arrow direction vs nose → checked in Guide 03</li>
+    <li><s>Ever flew?</s> ✅ <strong>No</strong>. The old setup is untested, so every item gets verified</li>
+    <li><s>Keep or reset params?</s> ✅ <strong>Keep and fix</strong> (agreed)</li>
+    <li><s>QGC version</s> ✅ <strong>5.1.5</strong></li>
+    <li><s>2 photos</s> ✅ received (see Results: step 6)</li>
+    <li>Tail shape (V-tail?): still open, not needed for Guide 02</li>
+  </ul>
+</div>
+<p><strong>➡️ Next: <a href="guide-02_2026-10-17_0220_update-arduplane-4-7-2.html">Guide 02: Update to ArduPlane 4.7.2 (keep parameters)</a></strong></p>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/parameters.html">ArduPilot Plane: full parameter list</a> (Plane uses <code>FS_GCS_ENABL</code>, not <code>FS_GCS_ENABLE</code>)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-overview.html">ArduPilot Plane: QuadPlane overview</a> (what QuadPlane is, supported frames)</li>
+  <li><a href="https://ardupilot.org/plane/docs/guide-tilt-rotor.html">ArduPilot Plane: Tilt-Rotor Planes</a> (Q_FRAME_CLASS 7 Tri, Q_TILT_MASK 3, tilt types, tilt servo functions 41 / 75 / 76)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-flight-modes.html">ArduPilot Plane: QuadPlane flight modes</a> (QSTABILIZE, QHOVER, QLAND…)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/parameters.html">QGroundControl: Parameters</a> (Tools → Save to file)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/firmware.html">QGroundControl: Loading Firmware</a> (direct USB port, no hub)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-pixhawk-overview.html">ArduPilot: Pixhawk overview</a> (early STM32F427 revisions limited to 1 MB flash)</li>
+</ul>
+
+<footer>VTOL Y3 project · Guide 01 · created 2026-10-17 01:13 · rev 8 02:20 · ✅ complete · next: Guide 02, Update to ArduPlane 4.7.2</footer>
+</main>
+</body>
+</html>

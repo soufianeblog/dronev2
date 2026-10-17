@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide 04 — FlySky Setup</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">
+    <span class="pill">Guide 04 / ~10</span>
+    <span class="pill">Created 2026-10-17 · 03:45</span>
+    <span class="pill">Rev 3 · 20:39 (status, drawings)</span>
+    <span class="pill">⏱ ~45 min</span>
+    <span class="pill">✅ Complete 20:34</span>
+  </div>
+  <h1>FlySky i6X: test it, set up your switches, calibrate</h1>
+  <p class="lead">Goal: your switch/stick plan working in ArduPlane. <strong>SWA</strong> = motors on/off, <strong>SWC</strong> = idle / drone / airplane, <strong>left stick</strong> = throttle, <strong>right stick</strong> = pitch + turning. Then QGC radio calibration and a test of every switch, <strong>with no battery and no props</strong>.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>Status now (20:39): ✅ complete.</strong> Radio path: i6X → iA10B (Output mode <strong>PWM</strong>) → PPM encoder → RC IN. Calibrated in Mode 2. SWC on CH6: up QLAND · middle QHOVER · down FBWA. SWA: down = arm, up = off. Leftover switch jobs cleared, stick-arming off, GPS on. Backup: <code>backups/params_after-guide04.params</code>. The step-by-step history below is kept as a log. Boxes marked <em>Superseded</em> were early ideas that turned out wrong. <a href="#final-summary">Jump to the final summary</a>.</div>
+
+
+<div class="box danger">
+  <strong>Safety for this guide</strong>
+  <ul>
+    <li><strong>USB only. No LiPo. Propellers OFF.</strong> The receiver gets its power from the Pixhawk's RC IN port over USB, so the radio works without a battery.</li>
+    <li>The motors <strong>cannot spin</strong> in this guide (no battery, and arming is still blocked by PreArm checks). We only check that the Pixhawk <em>sees</em> the right signals.</li>
+  </ul>
+</div>
+
+<div class="box warn"><strong>You make every change yourself.</strong> I don't connect to or change the Pixhawk. Each part below says exactly what to click in QGC or on the i6X. Do them in order: <strong>0 → B → C → D → E → F → G → H</strong>.</div>
+
+<h2 id="pictures">Our plan in pictures (rev 2, 03:53)</h2>
+
+<div class="fig">
+<svg viewBox="0 0 770 400" role="img" aria-label="FlySky i6X controller with the agreed assignments">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>
+  <text x="360" y="22" text-anchor="middle" class="t">FlySky i6X: what every control does</text>
+  <rect x="150" y="60" width="420" height="250" rx="40" class="body"/>
+  <!-- top switches -->
+  <rect x="185" y="40" width="14" height="34" rx="4" class="sw"/><text x="192" y="34" text-anchor="middle" class="t">SWA</text>
+  <rect x="235" y="40" width="14" height="34" rx="4" class="unused"/><text x="242" y="34" text-anchor="middle" class="m">SWB</text>
+  <rect x="471" y="40" width="14" height="34" rx="4" class="sw"/><text x="478" y="34" text-anchor="middle" class="t">SWC</text>
+  <rect x="521" y="40" width="14" height="34" rx="4" class="unused"/><text x="528" y="34" text-anchor="middle" class="m">SWD</text>
+  <circle cx="300" cy="95" r="12" class="unused"/><text x="300" y="122" text-anchor="middle" class="m">VrA</text>
+  <circle cx="420" cy="95" r="12" class="unused"/><text x="420" y="122" text-anchor="middle" class="m">VrB</text>
+  <rect x="320" y="140" width="80" height="50" rx="6" fill="var(--bg)" stroke="var(--muted)"/><text x="360" y="170" text-anchor="middle" class="m">screen</text>
+  <!-- sticks -->
+  <circle cx="245" cy="225" r="48" class="stick"/><circle cx="245" cy="225" r="10" fill="var(--text)"/>
+  <circle cx="475" cy="225" r="48" class="stick"/><circle cx="475" cy="225" r="10" fill="var(--text)"/>
+  <path class="arr" d="M245 205 L245 185"/><path class="arr" d="M245 245 L245 265"/>
+  <path class="arr" d="M225 225 L205 225"/><path class="arr" d="M265 225 L285 225"/>
+  <path class="arr" d="M475 205 L475 185"/><path class="arr" d="M475 245 L475 265"/>
+  <path class="arr" d="M455 225 L435 225"/><path class="arr" d="M495 225 L515 225"/>
+  <!-- labels left -->
+  <text x="20" y="60" class="t">SWA (CH5)</text><text x="20" y="76">ARM / DISARM</text><text x="20" y="92" class="m">down = ON · up = OFF</text>
+  <path class="ln" d="M120 70 L185 56"/>
+  <text x="20" y="190" class="t">LEFT STICK</text>
+  <text x="20" y="208">↑↓ THROTTLE (CH3)</text>
+  <text x="20" y="226">←→ YAW (CH4), turn</text>
+  <text x="20" y="244" class="m">throttle DOWN to arm</text>
+  <path class="ln" d="M150 220 L195 225"/>
+  <!-- labels right -->
+  <text x="590" y="52" class="t">SWC (CH6) 3-pos</text>
+  <text x="590" y="70">UP: QLAND (idle)</text>
+  <text x="590" y="86">MID: QHOVER (drone)</text>
+  <text x="590" y="102">DOWN: FBWA (airplane)</text>
+  <path class="ln" d="M588 66 L485 56"/>
+  <text x="590" y="190" class="t">RIGHT STICK</text>
+  <text x="590" y="208">↑↓ PITCH (CH2)</text>
+  <text x="590" y="226">←→ ROLL (CH1)</text>
+  <path class="ln" d="M588 220 L525 225"/>
+  <text x="360" y="340" text-anchor="middle" class="m">Grey = not used: SWB, SWD, VrA, VrB (free for later)</text>
+  <text x="360" y="360" text-anchor="middle" class="m">Standard "Mode 2". Roll stays on the right stick (agreed, rev 2)</text>
+</svg>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="Drone mode: three motors lift, surfaces almost still">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">nose</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="quiet"/><rect x="275" y="133" width="80" height="9" class="quiet"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="quiet"/><rect x="210" y="287" width="54" height="9" class="quiet"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="110" cy="80" r="18" class="on"/>
+  <text x="110" y="84" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="290" cy="80" r="18" class="on"/>
+  <text x="290" y="84" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <circle cx="200" cy="236" r="15" class="on"/><text x="200" y="240" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <text x="110" y="52" text-anchor="middle">M2 front-left</text><text x="290" y="52" text-anchor="middle">M1 front-right</text><text x="222" y="240">M4 tail</text>
+  <text x="360" y="22" text-anchor="middle" class="t">DRONE MODE: SWC middle = QHOVER (also QLAND)</text>
+  <text x="400" y="80" class="t">What works</text>
+  <text x="400" y="102"><tspan class="on" style="font-weight:700">● ON</tspan> all 3 motors, pointing UP (lift)</text>
+  <text x="400" y="122">Tilt servos: hold front motors vertical</text>
+  <text x="400" y="150" class="t">Who steers</text>
+  <text x="400" y="172">Roll: left vs right front motor</text>
+  <text x="400" y="190">Pitch: front motors vs tail motor</text>
+  <text x="400" y="208">Yaw: tilt servos lean the 2 motors opposite</text>
+  <text x="400" y="236" class="t">Wing + V-tail servos</text>
+  <text x="400" y="256"><tspan class="m" style="font-weight:700">● almost still</tspan> ArduPlane scales their</text>
+  <text x="400" y="274">movement to ~0 at hover speed (automatic).</text>
+  <text x="400" y="292" class="m">So no SWD switch is needed.</text>
+</svg>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="Airplane mode: front motors forward, tail motor off, surfaces active">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">nose</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="act"/><rect x="275" y="133" width="80" height="9" class="act"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="act"/><rect x="210" y="287" width="54" height="9" class="act"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <ellipse cx="110" cy="76" rx="24" ry="6" class="on"/><text x="110" y="66" text-anchor="middle" font-weight="700">▲ thrust</text>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <ellipse cx="290" cy="76" rx="24" ry="6" class="on"/><text x="290" y="66" text-anchor="middle" font-weight="700">▲ thrust</text>
+  <circle cx="200" cy="236" r="15" class="off"/><text x="200" y="240" text-anchor="middle" font-weight="700">✕</text>
+  <text x="85" y="160" text-anchor="middle">aileron</text><text x="315" y="160" text-anchor="middle">aileron</text><text x="222" y="240" class="m">M4 tail: OFF</text><text x="200" y="320" text-anchor="middle" class="m">V-tail surfaces</text>
+  <text x="360" y="22" text-anchor="middle" class="t">AIRPLANE MODE: SWC down = FBWA</text>
+  <text x="400" y="80" class="t">What works</text>
+  <text x="400" y="102"><tspan class="on" style="font-weight:700">● ON</tspan> 2 front motors, tilted FORWARD (thrust)</text>
+  <text x="400" y="122"><tspan class="m" style="font-weight:700">✕ OFF</tspan> tail motor (stops after transition)</text>
+  <text x="400" y="150" class="t">Who steers <tspan class="act">(orange = active)</tspan></text>
+  <text x="400" y="172">Roll: <tspan font-weight="700">ailerons</tspan> (MAIN 1–2)</text>
+  <text x="400" y="190">Pitch: <tspan font-weight="700">V-tail</tspan>, both surfaces same way</text>
+  <text x="400" y="208">Yaw: <tspan font-weight="700">V-tail</tspan>, surfaces opposite (MAIN 3–4)</text>
+  <text x="400" y="236" class="t">Switching</text>
+  <text x="400" y="256">Middle → down: motors tilt forward slowly</text>
+  <text x="400" y="274">(25°/s); ArduPlane manages the transition.</text>
+  <text x="400" y="292">Down → middle: motors tilt back up (80°/s).</text>
+</svg>
+</div>
+
+<div class="box ok" id="surfaces"><strong>How the sticks move the surfaces (your description, 19:48, airplane mode):</strong>
+  <div class="table-wrap"><table>
+    <tr><th>Stick</th><th>Surfaces</th><th>Movement</th><th>Pixhawk output</th></tr>
+    <tr><td>Right stick ←→ (roll, CH1)</td><td>2 main-wing servos (ailerons)</td><td><strong>Opposite</strong>: one up, one down</td><td>MAIN 1–2 <code>Aileron</code></td></tr>
+    <tr><td>Right stick ↑↓ (pitch, CH2)</td><td>2 tail-wing servos</td><td><strong>Together</strong>: both up / both down</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>Left stick ←→ (yaw, CH4)</td><td>2 tail-wing servos</td><td><strong>Opposite</strong>: one up, one down</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>Left stick ↑↓ (throttle, CH3)</td><td>motors</td><td>more / less power</td><td>MAIN 5, 6, 8</td></tr>
+    <tr><td><em>automatic</em></td><td>2 front tilt servos</td><td>motors up (drone) ↔ forward (airplane), plus yaw in drone mode</td><td>AUX 1–2 <code>TiltMotorFront…</code></td></tr>
+  </table></div>
+  All mixing is done by the <strong>Pixhawk</strong> (that's why the i6X V-Tail/Elevon mixing is Off). Pitch + yaw together: the V-tail mixer adds both. Servo directions are checked one by one in Guide 08, once the servos are wired.</div>
+
+<div class="box info"><strong>About "disable the surfaces outside airplane mode":</strong> ArduPlane 4.7.2 already does this for you. In VTOL modes it <em>"limit[s] surface movement at low speed to prevent instability"</em>: the deflection is scaled down linearly to almost zero as speed approaches hover (source: <code>ArduPlane/Attitude.cpp</code>, 4.7.2). In airplane mode the surfaces work fully. A separate SWD switch isn't needed, and it would be risky: switching the V-tail off in airplane mode means no pitch/yaw control. <em>Note: without a GPS fix (indoors) ArduPlane can't estimate speed, so on the desk the surfaces may still move when you test. That's normal.</em></div>
+
+<h2>How the Pixhawk sees your radio</h2>
+<div class="box info">
+  <ul>
+    <li>FlySky i6X → (2.4 GHz) → <strong>iA10B receiver</strong> (Output mode <strong>PWM</strong>: one wire per channel) → <strong>PPM encoder board</strong> (combines them into one PPM signal) → Pixhawk <strong>RC IN</strong>. Working since 19:48 (C5).</li>
+    <li>Each stick/switch/knob = one <strong>channel</strong> (CH1, CH2, …). ArduPlane decides what each channel does.</li>
+    <li>Current ArduPlane settings (from your backup): CH1 roll · CH2 pitch · CH3 throttle · CH4 yaw · <strong>CH5 = arm/disarm</strong> (<code>RC5_OPTION=153</code>, already!) · CH6 = RTL (leftover) · flight modes on <strong>CH8</strong>.</li>
+  </ul>
+</div>
+
+<h2>Part 0: Save a backup first (also finishes Guide 03)</h2>
+<div class="step"><div class="num">0</div><div>
+  <h3>Save the parameters before we change anything</h3>
+  <p><strong>Vehicle Configuration → Parameters → Tools</strong> (top-right) → <strong>Save to file…</strong> → <code>backups/params_after-guide03.params</code>.</p>
+  <p>This is Guide 03 step F. I'll use it to confirm your orientation and calibrations, and as the "undo" point for this guide.</p>
+</div></div>
+
+<h2>Part A: Your plan → ArduPlane</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>You want</th><th>ArduPlane feature</th><th>How it behaves</th><th>Verdict</th></tr>
+  <tr><td><strong>SWA</strong>: all motors on/off</td><td><strong>Arm/Disarm switch</strong> (<code>RC5_OPTION = 153</code>)</td><td>Switch <strong>down</strong> (signal high) → <strong>arms</strong> (only if all safety checks pass). Switch <strong>up</strong> (signal low) → <strong>disarms unconditionally</strong>: motors stop at once. (Tested 20:32.)</td><td>✅ Good. <strong>⚠️ In the air, SWA off = motors stop = the plane falls.</strong> Treat SWA as an <em>emergency kill switch</em>, only flipped on the ground (or in a real emergency).</td></tr>
+  <tr><td><strong>SWC up</strong>: idle, "turns motors off gradually and safely"</td><td>Flight mode <strong>QLAND</strong></td><td>In the air: <strong>descends slowly, lands vertically, stops the motors and disarms by itself</strong>. On the ground: the board <strong>refuses to arm</strong> in QLAND ("QLand mode not armable"), so motors stay off.</td><td>✅ This is exactly the "safe idle" you described</td></tr>
+  <tr><td><strong>SWC middle</strong>: drone mode, 3 motors</td><td>Flight mode <strong>QHOVER</strong></td><td>VTOL with all 3 motors, front motors pointing up. Holds its height when the throttle stick is centred.</td><td>✅ Recommended for the first hovers (alternative: QSTABILIZE, where the throttle sets motor power directly; harder)</td></tr>
+  <tr><td><strong>SWC down</strong>: airplane mode, front 2 motors only</td><td>Flight mode <strong>FBWA</strong></td><td>Front motors tilt forward (gradually, <code>Q_TILT_RATE_DN</code> = 25°/s), the <strong>tail motor stops</strong> once flying speed is reached, and the wings + V-tail take over. ArduPlane does this transition by itself.</td><td>✅ Exactly your airplane mode</td></tr>
+  <tr><td><strong>Left stick up/down</strong>: speed</td><td>Throttle (CH3)</td><td>QHOVER: up = climb, centre = hold height, down = descend. FBWA: forward thrust of the 2 front motors. QLAND: ignored. <strong>Must be fully down to arm.</strong></td><td>✅</td></tr>
+  <tr><td><strong>Right stick up/down</strong>: pitch</td><td>Pitch (CH2)</td><td>Nose up/down</td><td>✅ standard</td></tr>
+  <tr><td><strong>Right stick left/right</strong>: yaw</td><td>Normally <strong>roll</strong></td><td colspan="2" rowspan="2">⚠️ <strong>See the recommendation below</strong></td></tr>
+  <tr><td><strong>VrB knob</strong>: roll</td><td>A knob as the roll control</td></tr>
+</table>
+</div>
+
+<div class="box danger">
+  <strong>⚠️ My strong recommendation: don't put roll on the VrB knob.</strong>
+  <ul>
+    <li><strong>A stick springs back to centre when you let go. A knob stays where you left it.</strong> Roll on a knob means: turn it a bit and the plane <strong>keeps banking</strong> (or in hover keeps <strong>leaning and sliding sideways</strong>) until you find the exact centre again by feel.</li>
+    <li>Roll is the axis you correct <strong>most often and fastest</strong>, in hover <em>and</em> in airplane flight. A knob is far too slow for that. In a gust or after the transition, this alone can crash the Y3.</li>
+    <li>ArduPlane, the autopilot's stabilization and all its documentation assume the standard layout. Instructors, simulators and every tutorial also use it.</li>
+  </ul>
+  <p><strong>Recommended = standard "Mode 2"</strong> (what your i6X already does by default):</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>Up / down</th><th>Left / right</th></tr>
+    <tr><td><strong>Left stick</strong></td><td>Throttle (CH3) ✅ <em>as you wanted</em></td><td><strong>Yaw</strong> (CH4): turn left/right</td></tr>
+    <tr><td><strong>Right stick</strong></td><td>Pitch (CH2) ✅ <em>as you wanted</em></td><td><strong>Roll</strong> (CH1): bank left/right</td></tr>
+  </table>
+  </div>
+  <p>So the only difference from your plan: <strong>yaw moves to the left stick (left/right), roll goes on the right stick (left/right)</strong>, and the VrB knob stays free.</p>
+  <p class="box ok" style="display:block"><strong>✅ Decided (03:53): standard layout. Roll stays on the right stick, VrB unused.</strong></p>
+</div>
+
+<h2>Part A2: Your extra points (03:46)</h2>
+<div class="box info">
+  <strong>1. "The wing and tail servos control roll together."</strong> Close, but in ArduPlane each surface has its own job, and <strong>ArduPlane mixes them automatically</strong>. You never wire or mix this yourself:
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>Drone mode (QHOVER/QLAND)</th><th>Airplane mode (FBWA)</th></tr>
+    <tr><td><strong>Roll</strong></td><td>Left vs right <strong>front motor</strong> speed (more thrust on one side)</td><td><strong>Ailerons</strong> (wing servos, MAIN 1–2)</td></tr>
+    <tr><td><strong>Pitch</strong></td><td>Front motors vs <strong>tail motor</strong></td><td><strong>V-tail</strong> both surfaces same direction (MAIN 3–4)</td></tr>
+    <tr><td><strong>Yaw</strong></td><td>The 2 <strong>tilt servos</strong> tilt opposite ways (VectoredYaw)</td><td><strong>V-tail</strong> surfaces opposite directions</td></tr>
+  </table>
+  </div>
+  So the <strong>V-tail does pitch + yaw, not roll</strong>. Either way, your <em>input</em> for roll (stick vs knob) is a separate question, and my recommendation stays: <strong>roll on the right stick</strong>.
+</div>
+<div class="box ok">
+  <strong>2. ✅ Decided (03:53): wing + V-tail servos only work in airplane mode, handled automatically.</strong> You confirmed: pitch and yaw from the surfaces only in airplane mode. ArduPlane already scales the surfaces to almost zero in hover (see <a href="#pictures">the pictures</a>), so <strong>no SWD switch</strong>. SWB, SWD, VrA and VrB stay unused.
+</div>
+
+<h2>Part B: Settings on the FlySky i6X transmitter</h2>
+<div class="box ok"><strong>➡️ Full transmitter setup now has its own guide (14:21):</strong> <a href="guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html">Guide 05: FlySky i6X transmitter setup</a>, based on the official FS-i6X manual (model type, Mode 2, transmitter mixing OFF incl. V Tail, Aux switches, SwA→CH5, SwC→CH6, PPM, test on the i6X Display screen). Do Guide 05, then come back here for C5 → D → G.</div>
+<p>i6X basics: <strong>hold OK</strong> = open the menu · <strong>UP/DOWN</strong> = move · <strong>OK</strong> = select · <strong>hold CANCEL</strong> = <strong>save</strong> and go back. (Menu names below are from FlySky i6X guides; your firmware may word them slightly differently. If you can't find one, send a photo of the screen.)</p>
+
+<div class="step"><div class="num">B1</div><div>
+  <h3>Assign the switches to channels</h3>
+  <ol>
+    <li>Turn the i6X on. <strong>If it beeps and shows a warning:</strong> push <strong>all 4 switches (SWA, SWB, SWC, SWD) UP</strong> (away from you) and the <strong>left stick fully DOWN</strong>. The beeping stops and the main screen appears. This is FlySky's safety check: it won't start with throttle up or a switch on. (Still beeping after that? The batteries may be low. Check the battery icon on the screen.) <em>(added 03:56)</em></li>
+    <li><strong>Hold OK</strong> → <strong>Functions setup</strong> (wrench icon) → <strong>Aux. channels</strong>.</li>
+    <li>Set <strong>Channel 5 → SwA</strong>.</li>
+    <li>Set <strong>Channel 6 → SwC</strong>.</li>
+    <li><strong>Hold CANCEL</strong> to save.</li>
+  </ol>
+  <p>We use <strong>CH6 for SWC</strong> (instead of the old CH8). That works with the i6X's standard 6 channels, so there's nothing extra to unlock.</p>
+</div></div>
+
+<div class="step"><div class="num">B2</div><div>
+  <h3>Check these 3 things (normally already fine)</h3>
+  <ul>
+    <li><strong>Trims at zero</strong>: the small trim buttons next to the sticks. The screen's trim markers should be centred. QGC asks for this: <em>"Before calibrating you should zero all your trims and subtrims."</em> (Also: <strong>Functions setup → Subtrim</strong>: all 0.)</li>
+    <li><strong>End points 100%</strong>: <strong>Functions setup → End points</strong>: all channels 100%.</li>
+    <li><s><strong>Receiver output = PPM</strong></s> ⚠️ <em>Superseded: with your PPM encoder it must be <strong>PWM</strong> (C5).</em> <strong>System setup → RX setup → Output mode</strong> → PPM. It already works as PPM (boot message), so <strong>don't change it</strong> if it says PPM.</li>
+  </ul>
+</div></div>
+
+<h2>Part C: See your radio in QGC</h2>
+<div class="step"><div class="num">C</div><div>
+  <h3>Radio page: does every control move the right bar?</h3>
+  <ol>
+    <li>QGC: <strong>Vehicle Configuration → Radio</strong>.</li>
+    <li>Transmitter <strong>on</strong>. You see channel bars. Move each control <strong>one at a time</strong>:</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Move</th><th>Bar that must move</th></tr>
+    <tr><td>Right stick left/right</td><td>Channel 1 (Roll)</td></tr>
+    <tr><td>Right stick up/down</td><td>Channel 2 (Pitch)</td></tr>
+    <tr><td>Left stick up/down</td><td>Channel 3 (Throttle)</td></tr>
+    <tr><td>Left stick left/right</td><td>Channel 4 (Yaw)</td></tr>
+    <tr><td>SWA</td><td>Channel 5: jumps between ~1000 and ~2000</td></tr>
+    <tr><td>SWC (3 positions)</td><td>Channel 6: ~1000 / ~1500 / ~2000</td></tr>
+  </table>
+  </div>
+  <p>📸 Screenshot with SWC in the middle. Nothing moves? Check Part B, and that the receiver's LED is <strong>solid</strong> (blinking = not bound to the transmitter; rebind like in your video).</p>
+</div></div>
+
+<div class="step"><div class="num">C2</div><div>
+  <h3>Bars don't move? Find where the signal stops (04:03)</h3>
+  <p><strong>Your result (04:03):</strong> receiver LED <strong>solid red</strong>, but the Radio page bars <strong>don't react</strong>, and in Calibrate step 2 <strong>Next stays grey</strong>.</p>
+  <ul>
+    <li><strong>Solid LED on the iA10B</strong> usually means it's <strong>bound and receiving the transmitter</strong> (blinking = no link). So the radio link itself looks OK ✅.</li>
+    <li><strong>Grey Next is by design:</strong> on that step QGC waits until it <em>sees</em> you move the stick, then continues by itself (QGC 5.1.5 source: "stick detect"). Since it sees nothing, it never continues.</li>
+    <li>So the problem is between the <strong>receiver</strong> and the <strong>Pixhawk</strong>: the right signal isn't arriving on RC IN.</li>
+  </ul>
+  <div class="box ok"><strong>Update (04:03): data IS arriving ✅.</strong> Your screenshot's <strong>Raw Channel Monitor</strong> shows <strong>channels 1–8 with real values</strong>: 1, 2, 4 ≈ centre (sticks centred), <strong>3 low</strong> (throttle down), 5–8 ≈ middle. Channels 9–18 are empty, which is normal for PPM (8 channels). So the receiver → Pixhawk link works.<br>
+  <img src="guide4_screenshots/radio-calibrate-step2_2026-10-17_0403.png" alt="Radio calibration step: Mode 1 selected, Raw Channel Monitor shows channels 1-8 with values" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><br>
+  <strong>Two real reasons it got stuck:</strong>
+  <ol style="margin:4px 0">
+    <li>The mode box says <strong>"Mode 1"</strong>. In Mode 1 the <em>throttle is on the RIGHT stick</em> (see the blue dot at the top of the right circle). Your i6X is <strong>Mode 2</strong> (throttle on the left).</li>
+    <li>"Not Mapped" during calibration is normal: QGC <em>learns</em> each stick as you move it. On "Move the Throttle stick all the way up", <strong>Next stays grey on purpose</strong>. It continues <strong>by itself</strong> once it sees the stick go up and stay there for a moment.</li>
+  </ol>
+  <strong>Fix:</strong> <strong>Cancel</strong> → set the box (top-right, next to "Centered Throttle") to <strong>Mode 2</strong>, leave "Centered Throttle" <strong>unticked</strong> → <strong>Calibrate</strong> → OK, OK → on "Move the Throttle stick all the way up": push the <strong>LEFT stick fully up and hold it</strong> ~2 s until the text changes. Then follow each instruction the same way.<br>
+  <em>First a quick test without calibrating:</em> move each stick and watch the <strong>Raw Channel Monitor</strong> dots. Right stick → dots 1 and 2 move; left stick → dots 3 and 4. If a dot moves, everything is fine. The checks below are only needed if <strong>no</strong> dot moves.</div>
+  <p><strong>Only if no Raw Channel Monitor dot moves when you move the sticks, do these 4 checks:</strong></p>
+  <ol>
+    <li>On the Calibrate screen click <strong>Cancel</strong>.</li>
+    <li><strong>What does the Pixhawk receive?</strong> Purple Q icon → <strong>Analyze Tools</strong> → <strong>MAVLink Inspector</strong> → in the list click <strong>RC_CHANNELS</strong>. Write down <code>chancount</code>, <code>chan1_raw</code>…<code>chan6_raw</code>, and <code>rssi</code>. Move the right stick: does <code>chan1_raw</code> change? 📸 Screenshot.</li>
+    <li><strong>Transmitter output mode:</strong> on the i6X, hold <strong>OK</strong> → <strong>System setup</strong> → <strong>RX setup</strong> → <strong>Output mode</strong>. Photo the screen (it shows <em>PWM</em> or <em>PPM</em>, and <em>i-BUS</em> or <em>S.BUS</em>). Press <strong>CANCEL</strong> (short) to leave without changing.</li>
+    <li><strong>Photo of the receiver</strong>: the iA10B's end with its cable sockets, so I can see <strong>which socket</strong> the cable to the Pixhawk comes from, and whether other cables go to the <strong>small black board</strong> from your earlier photo.</li>
+  </ol>
+  <p>With these I can tell exactly what to change: usually either the output mode (PWM ↔ PPM) or which receiver socket the cable sits in.</p>
+</div></div>
+
+<div class="box warn"><strong>⚠️ Superseded (20:39):</strong> C3 assumed a direct PPM cable. Your setup has a PPM encoder, so the real fix was C5 option B (Output mode <strong>PWM</strong>). C3 is kept only as history.</div>
+<div class="step"><div class="num">C3</div><div>
+  <h3>Dots don't move: fix the receiver → Pixhawk signal (04:07)</h3>
+  <p><strong>Your result (04:07):</strong> dots don't move in any mode (1–4). The Pixhawk receives a PPM signal (8 channels), but with <strong>frozen values</strong>: sticks centred, throttle low, the rest middle. That's the typical "default / no-input" pattern. The PPM signal exists, but it <strong>doesn't carry your sticks</strong>. Most likely causes:</p>
+  <ul>
+    <li>The i6X sends <strong>PWM</strong> (one channel per socket) while the Pixhawk needs <strong>PPM</strong> (all channels on one wire), <em>or</em></li>
+    <li>the signal goes through the <strong>small black board</strong> (probably a PPM encoder) from your photo, which outputs these default values when its inputs don't deliver.</li>
+  </ul>
+  <p><strong>The fix (simplest, most common working setup):</strong> the iA10B makes PPM <strong>by itself</strong>, on its <strong>PPM/CH1</strong> socket. One cable straight to the Pixhawk, no extra board.</p>
+  <ol>
+    <li><strong>Check the link first:</strong> transmitter <strong>off</strong> → the iA10B LED should <strong>blink</strong>. Transmitter <strong>on</strong> → LED <strong>solid</strong>. (Solid even with the transmitter off, or blinking with it on? Tell me; then it's a binding issue.)</li>
+    <li>📸 <strong>Before unplugging anything, photo</strong> the receiver end and the Pixhawk RC IN end (for the log).</li>
+    <li><strong>i6X → PPM:</strong> hold <strong>OK</strong> → <strong>System setup</strong> → <strong>RX setup</strong> → <strong>Output mode</strong> → select <strong>PPM</strong> (leave the Serial line as it is) → <strong>hold CANCEL</strong> to save. The transmitter must be <strong>on and connected to the receiver</strong> while you do this, because the setting is sent to the receiver.</li>
+    <li><strong>Cable:</strong> USB unplugged (Pixhawk off). One 3-wire servo cable from the iA10B socket labelled <strong>PPM/CH1</strong> (or <strong>CH1</strong>) directly to the Pixhawk <strong>RC IN</strong>. If it currently goes through the small black board, take that board out of the path (keep it). Match the wires to the labels printed on both: <strong>− = black/brown</strong>, <strong>+ = red</strong>, <strong>S (signal) = white/yellow/orange</strong>. A reversed plug won't work and can damage things, so check the labels.</li>
+    <li><strong>Reboot the Pixhawk:</strong> plug the USB back in, wait 30 s. (The Pixhawk detects the RC protocol at start-up.)</li>
+    <li><strong>Test:</strong> Vehicle Configuration → <strong>Radio</strong> → move the sticks → <strong>Raw Channel Monitor</strong> dots 1–4 must move.</li>
+  </ol>
+  <p>Still frozen? Send me the 2 photos + a photo of the i6X <em>Output mode</em> screen.</p>
+  <div class="box info"><strong>Detail: checking the Output mode on the i6X (04:10)</strong>
+    <ol style="margin:4px 0">
+      <li>Pixhawk on USB (this powers the receiver), transmitter <strong>on</strong>, receiver LED <strong>solid</strong>.</li>
+      <li><strong>Hold OK</strong> about 2 s → the main menu shows 2 icons: <strong>System setup</strong> (left) and <strong>Functions setup</strong> (right, wrench).</li>
+      <li>Select <strong>System setup</strong> (UP/DOWN to move, <strong>short OK</strong> to open).</li>
+      <li>Scroll with DOWN to <strong>RX setup</strong> → short <strong>OK</strong>.</li>
+      <li>Scroll to <strong>Output mode</strong> → short <strong>OK</strong>. You see 2 lines: <strong>PWM / PPM</strong> (top) and <strong>Serial: i-BUS / S.BUS</strong> (bottom). The selected word is highlighted. 📸 <strong>Photo this screen.</strong></li>
+      <li>On the top line choose <strong>PPM</strong> (UP/DOWN to the line, short OK to toggle). Leave the bottom line on <strong>i-BUS</strong> (default). It only affects the receiver's separate i-BUS/serial socket, which we don't use, so it has no effect on PPM. <em>(04:16)</em></li>
+      <li><strong>Hold CANCEL</strong> about 2 s to <strong>save</strong>. (Short CANCEL = back without saving.) Then short CANCEL until you're back on the main screen.</li>
+    </ol>
+    <strong>Which one?</strong> <strong>PPM</strong> for our setup (one cable from the iA10B <strong>PPM/CH1</strong> socket to RC IN). PWM would only be right if several receiver cables feed the small black encoder board, and we're removing that from the path.<br>
+    <strong>LED test:</strong> with the transmitter <strong>off</strong>, the iA10B LED should start <strong>blinking</strong> within a second or two. If it stays solid with the transmitter off, tell me.
+  </div>
+</div></div>
+
+<div class="box danger"><strong>⚠️ Stuck on "Move the Yaw stick all the way to the right" (04:21): stop the calibration.</strong><br>
+<img src="guide4_screenshots/radio-calibrate-yaw-stuck_2026-10-17_0421.png" alt="Calibration stuck on yaw step; raw channel 4 still centred" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><br>
+While you hold the left stick right, <strong>raw channel 4 stays centred</strong>, and channel 3 (throttle) is still low. So the <strong>sticks still aren't reaching the Pixhawk</strong>. The "Throttle" that QGC mapped in the previous step is <strong>not real</strong>: it latched onto a channel that only jittered (its bar sits at about 58% while channel 3 is low). <strong>Click Cancel</strong>, which doesn't save anything. Don't finish a calibration with frozen values.<br>
+Calibration only makes sense once the <strong>Raw Channel Monitor dots follow the sticks</strong>. First finish <strong>C3</strong> (PPM + saved with <em>hold</em> CANCEL, direct cable from <strong>PPM/CH1</strong>, USB replugged).</div>
+
+<div class="step"><div class="num">C4</div><div>
+  <h3><s>Is the receiver really talking to THIS transmitter?</s> Not needed: LED blinks with TX off = bound (04:28). Check, then rebind (04:26)</h3>
+  <p><strong>Your answers (04:26):</strong> PPM saved ✅ · cable direct from PPM/CH1 ✅ · USB replugged ✅ · LED <strong>solid even with the transmitter OFF</strong> ⚠️ · in QGC only "roll" moves, randomly.</p>
+  <p>A receiver that's really linked should react when its transmitter goes off: the LED changes and the outputs go to failsafe. Solid with the transmitter off + frozen values + random jitter all point to <strong>no real radio link</strong> (not bound to this i6X / this model memory), even though the LED is on.</p>
+  <p><strong>Check 1: does the i6X see the receiver?</strong> On the i6X <strong>main screen</strong> (transmitter on, Pixhawk on USB): a bound iA10B sends back its voltage, so near the top you should see an <strong>RX battery value (about 5 V)</strong> and/or signal bars. 📸 Photo the main screen. No RX value / "--" = <strong>not linked</strong>, so do Check 2.</p>
+  <p><strong>Check 2: rebind (FlySky's standard procedure):</strong></p>
+  <ol>
+    <li>Transmitter <strong>OFF</strong>. Pixhawk USB <strong>unplugged</strong> (receiver unpowered).</li>
+    <li>Put the <strong>bind plug</strong> (small jumper cable from the FlySky box) into the iA10B socket labelled <strong>B/VCC</strong>. Leave the PPM/CH1 → RC IN cable where it is.</li>
+    <li>Plug the Pixhawk USB in (this powers the receiver). The receiver LED should <strong>flash fast</strong> = bind mode.</li>
+    <li>On the i6X: <strong>hold the BIND key</strong> (on the transmitter) <strong>while switching it ON</strong>. (Alternative: hold OK → System setup → RX setup → <strong>Bind with a receiver</strong>.) The screen shows binding; the receiver LED goes <strong>solid</strong>.</li>
+    <li>Transmitter OFF → unplug USB → <strong>remove the bind plug</strong> from B/VCC.</li>
+    <li>Plug USB back in, transmitter ON. LED solid. Now switch the <strong>transmitter OFF</strong>: the LED should <strong>change</strong> (blink). Switch it back ON.</li>
+    <li>Check <strong>Output mode = PPM</strong> again (System setup → RX setup → Output mode → hold CANCEL). A new bind can reset it.</li>
+    <li><strong>Unplug/replug USB</strong>, wait 30 s → <strong>Radio</strong> page → move the sticks → do the Raw Channel Monitor dots 1–4 follow?</li>
+  </ol>
+  <p>Also check: the i6X model shown on the main screen is the same model you bound (one model memory = one bind).</p>
+</div></div>
+
+<div class="step"><div class="num">C5</div><div>
+  <h3>The radio link is fine. The small black board is the problem (04:28)</h3>
+  <p><strong>Correction (04:28):</strong> with the transmitter <strong>off</strong> the LED <strong>blinks</strong>, so the receiver <strong>is bound</strong> ✅. <strong>Skip C4 (rebind).</strong></p>
+  <p><strong>What explains everything you see:</strong> the signal passes through the <strong>small black board</strong> (a <strong>PPM encoder</strong>) from your earlier photo. It takes <em>separate</em> PWM channels from the receiver and builds a PPM signal for the Pixhawk.</p>
+  <ul>
+    <li>The receiver now outputs <strong>PPM</strong> on its PPM/CH1 socket and nothing usable on the others. The encoder gets no proper inputs and sends its <strong>default values</strong>: throttle low, everything else centred. That's <strong>exactly your frozen pattern</strong>.</li>
+    <li>The encoder's input 1 receives the receiver's PPM pulse train, which it can't read as one channel. That gives <strong>"roll" (channel 1) jumping randomly</strong>. ✔ Matches.</li>
+  </ul>
+  <p>So the cable on RC IN most likely comes <strong>from the encoder</strong>, not straight from the receiver (easy to miss: the encoder sits inline). 📸 Please send a photo of the receiver + small board + RC IN cable to confirm.</p>
+  <p><strong>Fix, option A (recommended, simplest): remove the encoder</strong></p>
+  <ol>
+    <li>USB unplugged.</li>
+    <li>Unplug the encoder from the Pixhawk RC IN and from the receiver (keep it in a box).</li>
+    <li>Use a <strong>3-wire servo extension lead</strong> (female ↔ female, black/red/white; often in the FlySky or Pixhawk box): iA10B <strong>PPM/CH1</strong> socket → Pixhawk <strong>RC IN</strong>. Match <strong>− black</strong> / <strong>+ red</strong> / <strong>S white</strong> to the labels on both.</li>
+    <li>i6X Output mode stays <strong>PPM</strong>.</li>
+    <li>USB in, wait 30 s → Radio page → dots 1–4 must follow the sticks.</li>
+  </ol>
+  <p><strong>Option B (keep the encoder):</strong> i6X Output mode back to <strong>PWM</strong>, and the encoder's input wires go to receiver sockets <strong>CH1…CH8 in order</strong>. More wires and more failure points, which is why I recommend A.</p>
+</div></div>
+
+<div class="box warn"><strong>Re-check after Guide 05 (19:26):</strong> transmitter fully set up and proven on the i6X Display (all 6 channels correct, Output mode PPM). Pixhawk replugged, receiver on RC IN, waited 30 s, Radio page: the Raw Channel Monitor <strong>still doesn't move</strong>. So the transmitter and receiver are fine and the problem is in the receiver → Pixhawk cable (encoder). <strong>Do C5 option A now.</strong></div>
+
+<div class="box info"><strong>C5.1 trace result (19:28): (b) the encoder is inline, confirmed by photo.</strong><br>
+<img src="guide4_screenshots/rcin-to-ppm-encoder_1927.jpeg" alt="RC IN lead goes to PPM encoder" style="max-width:300px;width:100%;border-radius:8px;margin:.5em 0"><br>
+Pixhawk <strong>RC IN</strong> ← black/red/white lead ← <strong>small PPM encoder board</strong> (blue LED) ← multi-colour wires ← receiver. The receiver sends PPM, but the encoder expects separate PWM channels → frozen values.<br>
+<strong>Two fixes:</strong> <strong>B (test now, no rewiring):</strong> i6X Output mode → <strong>PWM</strong>, so the encoder gets what it expects. <strong>A (final, cleaner):</strong> remove the encoder, direct female–female servo lead receiver PPM/CH1 → RC IN, Output mode PPM.</div>
+
+<div class="box ok"><strong>✅ C5 solved (19:32), option B:</strong> i6X <strong>System setup → RX setup → Output mode → PWM</strong> (hold CANCEL). The encoder now gets separate channels from the receiver and builds the PPM for RC IN. QGC <strong>Radio → Raw Channel Monitor</strong> follows the sticks and switches ✅. The encoder stays for now. Option A (remove it, direct lead, Output mode back to PPM) is optional later. <strong>Next: Part D.</strong></div>
+
+<h2>Part D: Radio calibration in QGC (rev 19:48, exact QGC 5.1.5 flow)</h2>
+<div class="step"><div class="num">D</div><div>
+  <h3>Teach the Pixhawk each stick's min / centre / max</h3>
+  <p><strong>Before:</strong> USB only, no LiPo, no props. i6X on, all switches <strong>up</strong>, throttle <strong>fully down</strong>, trims centred.</p>
+  <ol>
+    <li>QGC → <strong>purple Q icon</strong> → <strong>Vehicle Configuration</strong> → <strong>Radio</strong>.</li>
+    <li>Above the two stick drawings: dropdown = <strong>Mode 2</strong>. Checkbox <strong>"Centered Throttle"</strong> = <strong>unticked</strong>.</li>
+    <li>Bottom: click <strong>Calibrate</strong> → popup <em>"Zero Trims … Please ensure all motor power is disconnected AND all props are removed"</em> → <strong>OK</strong>.</li>
+    <li><em>"Lower the Throttle stick all the way down… Click Next"</em>: throttle down, other sticks centred → <strong>Next</strong>.</li>
+    <li>Then QGC asks one move at a time and <strong>goes on by itself</strong> when it sees the stick held at the end (no clicking):
+      <ol>
+        <li>Throttle (left stick) <strong>up</strong> and hold → then <strong>down</strong> and leave it.</li>
+        <li>Yaw (left stick) <strong>right</strong> and hold → then <strong>left</strong>.</li>
+        <li>Roll (right stick) <strong>right</strong> and hold → then <strong>left</strong>.</li>
+        <li>Pitch (right stick) <strong>up</strong> (push away from you) and hold → then <strong>down</strong>.</li>
+      </ol></li>
+    <li><em>"Move all the transmitter switches and/or dials back and forth to their extreme positions"</em>: SWA down/up, SWB, SWC up/middle/down, SWD, VrA and VrB fully both ways → <strong>Next</strong>.</li>
+    <li><em>"All settings have been captured. Click Next to write the new parameters to your board."</em> → <strong>Next</strong>. Done.</li>
+    <li>Put all switches back <strong>up</strong>, throttle down.</li>
+  </ol>
+  <p>If it says <em>"Throttle channel reversed"</em>: i6X Functions setup → Reverse → Ch3 → Rev, hold CANCEL, redo. A step hangs: <strong>Cancel</strong> (nothing is saved) and tell me which step.</p>
+  <div class="expect">After: on the Radio page, the <strong>Roll / Pitch / Yaw / Throttle</strong> bars follow the sticks the right way (right stick right → Roll right; left stick up → Throttle up). 📸 Screenshot to <code>guides/guide4_screenshots/</code>. Vehicle Messages: <code>PreArm: Radio failsafe on</code> should be gone with the i6X on.</div>
+</div></div>
+
+<div class="box ok"><strong>✅ Part D done (19:56):</strong> calibration finished and was written to the board. Roll / Pitch / Yaw / Throttle all follow the sticks in the right direction.<br>
+<img src="guide4_screenshots/radio-after-calibration_1955.png" alt="Radio page after calibration" style="max-width:520px;width:100%;border-radius:8px;margin:.5em 0"><br>
+Raw Channel Monitor with all switches up: 1, 2, 4 centred · 3 low (throttle down) · <strong>5 low = SWA up</strong> · <strong>6 low = SWC up</strong> · 7, 8 mid (unused) · 9–18 none (encoder sends 8 ch).<br>
+<strong>What this means:</strong> SWA up = low = <strong>disarmed</strong> (ArmDisarm: low disarms), so <em>up = safe</em> ✅. SWC up = low → Flight Mode 1 slot = <strong>QLand</strong>, so <em>up = idle/land</em>, as planned ✅. No transmitter reversing needed.</div>
+
+<div class="box warn"><strong>Backup check (19:59): <code>backups/params_after-radio-cal.params</code></strong>
+  <div class="table-wrap"><table>
+    <tr><th>Check</th><th>Value</th><th>Meaning</th></tr>
+    <tr><td>Board orientation</td><td><code>AHRS_ORIENTATION=0</code></td><td>✅ Your Guide 03 change is stored (arrow = nose)</td></tr>
+    <tr><td>Accelerometer calibration</td><td><code>INS_ACCOFFS/SCAL</code> set</td><td>✅ Done (Guide 03)</td></tr>
+    <tr><td>Level horizon</td><td><code>AHRS_TRIM_X/Y</code> ≈ −0.016 / −0.006</td><td>✅ Done (Guide 03)</td></tr>
+    <tr><td>Radio calibration</td><td>RC1–8: about 1000–2000, centre ~1500, throttle min 1000</td><td>✅ Done now (Part D)</td></tr>
+    <tr><td>Compass</td><td>External M8N, offsets −76 / 25 / 267</td><td>Offsets come from an older calibration (unchanged since Guide 02). Fine for now; a fresh outdoor calibration before flying.</td></tr>
+    <tr><td>⚠️ Parameter list</td><td><strong>1,276</strong> params (earlier 4.7.2 backups: 1,430)</td><td>144 <code>Q_A_/Q_P_/Q_M_/Q_WP_/Q_LOIT_/Q_WVANE_</code> (VTOL tuning) + 10 <code>GPS1_*</code> are missing, and <code>GPS1_TYPE</code>=0, <code>SERVO7_FUNCTION</code>=0. Most likely QGC downloaded the list before the Pixhawk had finished starting up (those groups appear once QuadPlane/GPS start). <strong>Check: Parameters → Tools → Refresh, then save again.</strong> Don't change parameters until this is clear.</td></tr>
+  </table></div></div>
+
+<div class="step"><div class="num">D2</div><div>
+  <h3>Switch the GPS back on (GPS1_TYPE = 1 "Auto") (20:03)</h3>
+  <ol>
+    <li>QGC → Q icon → <strong>Vehicle Configuration → Parameters</strong>.</li>
+    <li>Search box (top): type <code>GPS1_TYPE</code>. Click the row → a box opens → dropdown <strong>Auto</strong> (= 1) → <strong>Save</strong>.</li>
+    <li><strong>Tools</strong> (top-right) → <strong>Reboot Vehicle</strong> → OK. GPS type is only read at start-up.</li>
+    <li>Wait ~60 s until QGC reconnects and finishes loading parameters.</li>
+    <li>Then: Tools → Refresh → Save to file → <code>backups/params_after-radio-cal_refresh.params</code>.</li>
+  </ol>
+  <div class="box ok"><strong>✅ (20:03):</strong> GPS1_TYPE set to <strong>Auto</strong> (was 0). Reboot next.</div>
+  <p class="m">Meaning: GPS1_TYPE tells ArduPilot what kind of GPS is on port 1. 0 = none (GPS off), 1 = Auto (detects your u-blox M8N).</p>
+</div></div>
+
+<div class="box warn"><strong>Refresh result (20:06): <code>backups/params_after-radio-cal_refresh.params</code></strong> (1,286 params)<br>
+✅ GPS back: <code>GPS1_TYPE=1</code>, and the 10 <code>GPS1_*</code> settings are visible again.<br>
+⚠️ The 144 VTOL settings (<code>Q_A_* Q_P_* Q_M_* Q_WP_* Q_LOIT_* Q_WVANE_*</code>) are <strong>still missing</strong> after a reboot + refresh, and <code>SERVO7_FUNCTION</code> is still 0 (QuadPlane normally auto-assigns it). So <strong>QuadPlane is not finishing its start-up</strong> this time (it did at 02:47–03:54). In the 4.7.2 source, <code>QuadPlane::setup()</code> stops with a <em>"Config error"</em> such as <em>"Not enough memory for quadplane"</em> or an allocation error. <strong>Needed: the Vehicle Messages from a fresh boot.</strong> No parameter changes until we know why.</div>
+
+<div class="box ok"><strong>Boot 20:07 (<a href="guide4_screenshots/boot-messages_2007.txt">messages</a>, <a href="guide4_screenshots/sensor-status_2008.png">sensor status</a>) (20:09):</strong>
+<ul>
+<li>✅ <code>QuadPlane initialised, Frame: TRI</code> with <strong>no Config error</strong>, so QuadPlane does start.</li>
+<li>✅ GPS works: <code>GPS 1: detected u-blox</code> (HW 00070000).</li>
+<li>✅ <strong>"Radio failsafe on" is gone</strong>, and Sensor Status shows <strong>RC receiver: Normal</strong> (radio fixed + calibrated).</li>
+<li>Remaining PreArm (all expected on the bench): Battery low (USB only) · GPS bad fix (indoors) · <strong>Compass not calibrated</strong> (to do) · AHRS not using EKF (needs GPS + compass) · Hardware safety switch (not pressed).</li>
+<li>Open: why QGC's list lacks the Q_ tuning groups although QuadPlane starts. Test: search <code>Q_A_RAT_RLL_P</code> in Parameters.</li>
+</ul></div>
+
+<div class="box ok"><strong>✅ Solved (20:11): QGC's list was just incomplete.</strong> <code>Q_A_RAT_RLL_P</code> wasn't there, then after <strong>Tools → Refresh</strong> it appeared with <strong>0.45</strong> (unchanged). Reason: QGC downloads the parameter list the moment it connects, but QuadPlane adds its ~144 settings a few seconds later (boot log: <code>QuadPlane initialised</code> ~2 s after start). <strong>Rule from now on:</strong> after every reboot/reconnect, wait ~30 s, then <strong>Parameters → Tools → Refresh</strong> before editing or saving parameters.</div>
+
+<div class="box ok"><strong>✅ Full backup (20:12):</strong> <code>backups/params_after-radio-cal_full.params</code>, 1,430 params. This is the undo point before Part E.</div>
+
+<h2>Part E: Flight modes on SWC + SWA as arm switch</h2>
+<div class="step"><div class="num">E</div><div>
+  <h3>Flight Modes page</h3>
+  <p><strong>Vehicle Configuration → Flight Modes</strong>. You see <em>"Flight mode channel:"</em>, 6 <em>"Flight Mode"</em> dropdowns (each with a PWM range), and <em>"Switch Options"</em>.</p>
+  <ol>
+    <li><strong>Flight mode channel:</strong> change from <em>Channel 8</em> to <strong>Channel 6</strong>.</li>
+    <li>Set the 6 flight modes. SWC sends ~1000 / ~1500 / ~2000, which lands in slots <strong>1, 4 and 6</strong>. I also fill the in-between slots so a slightly-off switch value can never pick a surprise mode:</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Slot (PWM range shown by QGC)</th><th>Set to</th><th>SWC position</th></tr>
+    <tr><td>Flight Mode 1 (0 – 1230)</td><td><strong>QLAND</strong></td><td>UP = idle / safe land</td></tr>
+    <tr><td>Flight Mode 2 (1231 – 1360)</td><td>QLAND</td><td>(safety filler)</td></tr>
+    <tr><td>Flight Mode 3 (1361 – 1490)</td><td>QHOVER</td><td>(safety filler)</td></tr>
+    <tr><td>Flight Mode 4 (1491 – 1620)</td><td><strong>QHOVER</strong></td><td>MIDDLE = drone mode</td></tr>
+    <tr><td>Flight Mode 5 (1621 – 1749)</td><td>FLY_BY_WIRE_A (FBWA)</td><td>(safety filler)</td></tr>
+    <tr><td>Flight Mode 6 (1750 +)</td><td><strong>FLY_BY_WIRE_A (FBWA)</strong></td><td>DOWN = airplane mode</td></tr>
+  </table>
+  </div>
+  <ol start="3">
+    <li><strong>Switch Options</strong>, under "Channel option 5": must be <strong>ArmDisarm</strong> (it already is, <code>RC5_OPTION=153</code>). Leave it.</li>
+    <li><strong>Switch Options</strong>, under "Channel option 6": currently <strong>RTL</strong> (old leftover). Change it to <strong>Do Nothing</strong>. Channel 6 is now the mode switch and can't have a second job.</li>
+  </ol>
+  <p><strong>Live check:</strong> on this page, the words <strong>"Flight Mode 1…6"</strong> on the left of the dropdowns are white, except the one currently selected by your switch, which turns <strong>yellow</strong>. Flip SWC: up → Flight Mode 1, middle → 4, down → 6 should turn yellow.</p>
+  <p>Changes on this page are saved immediately. If your SWC is physically "down = 1000" instead of "up = 1000", the order flips (up = airplane). Part G shows which. We can reverse CH6 on the transmitter if you prefer.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ Part E step 1 done (20:17):</strong> Flight mode channel = <strong>Channel 6</strong>; modes QLAND, QLAND, QHOVER, QHOVER, FBWA, FBWA. With SWC up, "Flight Mode 1" is yellow ✅.<br><img src="guide4_screenshots/flight-modes-set_2015.png" alt="Flight modes set" style="max-width:480px;width:100%;border-radius:8px;margin:.5em 0"><br><small>Changed: <code>FLTMODE_CH</code> 8→6, <code>FLTMODE1..6</code> 17/19/5/17/11/5 → 20/20/18/18/5/5.</small></div>
+
+<div class="box ok"><strong>✅ Part E step 2 done (20:25):</strong> Channel option 6: <strong>RTL → Do Nothing</strong> (<code>RC6_OPTION</code> 4 → 0). SWC up → Flight Mode 1, middle → 4, down → 6 ✅.<br>
+<small>How to read the yellow labels (QGC 5.1.5 source, <code>APMFlightModesComponentController.cc</code>): "Flight Mode N" yellow = the slot your switch's signal falls into. "Channel option N" yellow = channel N's signal is above 1800 µs (switch at its high end), <em>whatever</em> job it has. So "Channel option 6" being yellow with SWC down is normal and harmless now that it's "Do Nothing".</small></div>
+
+<h2>Part F: Clean up old leftovers</h2>
+<div class="step"><div class="num">F</div><div>
+  <h3>Old switch functions + stick-arming</h3>
+  <p><strong>Vehicle Configuration → Parameters</strong>. For each line: search the name → <strong>click the value</strong> → the <em>Value Editor</em> opens → type the new value → <strong>Save</strong>.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Parameter</th><th>Now</th><th>Set to</th><th>Why</th></tr>
+    <tr><td><code>RC9_OPTION</code></td><td>34</td><td><strong>0</strong></td><td rowspan="6">Old switch jobs on channels 9–16 from earlier experiments. Your radio (PPM) only sends 8 channels. Clearing them means no hidden function can ever trigger. <code>RC16_OPTION=154</code> is a <strong>second arm/disarm</strong>; we want only SWA.</td></tr>
+    <tr><td><code>RC10_OPTION</code></td><td>162</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC12_OPTION</code></td><td>28</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC13_OPTION</code></td><td>24</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC14_OPTION</code></td><td>16</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC16_OPTION</code></td><td>154</td><td><strong>0</strong></td></tr>
+    <tr><td><code>ARMING_RUDDER</code></td><td>2</td><td><strong>0</strong></td><td>Now 2 = "arm <em>and disarm</em> by holding the left stick right/left". With yaw on the left stick, a long full-left yaw with low throttle could <strong>disarm</strong>. 0 = only SWA arms/disarms, matching your plan.</td></tr>
+  </table>
+  </div>
+  <p>Then <strong>reboot the Pixhawk</strong> (unplug/replug USB, 30 s still).</p>
+</div></div>
+
+<div class="box ok"><strong>✅ Part F step 1 done (20:28):</strong> Channel options 6–16 all <strong>Do Nothing</strong> (<code>RC9_OPTION</code> 34→0, <code>RC10</code> 162→0, <code>RC12</code> 28→0, <code>RC13</code> 24→0, <code>RC14</code> 16→0, <code>RC16</code> 154→0). Channel 5 isn't listed on this page; <code>RC5_OPTION=153</code> (ArmDisarm) stays.<br><img src="guide4_screenshots/switch-options-cleared_2027.png" alt="Switch options cleared" style="max-width:420px;width:100%;border-radius:8px;margin:.5em 0"></div>
+
+<div class="box ok"><strong>✅ Part F step 2 done (20:28):</strong> <code>ARMING_RUDDER</code> 2 (ArmOrDisarm) → <strong>0 (Disabled)</strong>. The motors can only be armed with SWA now, not with the sticks.</div>
+
+<h2>Part G: Test every switch (no battery, no props)</h2>
+<div class="step"><div class="num">G</div><div>
+  <h3>Watch QGC's top bar (Fly view)</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Do</th><th>QGC should show</th></tr>
+    <tr><td>SWC up</td><td>Flight mode <strong>QLand</strong></td></tr>
+    <tr><td>SWC middle</td><td><strong>QHover</strong></td></tr>
+    <tr><td>SWC down</td><td><strong>FBWA</strong> (the front tilt servos would move here, but nothing is connected yet)</td></tr>
+    <tr><td>SWA to the "on" position, throttle down, SWC middle</td><td>It will <strong>not</strong> arm yet. Messages list the PreArm reasons (safety switch, battery, GPS…). <strong>That's expected</strong> for now. We only confirm Channel 5 changes on the Radio page.</td></tr>
+  </table>
+  </div>
+  <p>Tell me which SWA position is "high" (~2000) = arm. Most people want <strong>SWA down = motors on</strong>. If it's the other way round, we reverse CH5 on the transmitter.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ Part G done (20:32):</strong> Fly view top bar: SWC up = <strong>QLand</strong>, middle = <strong>QHover</strong>, down = <strong>FBWA</strong> ✅. SWA <strong>down</strong> (SWC middle, throttle down) → arm attempt → blocked: <em>"Arm: Hardware safety switch"</em> (plus PreArm battery / no GPS lock). So <strong>SWA down = arm, SWA up = disarm</strong> ✅, as wanted. The safety checks correctly refuse to arm on the bench.<br><img src="guide4_screenshots/arm-test-safety-switch_2032.png" alt="Arm attempt blocked by safety switch" style="max-width:420px;width:100%;border-radius:8px;margin:.5em 0"></div>
+
+<h2>Part H: Save and report</h2>
+<div class="step"><div class="num">H</div><div>
+  <h3>Backup + messages</h3>
+  <p>First <strong>Parameters → Tools → Refresh</strong> (complete list), then <strong>Tools → Save to file…</strong> → <code>backups/params_after-guide04.params</code>, and copy-paste the <strong>Vehicle Messages</strong>.</p>
+</div></div>
+
+<div class="box ok" id="final-summary"><strong>✅ GUIDE 04 COMPLETE (20:34).</strong> Backup <code>backups/params_after-guide04.params</code> (1,430 params) contains exactly these changes vs. <code>params_after-radio-cal_full.params</code>:
+<div class="table-wrap"><table>
+<tr><th>Parameter</th><th>Before → After</th><th>Meaning</th></tr>
+<tr><td><code>FLTMODE_CH</code></td><td>8 → <strong>6</strong></td><td>SWC (channel 6) picks the flight mode</td></tr>
+<tr><td><code>FLTMODE1…6</code></td><td>QStab, QLoiter, FBWA, QStab, RTL, FBWA → <strong>QLAND, QLAND, QHOVER, QHOVER, FBWA, FBWA</strong></td><td>SWC up = land/idle, middle = drone, down = airplane</td></tr>
+<tr><td><code>RC6_OPTION</code></td><td>4 (RTL) → <strong>0</strong></td><td>SWC has only one job</td></tr>
+<tr><td><code>RC9/10/12/13/14/16_OPTION</code></td><td>old jobs → <strong>0</strong></td><td>No leftover switch functions</td></tr>
+<tr><td><code>ARMING_RUDDER</code></td><td>2 → <strong>0</strong></td><td>Arm only with SWA, never with the sticks</td></tr>
+<tr><td><code>GPS1_TYPE</code></td><td>0 → <strong>1</strong> (step D2)</td><td>GPS switched on (Auto)</td></tr>
+<tr><td><code>RC1–8_MIN/MAX/TRIM</code></td><td>calibrated (Part D)</td><td>Pixhawk knows each stick's range</td></tr>
+</table></div>
+Radio: i6X Output mode <strong>PWM</strong> → PPM encoder → RC IN. SWA down = arm, up = off. Safety checks block arming on the bench (expected).</div>
+
+<h2>Still to come (later guides, not now)</h2>
+<ul>
+  <li><strong>Radio failsafe</strong> (what happens if the transmitter is switched off or out of range): a separate step. With PPM receivers this needs a careful check.</li>
+  <li><strong>Arming test with motors</strong>: only after the wiring guide, with <strong>props off</strong>.</li>
+</ul>
+
+<h2>Report back</h2>
+<div class="box ok">
+  <strong>Send me these:</strong>
+  <ul class="check">
+    <li>Part 0: <code>backups/params_after-guide03.params</code> saved</li>
+    <li><s>Part A: stick layout?</s> ✅ standard (roll on the right stick)</li>
+    <li><s>Part A2: SWD?</s> ✅ not needed (surfaces automatically quiet in drone mode)</li>
+    <li>Part C/D: Radio page screenshots (before and after calibration). Did "Radio failsafe on" disappear?</li>
+    <li>Part G: which mode appears for each SWC position; which SWA position is "on"</li>
+    <li>Part H: <code>backups/params_after-guide04.params</code> + Vehicle Messages</li>
+    <li>Anything you couldn't find on the i6X (photo of its screen)</li>
+  </ul>
+</div>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/common-auxiliary-functions.html">ArduPilot: Auxiliary functions</a> (153 ArmDisarm: arms high subject to checks, "disarms unconditionally if brought low"; LOW &lt; 1200 µs, HIGH &gt; 1800 µs)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-rc-transmitter-flight-mode-configuration.html">ArduPilot: Flight mode configuration</a> (FLTMODE_CH, 6 slots, 3-position switch)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/AutoPilotPlugins/APM/APMFlightModesComponent.qml">QGC 5.1.5: APMFlightModesComponent.qml</a> (PWM slots 0–1230 / 1231–1360 / 1361–1490 / 1491–1620 / 1621–1749 / 1750+, "Flight mode channel", "Switch Options")</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/Vehicle/VehicleSetup/RemoteControlCalibration.qml">QGC 5.1.5: RemoteControlCalibration.qml</a> (Calibrate, Mode 1–4, zero trims, props/power warning)</li>
+  <li><a href="https://discuss.ardupilot.org/t/connecting-an-fs-ia10b-receiver-to-pixhawk/27833">ArduPilot forum: Connecting an FS-iA10B to Pixhawk</a> (PPM from the PPM/CH1 port into RC IN; ~8 channels)</li>
+  <li><a href="https://discuss.ardupilot.org/t/pixhawk-2-4-8-channel-issue/54111">ArduPilot forum: Pixhawk 2.4.8 channel issue</a> (set the transmitter output mode to PPM first)</li>
+  <li><a href="https://manuals.plus/asin/B01N6HYPBK">FS-iA10B manual (manuals.plus)</a> (bind plug in B/VCC → LED flashes fast → hold BIND key while powering the transmitter → LED solid)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-flight-modes.html">ArduPilot: QuadPlane flight modes</a> (QHOVER, QLAND, QSTABILIZE)</li>
+  <li><a href="https://forums.parallax.com/uploads/editor/h3/zmuh5nvzzu85.pdf">FS-i6X menu guide (Parallax)</a> (Functions setup → Aux. channels; System → RX setup → Output mode)</li>
+  <li><a href="https://blog.unmanned.tech/flysky-radio-setup/">FlySky radio setup (Unmanned Tech)</a> (assigning SWA/SWC to aux channels)</li>
+</ul>
+
+<footer>VTOL Y3 project · Guide 04 · created 2026-10-17 03:45 · rev 2 03:53 · previous: <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">Guide 03</a> · next: <a href="guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html">Guide 05, i6X transmitter setup</a> → Guide 06, Full wiring plan</footer>
+</main>
+</body>
+</html>

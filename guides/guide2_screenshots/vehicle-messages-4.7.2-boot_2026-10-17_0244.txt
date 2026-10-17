@@ -1,0 +1,47 @@
+Vehicle Messages after flashing ArduPlane 4.7.2 (pasted by the user, 2026-10-17 ~02:45). Oldest first.
+
+[02:44:22.123 ] Info: QuadPlane initialised, Frame: TRI
+[02:44:22.123 ] Info: Ground start
+[02:44:22.123 ] ALERT: Beginning INS calibration. Do not move plane
+[02:44:23.187 ] Info: Calibrating barometer
+[02:44:23.203 ] Info: Initialising ArduPilot
+[02:44:23.392 ] Info: ArduPlane V4.7.2 (fb773567)
+[02:44:23.392 ] Info: ChibiOS: d103983f
+[02:44:23.392 ] Info: Pixhawk1 00200035 3238510A 32373737
+[02:44:23.392 ] Info: IOMCU: 420 1001 411FC231
+[02:44:23.392 ] Info: RCOut: Initialising
+[02:44:23.392 ] Info: IMU0: fast sampling enabled 8.0kHz/2.0kHz
+[02:44:24.807 ] Info: Barometer 1 calibration complete
+[02:44:24.807 ] Info: No airspeed sensor
+[02:44:24.807 ] Info: ArduPilot Ready
+[02:44:24.807 ] Info: AHRS: DCM active
+[02:44:24.809 ] Info: RCOut: PWM:1-14
+[02:44:24.809 ] Critical: Internal Errors 0x100000          <- NEW (not present on 4.7.1 boot at 01:47)
+[02:44:24.988 ] Warning: Throttle failsafe on
+[02:44:24.988 ] Warning: RC Short Failsafe: switched to QLand
+[02:44:25.142 ] Warning: RC Long Failsafe On: switched to QLand
+[02:44:26.813 ] Info: EKF3 IMU0 initialised
+[02:44:26.813 ] Info: EKF3 IMU1 initialised
+[02:44:28.381 ] Info: EKF3 IMU1 tilt alignment complete
+[02:44:28.384 ] Info: EKF3 IMU0 tilt alignment complete
+[02:44:28.475 ] Info: EKF3 IMU1 MAG0 initial yaw alignment complete
+[02:44:28.475 ] Info: EKF3 IMU0 MAG0 initial yaw alignment complete
+[02:44:29.990 ] Info: Land complete
+[02:44:32.074 ] Info: GPS 1: probing for u-blox at 230400 baud
+[02:44:32.254 ] Info: GPS 1: detected u-blox
+[02:44:35.776 ] Info: GPS 1: u-blox saving config
+[02:44:39.802 ] Info: u-blox 1 HW: 00070000 SW: 1.00 (59842)
+[02:44:48.882 ] Critical: PreArm: Hardware safety switch
+[02:44:48.887 ] Critical: PreArm: AHRS: not using configured AHRS type
+[02:44:48.892 ] Critical: PreArm: Compass not calibrated
+[02:44:48.895 ] Critical: PreArm: GPS 1: Bad fix
+[02:44:48.898 ] Critical: PreArm: Battery 1 low voltage failsafe
+[02:44:48.905 ] Critical: PreArm: Radio failsafe on
+[02:44:48.908 ] Critical: PreArm: Internal errors 0x100000 l:1375 flow_of_ctrl   <- NEW
+[02:44:48.911 ] Critical: PreArm: QLand mode not armable
+
+Decoded (ArduPilot source at fb773567):
+- 0x100000 = AP_InternalError bit 20 "flow_of_control" (libraries/AP_InternalError/AP_InternalError.h:64)
+- l:1375 = libraries/AP_HAL_ChibiOS/RCOutput.cpp:1375, inside RCOutput::push():
+      if (!corked) { INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control); }
+  i.e. servo/motor outputs were "pushed" without a matching "cork" first, once, at boot.

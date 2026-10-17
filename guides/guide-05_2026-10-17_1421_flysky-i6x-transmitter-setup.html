@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide 05 — i6X Setup</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">
+    <span class="pill">Guide 05 / ~11</span>
+    <span class="pill">Created 2026-10-17 · 14:21</span>
+    <span class="pill">✅ Complete 19:10 · Rev 4 · 16:58 (Step 4 rewritten: 4.1–4.4) · was Rev 3 · 16:36 (shorter log, progress list)</span>
+    <span class="pill">⏱ ~25 min</span>
+    <span class="pill">Status: ✅ complete</span>
+  </div>
+  <h1>FlySky i6X transmitter setup (firmware 1.0, 09-Feb-2022)</h1>
+  <p class="lead">Goal: set up the i6X itself for our plan: correct model type, Mode 2 sticks, <strong>no transmitter mixing</strong> (ArduPlane does all mixing), <strong>SWA → CH5</strong>, <strong>SWC → CH6</strong>, receiver output mode (<strong>PWM</strong> in your setup, because of the PPM encoder). Then check every control on the transmitter's own <strong>Display</strong> screen, before involving the Pixhawk at all.</p>
+</header>
+
+<div class="box danger">
+  <strong>Safety:</strong> USB only, <strong>no LiPo, no propellers</strong>. The receiver is powered by the Pixhawk (USB) through RC IN.
+</div>
+
+<div class="box ok" id="glance"><strong>Where we are (19:10):</strong>
+  <ol style="margin:.4em 0 0 1.2em;padding:0">
+    <li>✅ Start-up: linked</li>
+    <li>✅ Model basics: Airplane, Mode 2, Aux switches on</li>
+    <li>✅ All transmitter mixing off (7 items)</li>
+    <li>✅ <strong>Clean outputs:</strong> 4.1 Reverse ✅ · 4.2 End points ✅ · 4.3 Subtrim ✅ · 4.4 Trims ✅</li>
+    <li>✅ SWA → Ch5, SWC → Ch6 <strong>(changed)</strong></li>
+    <li>✅ Receiver output = <strong>PWM</strong> (changed later, because of the encoder)</li>
+    <li>✅ Test on the Display screen: all 6 correct</li>
+  </ol></div>
+
+<div class="box info">
+  <strong>Source:</strong> all menu names and button actions below come from the <strong>official FlySky FS-i6X Instruction Manual</strong> (FlySky, 2016; sections 4–9). Your transmitter: <strong>firmware 1.0 (09-Feb-2022), hardware V1.0</strong>. Newer firmware may show a few extra menu items, but the ones used here are the same.
+</div>
+
+<h2>The keys (official names)</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>You want to…</th><th>Do this</th></tr>
+  <tr><td>Open the main menu</td><td><strong>Hold OK</strong> (~2 s) → 2 icons: <strong>System setup</strong> and <strong>Functions setup</strong></td></tr>
+  <tr><td>Move in a list / change a value</td><td><strong>UP</strong> / <strong>DOWN</strong></td></tr>
+  <tr><td>Open an item / jump to the next field</td><td><strong>Short OK</strong></td></tr>
+  <tr><td><strong>Save</strong> and go back</td><td><strong>Hold CANCEL</strong> (~2 s). Without holding, changes are <em>not</em> saved.</td></tr>
+  <tr><td>Go back without saving</td><td>Short CANCEL</td></tr>
+  <tr><td>Reset an item to default</td><td>Hold OK 3 s, then hold CANCEL to save (not needed today)</td></tr>
+</table>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 770 400" role="img" aria-label="FlySky i6X controller with the agreed assignments">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>
+  <text x="360" y="22" text-anchor="middle" class="t">FlySky i6X: what every control does</text>
+  <rect x="150" y="60" width="420" height="250" rx="40" class="body"/>
+  <!-- top switches -->
+  <rect x="185" y="40" width="14" height="34" rx="4" class="sw"/><text x="192" y="34" text-anchor="middle" class="t">SWA</text>
+  <rect x="235" y="40" width="14" height="34" rx="4" class="unused"/><text x="242" y="34" text-anchor="middle" class="m">SWB</text>
+  <rect x="471" y="40" width="14" height="34" rx="4" class="sw"/><text x="478" y="34" text-anchor="middle" class="t">SWC</text>
+  <rect x="521" y="40" width="14" height="34" rx="4" class="unused"/><text x="528" y="34" text-anchor="middle" class="m">SWD</text>
+  <circle cx="300" cy="95" r="12" class="unused"/><text x="300" y="122" text-anchor="middle" class="m">VrA</text>
+  <circle cx="420" cy="95" r="12" class="unused"/><text x="420" y="122" text-anchor="middle" class="m">VrB</text>
+  <rect x="320" y="140" width="80" height="50" rx="6" fill="var(--bg)" stroke="var(--muted)"/><text x="360" y="170" text-anchor="middle" class="m">screen</text>
+  <!-- sticks -->
+  <circle cx="245" cy="225" r="48" class="stick"/><circle cx="245" cy="225" r="10" fill="var(--text)"/>
+  <circle cx="475" cy="225" r="48" class="stick"/><circle cx="475" cy="225" r="10" fill="var(--text)"/>
+  <path class="arr" d="M245 205 L245 185"/><path class="arr" d="M245 245 L245 265"/>
+  <path class="arr" d="M225 225 L205 225"/><path class="arr" d="M265 225 L285 225"/>
+  <path class="arr" d="M475 205 L475 185"/><path class="arr" d="M475 245 L475 265"/>
+  <path class="arr" d="M455 225 L435 225"/><path class="arr" d="M495 225 L515 225"/>
+  <!-- labels left -->
+  <text x="20" y="60" class="t">SWA (CH5)</text><text x="20" y="76">ARM / DISARM</text><text x="20" y="92" class="m">down = ON · up = OFF</text>
+  <path class="ln" d="M120 70 L185 56"/>
+  <text x="20" y="190" class="t">LEFT STICK</text>
+  <text x="20" y="208">↑↓ THROTTLE (CH3)</text>
+  <text x="20" y="226">←→ YAW (CH4), turn</text>
+  <text x="20" y="244" class="m">throttle DOWN to arm</text>
+  <path class="ln" d="M150 220 L195 225"/>
+  <!-- labels right -->
+  <text x="590" y="52" class="t">SWC (CH6) 3-pos</text>
+  <text x="590" y="70">UP: QLAND (idle)</text>
+  <text x="590" y="86">MID: QHOVER (drone)</text>
+  <text x="590" y="102">DOWN: FBWA (airplane)</text>
+  <path class="ln" d="M588 66 L485 56"/>
+  <text x="590" y="190" class="t">RIGHT STICK</text>
+  <text x="590" y="208">↑↓ PITCH (CH2)</text>
+  <text x="590" y="226">←→ ROLL (CH1)</text>
+  <path class="ln" d="M588 220 L525 225"/>
+  <text x="360" y="340" text-anchor="middle" class="m">Grey = not used: SWB, SWD, VrA, VrB (free for later)</text>
+  <text x="360" y="360" text-anchor="middle" class="m">Standard "Mode 2". Roll stays on the right stick (agreed, rev 2)</text>
+</svg>
+</div>
+
+<div class="box ok" id="surfaces"><strong>How the sticks move the surfaces (your description, 19:48, airplane mode):</strong>
+  <div class="table-wrap"><table>
+    <tr><th>Stick</th><th>Surfaces</th><th>Movement</th><th>Pixhawk output</th></tr>
+    <tr><td>Right stick ←→ (roll, CH1)</td><td>2 main-wing servos (ailerons)</td><td><strong>Opposite</strong>: one up, one down</td><td>MAIN 1–2 <code>Aileron</code></td></tr>
+    <tr><td>Right stick ↑↓ (pitch, CH2)</td><td>2 tail-wing servos</td><td><strong>Together</strong>: both up / both down</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>Left stick ←→ (yaw, CH4)</td><td>2 tail-wing servos</td><td><strong>Opposite</strong>: one up, one down</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>Left stick ↑↓ (throttle, CH3)</td><td>motors</td><td>more / less power</td><td>MAIN 5, 6, 8</td></tr>
+    <tr><td><em>automatic</em></td><td>2 front tilt servos</td><td>motors up (drone) ↔ forward (airplane), plus yaw in drone mode</td><td>AUX 1–2 <code>TiltMotorFront…</code></td></tr>
+  </table></div>
+  All mixing is done by the <strong>Pixhawk</strong> (that's why the i6X V-Tail/Elevon mixing is Off). Pitch + yaw together: the V-tail mixer adds both. Servo directions are checked one by one in Guide 08, once the servos are wired.</div>
+
+<h2 id="log">Settings log: what we checked/changed and what it means (updated 19:32)</h2>
+<p>One line per setting, in the order we did them. The steps below say <em>how</em>; this table says <em>what we found</em>.</p>
+<div class="table-wrap">
+<table id="settings-log">
+  <tr><th>#</th><th>Menu → item</th><th>Your result</th><th>Changed?</th><th>Meaning (1 line)</th></tr>
+  <tr><td>1</td><td>Home screen</td><td>TX+RX bars · IntV1 4.52 V · SigS1 10</td><td>–</td><td>Transmitter and receiver are linked (receiver reports voltage + signal 10/10).</td></tr>
+  <tr><td>2</td><td>System → Type select</td><td>Airplane</td><td>No</td><td>Plain channels, no helicopter mixing.</td></tr>
+  <tr><td>3</td><td>System → Sticks mode</td><td>Mode 2</td><td>No</td><td>Left: throttle ↑↓ / yaw ←→. Right: pitch ↑↓ / roll ←→.</td></tr>
+  <tr><td>4</td><td>System → Aux switches</td><td>All On · Ch 10</td><td>No</td><td>Switches are usable and enough channels are sent.</td></tr>
+  <tr><td>5</td><td>Functions → V Tail</td><td>Off</td><td>No</td><td>Pixhawk mixes the V-tail. Doing it twice would break pitch/yaw.</td></tr>
+  <tr><td>6</td><td>Functions → Elevon</td><td>Off</td><td>No</td><td>Flying-wing mix. Not for us.</td></tr>
+  <tr><td>7</td><td>Functions → Mixes</td><td>Mix 1–3 Off</td><td>No</td><td>No stick secretly moves another channel.</td></tr>
+  <tr><td>8</td><td>Functions → Throttle hold</td><td>Off</td><td>No</td><td>Would freeze throttle. SWA is our motor off.</td></tr>
+  <tr><td>9</td><td>Functions → Throttle curve</td><td>0/25/50/75/100</td><td>No</td><td>Straight line: Pixhawk sees the real stick.</td></tr>
+  <tr><td>10</td><td>Functions → Dual rate/exp.</td><td>Ch1/2/4: Rate 100, Exp 0</td><td>No</td><td>Full stick range, no softening (needed for calibration).</td></tr>
+  <tr><td>11</td><td>Functions → Assign switches</td><td>All None</td><td>No</td><td>SWA/SWC trigger no transmitter feature, only CH5/CH6.</td></tr>
+  <tr><td>12</td><td>Functions → Reverse</td><td>All Nor</td><td>No</td><td>No channel flipped in the transmitter.</td></tr>
+  <tr><td>13</td><td>Functions → End points</td><td>All 100% / 100%</td><td>No</td><td>Full range on every channel, needed for calibration.</td></tr>
+  <tr><td>14</td><td>Functions → Subtrim</td><td>All centred (Ch1–10)</td><td>No</td><td>Stick centre = true centre. (Ch1 looked 1 px off only because it was highlighted.)</td></tr>
+  <tr><td>15</td><td>Home screen → Trims</td><td>All 4 markers on centre (photo 18:25)</td><td>No</td><td>Sticks have no built-in offset. ArduPlane handles trim itself.</td></tr>
+  <tr><td>16</td><td>Functions → Aux. channels</td><td>Ch5: VrA → <strong>SwA</strong> · Ch6: VrB → <strong>SwC</strong> (saved, re-checked)</td><td><strong>YES</strong> (first real change)</td><td>Ch5 now follows <strong>SWA</strong> (arm/disarm, <code>RC5_OPTION=153</code>). Ch6 now follows <strong>SWC</strong> (3 flight modes: QLAND/QHOVER/FBWA, <code>FLTMODE_CH=6</code> in Guide 04). Before: the knobs VrA/VrB (factory default; you remembered "VrB and VrA").</td></tr>
+  <tr><td>17</td><td>System → RX setup → Output mode</td><td>Was PPM → <strong>changed to PWM</strong> at 19:32 (Guide 04 C5) · Serial: i-BUS</td><td><strong>YES</strong> (later)</td><td>Your wiring has a <strong>PPM encoder</strong> between receiver and RC IN. It needs <strong>separate channels (PWM)</strong> from the receiver and builds the PPM itself. With PPM the Pixhawk saw frozen values, with PWM it works ✅.</td></tr>
+  <tr><td>18</td><td>Functions → Display</td><td>Ch1 roll ✅ · Ch2 pitch ✅ · Ch3 throttle ✅ · Ch4 yaw ✅ · Ch5 SWA ✅ · Ch6 SWC 3 positions ✅</td><td>–</td><td>The <strong>transmitter</strong> sends every control on the right channel. Any problem from here on is in the receiver → Pixhawk cable / QGC side.</td></tr>
+  <tr><td>–</td><td>System → RX setup → RF standard</td><td>opened by mistake → <strong>No/CANCEL</strong></td><td>No</td><td>Stays AFHDS2A (shown on home screen). Never change it, or the link can break.</td></tr>
+</table>
+</div>
+
+<h2>Step 1: Start-up</h2>
+<div class="step"><div class="num">1</div><div>
+  <h3>Power on correctly</h3>
+  <ol>
+    <li>All 4 switches <strong>UP</strong>, left stick (throttle) <strong>fully DOWN</strong>, then power on. Otherwise the i6X beeps a warning (Guide 04).</li>
+    <li>Plug the Pixhawk USB in (powers the receiver). Receiver LED <strong>solid</strong>.</li>
+    <li>Main screen: next to <strong>RX</strong> you should see a battery bar. The manual says: <em>"If a receiver is not connected or bound to the transmitter no battery status will be displayed for the receiver."</em> RX bar visible = <strong>linked</strong> ✅.</li>
+  </ol>
+  <p>📸 Photo the main screen (it also shows the model number, e.g. <strong>M01</strong>).</p>
+  <div class="box ok"><strong>✅ Step 1 done (14:29):</strong> TX and RX bars shown; telemetry <code>TX.V 5.14 V</code>, <code>IntV1 4.52 V</code> (receiver voltage), <code>SigS1 10</code> (signal strength, maximum). The receiver is <strong>linked</strong> to this transmitter.</div>
+</div></div>
+
+<h2>Step 2: Model basics (System setup)</h2>
+<div class="step"><div class="num">2</div><div>
+  <h3>Model, type, stick mode</h3>
+  <p>Hold OK → <strong>System setup</strong> → short OK. Then:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Menu item</th><th>Set / check</th><th>Why</th></tr>
+    <tr><td><strong>Model select</strong></td><td>Note which model is active (e.g. Model 1). <strong>Don't change it</strong>: the receiver is bound and set up for this one.</td><td>Each model memory has its own settings</td></tr>
+    <tr><td><strong>Model name</strong> (optional)</td><td><code>VTOL-Y3</code> (UP/DOWN letter, OK next, hold CANCEL save)</td><td>So you always know you're on the right model</td></tr>
+    <tr><td><strong>Type select</strong></td><td><strong>Airplane</strong> (not a helicopter type)</td><td>Helicopter types add swashplate/pitch mixing</td></tr>
+    <tr><td><strong>Sticks mode</strong></td><td><strong>2</strong></td><td>Mode 2 = throttle + yaw left, pitch + roll right (our plan)</td></tr>
+    <tr><td><strong>Aux switches</strong></td><td>Turn <strong>SwA</strong> and <strong>SwC</strong> <strong>on</strong>. Channel count <strong>Ch</strong>: at least <strong>6</strong></td><td>The manual: this <em>"activates and deactivates switches/knobs as well as changing the amount of active channels"</em></td></tr>
+  </table>
+  </div>
+  <p>Remember: <strong>hold CANCEL</strong> after each change.</p>
+  <div class="box ok"><strong>✅ Step 2 done (14:48):</strong> Type select = <strong>Airplane</strong> (already set; the i6X asked to switch the receiver off first, so USB was unplugged, which is normal) · Sticks mode = <strong>2</strong> (left: Ch3 throttle ↑↓ / Ch4 yaw ←→; right: Ch2 pitch ↑↓ / Ch1 roll ←→) · Aux switches: <strong>all on</strong>, <strong>Ch = 10</strong>. Nothing needed changing. Model select/name not changed.<br>
+  <small>Note from the manual: with 10 channels the default is knobs = CH5/CH6, switches = CH7–CH10. We override CH5/CH6 in Step 5. PPM carries the first 8 channels.</small></div>
+</div></div>
+
+<h2>Step 3: Turn OFF all transmitter mixing (Functions setup)</h2>
+<div class="step"><div class="num">3</div><div>
+  <h3>The Pixhawk does all mixing, not the transmitter</h3>
+  <p>Hold OK → <strong>Functions setup</strong> → check each item:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Menu item</th><th>Must be</th><th>Why</th><th>You</th></tr>
+    <tr><td><strong>V Tail</strong></td><td><strong>Off</strong></td><td>⚠️ Important for <em>your</em> plane: ArduPlane already mixes the V-tail (<code>SERVO3/4 = VTailLeft/Right</code>). A second mix in the transmitter would mix pitch/yaw <strong>twice</strong>, giving wrong channels and a confused Pixhawk.</td><td>✅</td></tr>
+    <tr><td><strong>Elevon</strong></td><td><strong>Off</strong></td><td>Same reason</td><td>✅</td></tr>
+    <tr><td><strong>Mixes</strong> (Mix#1…#3)</td><td>Each <strong>"Mix is Off"</strong></td><td>No hidden channel mixing</td><td>✅</td></tr>
+    <tr><td><strong>Throttle hold</strong></td><td><strong>Off</strong></td><td>For gas engines. SWA (arm/disarm) is our motor off</td><td>✅</td></tr>
+    <tr><td><strong>Throttle curve</strong></td><td>Straight line: L 0%, 1 25%, 2 50%, 3 75%, H 100%</td><td>ArduPlane needs the real stick position</td><td>✅</td></tr>
+    <tr><td><strong>Dual rate/exp.</strong></td><td>Ch1, Ch2, Ch4: <strong>Rate 100</strong>, <strong>Exp 0</strong></td><td>Full, linear range for calibration (feel can be tuned later in ArduPlane)</td><td>✅</td></tr>
+    <tr><td><strong>Assign switches</strong></td><td>Nothing assigned (or "Off")</td><td>So SWA/SWC only send their channel</td><td>✅</td></tr>
+  </table>
+  </div>
+</div></div>
+
+<div class="box ok"><strong>✅ Step 3 done (16:36):</strong> all 7 already correct, nothing changed.<br>
+<em>"Is it safe to plug the receiver back in?" Yes:</em> USB only, no LiPo, and nothing is connected to the Pixhawk's MAIN/AUX outputs, so nothing can move. The "turn off receiver" prompt only appears for model-level changes (type/model select).</div>
+
+<h2>Step 4: Clean channel outputs (4 small checks)</h2>
+<div class="box warn"><strong>Key rule on these screens</strong> (official manual §5.2–5.6): <strong>short OK = go to the next channel</strong>. <strong>UP/DOWN = change the value</strong> of the selected channel. So <u>don't use UP/DOWN to scroll</u>, because it changes things. <strong>CANCEL once</strong> = leave without saving · <strong>hold CANCEL 2 s</strong> = save and leave.</div>
+<p><strong>Open the list (same for 4.1–4.3):</strong> home screen → <strong>hold OK</strong> 2 s → highlight <strong>Functions setup</strong> (UP/DOWN) → short <strong>OK</strong>. The list order is: <strong>1 Reverse</strong> · 2 End points · 3 Display · 4 Aux. channels · <strong>5 Subtrim</strong> · 6 Dual rate/exp. · …</p>
+
+<div class="step"><div class="num">4.1</div><div>
+  <h3>Reverse: all channels "Nor"</h3>
+  <ol>
+    <li>In the list, <strong>Reverse</strong> is the 1st item → short <strong>OK</strong>.</li>
+    <li>You see Ch1, Ch2… each with <strong>Nor</strong> or <strong>Rev</strong>. Press short <strong>OK</strong> to step through every channel. Just read them.</li>
+    <li>All <strong>Nor</strong> → press <strong>CANCEL once</strong>. One shows <strong>Rev</strong> → while it's selected press <strong>UP or DOWN</strong> once (becomes Nor) → <strong>hold CANCEL</strong>.</li>
+  </ol>
+  <p class="m">Meaning: Rev flips a channel's direction. Direction fixes are done in ArduPlane later, never here.</p>
+</div></div>
+
+<div class="step"><div class="num">4.2</div><div>
+  <h3>End points: all channels 100% / 100%</h3>
+  <ol>
+    <li>In the list, DOWN once to <strong>End points</strong> (2nd item) → short <strong>OK</strong>.</li>
+    <li>Each channel shows <strong>two numbers</strong>: left = low end, right = high end. Short <strong>OK</strong> steps to the next channel.</li>
+    <li>All <strong>100%</strong> both sides → <strong>CANCEL once</strong>. Not 100 → select that channel, <strong>move its stick</strong> toward the side to fix (picks left/right box), UP/DOWN to 100 → <strong>hold CANCEL</strong>.</li>
+  </ol>
+  <p class="m">Meaning: end points limit how far a channel goes. ArduPlane needs the full range to calibrate.</p>
+</div></div>
+
+<div class="step"><div class="num">4.3</div><div>
+  <h3>Subtrim: all channels 0 (centre)</h3>
+  <ol>
+    <li>In the list, DOWN to <strong>Subtrim</strong> (5th item) → short <strong>OK</strong>.</li>
+    <li>Short <strong>OK</strong> steps through the channels. Each should show <strong>0</strong> / the marker in the middle.</li>
+    <li>All 0 → <strong>CANCEL once</strong>. Not 0 → select it, UP/DOWN to 0 → <strong>hold CANCEL</strong>.</li>
+  </ol>
+  <p class="m">Tip: the <strong>highlighted</strong> channel's arrow can look ~1 pixel off. Press OK to move the highlight away and look again.</p>
+  <p class="m">Meaning: subtrim shifts a channel's centre. It must be centred so "stick in the middle" really is the middle.</p>
+</div></div>
+
+<div class="step"><div class="num">4.4</div><div>
+  <h3>Trims: the 4 small sliders, centred (no menu)</h3>
+  <p><strong>Where the trim bars are on the home screen</strong> (checked against a real i6X home-screen photo, see Sources):</p>
+<pre style="font-size:13px;line-height:1.25;overflow-x:auto">
+ ┌────────────────────────────────────────┐
+ ║  FlySky logo   AFHDS2A    TX [battery] ║
+ ║  M01 · model name · airplane drawing   ║
+ ║  telemetry: TX.V / IntV1 / SigS1 / RX  ║  ← side bars = ║
+ ║                                        ║
+ └──[====|====]──────────[====|====]──────┘
+  LEFT side ║ = Trim 1 → Ch3 throttle  (left stick ↑↓)
+  bottom-left ═ = Trim 2 → Ch4 yaw     (left stick ←→)
+  RIGHT side ║ = Trim 3 → Ch2 pitch    (right stick ↑↓)
+  bottom-right ═ = Trim 4 → Ch1 roll   (right stick ←→)
+</pre>
+  <p>Each bar has a <strong>fixed centre tick</strong> and a <strong>moving marker</strong>. Centred = the marker sits on the centre tick.</p>
+  <ol>
+    <li>Go back to the <strong>home screen</strong> (CANCEL until you're there).</li>
+    <li>The 4 trim rockers sit next to the sticks: Trim 1 beside the left stick (vertical), Trim 2 below it (horizontal), Trim 3 beside the right stick, Trim 4 below it.</li>
+    <li><strong>Beep test</strong> per rocker: click once one way, then once back. A <strong>higher beep</strong> on the way back means centred ✅. Otherwise keep clicking toward the middle until the higher beep. The manual: <em>"When the trim position reaches the middle, the transmitter beeps in a higher tone."</em></li>
+    <li>Saved automatically.</li>
+  </ol>
+  <figure style="margin:.6em 0"><img src="guide5_screenshots/i6x-home-screen_1825.jpeg" alt="Your i6X home screen" style="max-width:320px;width:100%;border-radius:8px"><figcaption class="m">Your home screen (18:25): the 4 trim bars are the <strong>left side bar</strong> (Ch3), <strong>right side bar</strong> (Ch2), <strong>bottom-left</strong> (Ch4) and <strong>bottom-right</strong> (Ch1). All 4 markers sit on the centre ✅. The "3 filled pixels" is the marker itself.</figcaption></figure>
+  <div class="box ok"><strong>✅ Step 4 done (18:31):</strong> Reverse all Nor · End points all 100%/100% · Subtrim all centred · Trims all centred. Nothing changed.</div>
+  <p class="m">Meaning: trims shift the stick centre. ArduPlane handles trim itself, so they must be centred before calibration.</p>
+</div></div>
+
+<h2>Step 5: Assign the switches</h2>
+<div class="step"><div class="num">5</div><div>
+  <h3>Functions setup → Aux. channels</h3>
+  <p><strong>From the home screen:</strong> hold <strong>OK</strong> 2 s → highlight <strong>Functions setup</strong> → short OK → DOWN 3× to <strong>Aux. channels</strong> (4th item) → short OK.</p>
+  <p>Default (manual): <em>Channel 5 Source VrA, Channel 6 Source VrB</em>. Change to:</p>
+  <ol>
+    <li>Short OK until <strong>Channel 5</strong> is selected → UP/DOWN → Source <strong>SwA</strong>.</li>
+    <li>Short OK to <strong>Channel 6</strong> → UP/DOWN → Source <strong>SwC</strong>.</li>
+    <li><strong>Hold CANCEL</strong> to save.</li>
+  </ol>
+  <p>Not offered SwA/SwC? Go back to Step 2, <strong>Aux switches</strong>, and turn them on.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ Step 5 done (18:38), CHANGED:</strong>
+  <div class="table-wrap"><table>
+    <tr><th>Channel</th><th>Before</th><th>After</th><th>Controls on the drone</th></tr>
+    <tr><td>Ch5</td><td>VrA (left knob)</td><td><strong>SwA</strong></td><td>Arm / disarm (motors on/off)</td></tr>
+    <tr><td>Ch6</td><td>VrB (right knob)</td><td><strong>SwC</strong></td><td>Up = QLAND · Middle = QHOVER · Down = FBWA</td></tr>
+  </table></div>
+  Saved with hold CANCEL, then re-opened to confirm. "Before" = factory default per manual §9; you recalled "VrB and VrA". The knobs are now unused.</div>
+
+<h2>Step 6: Receiver output mode (now PWM, see the update below)</h2>
+<div class="step"><div class="num">6</div><div>
+  <h3>System setup → RX setup</h3>
+  <p><strong>From the home screen:</strong> hold <strong>OK</strong> 2 s → highlight <strong>System setup</strong> → short OK → DOWN to <strong>RX setup</strong> (near the bottom of the list) → short OK → DOWN <strong>7×</strong> to <strong>Output mode</strong> (RF standard, RX battery, Failsafe, Sensors list, Choose sensors, Speed and distance, ASL pressure, <strong>Output mode</strong>; open nothing on the way) → short OK. The receiver must be <strong>on</strong> (Pixhawk USB plugged in, RX bar visible).</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>RX setup → …</th><th>Set / check</th></tr>
+    <tr><td><strong>RF standard</strong></td><td>⚠️ <strong>Do NOT open it.</strong> The home screen already shows <strong>AFHDS2A</strong> at the top, and that's the check. Opening it asks to turn the receiver off and then <em>"This will change the AFHDS mode, are you sure?"</em>. Answering yes could break the link and need a re-bind. If you land there: <strong>CANCEL / No</strong>.</td></tr>
+    <tr><td><strong>Output mode</strong></td><td>⚠️ <strong>PWM</strong> for your wiring (PPM encoder between receiver and RC IN). PPM only if the encoder is removed and a direct cable is used. Originally written: <strong>PPM</strong> on the top line (Serial line: leave <strong>i-BUS</strong>). Manual: <em>"When [PPM] is selected the receiver will output a standard PPM signal via the PPM interface."</em> → hold CANCEL.</td></tr>
+    <tr><td><strong>Failsafe</strong></td><td><strong>Not now</strong>. It needs care with ArduPlane, so it gets its own guide.</td></tr>
+  </table>
+  </div>
+  <p>The receiver must be <strong>powered and linked</strong> (Step 1) when you save Output mode, because the setting is sent to it.</p>
+</div></div>
+
+<div class="box warn"><strong>Note (18:48):</strong> you opened <strong>RF standard</strong> by mistake (my instruction said "check" it). The i6X asked to turn the receiver off, then <em>"This will change the AFHDS mode, are you sure?"</em> → answered <strong>No/CANCEL</strong>. Home screen still shows <strong>AFHDS2A</strong> ✅. Nothing changed.</div>
+
+<div class="box ok"><strong>✅ Step 6 done (18:51):</strong> Output mode = <strong>PPM</strong>, Serial = <strong>i-BUS</strong>. Already set, nothing changed.</div>
+
+<div class="box warn"><strong>Update (19:32): Output mode is now PWM, not PPM.</strong> The photo showed a PPM encoder board between the receiver and RC IN. That board expects PWM from the receiver. After switching to <strong>PWM</strong>, the QGC Raw Channel Monitor follows every stick and switch. If the encoder is ever removed (direct cable PPM/CH1 → RC IN), set this back to PPM.</div>
+
+<h2>Step 7: Test on the transmitter itself</h2>
+<div class="step"><div class="num">7</div><div>
+  <h3>Functions setup → Display</h3>
+  <p><strong>From the home screen:</strong> hold <strong>OK</strong> 2 s → highlight <strong>Functions setup</strong> → short OK → DOWN 2× to <strong>Display</strong> (3rd item) → <strong>short</strong> OK.</p>
+  <p>This screen shows what the transmitter sends, <strong>live</strong>. <strong>No buttons to press here:</strong> you only move the sticks and switches with your fingers and watch the bars.</p>
+  <p><strong>What it looks like:</strong> a list of bars (Ch1, Ch2, Ch3…). Each bar has a filled part that grows or shrinks as you move a control. Control centred = bar <strong>half full</strong>. Control at one end = bar <strong>empty</strong>, other end = <strong>full</strong>.</p>
+  <p><strong>Where SWA and SWC are:</strong> top edge of the transmitter. <strong>SWA</strong> = left side, outer switch (2 positions). <strong>SWC</strong> = right side, inner switch (3 positions: up / middle / down).</p>
+  <p>Do <strong>one control at a time</strong>, slowly, end to end, and watch which bar moves:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Move</th><th>Bar that must move</th></tr>
+    <tr><td>Right stick ←→</td><td>Ch1 (roll)</td></tr>
+    <tr><td>Right stick ↑↓</td><td>Ch2 (pitch)</td></tr>
+    <tr><td>Left stick ↑↓</td><td>Ch3 (throttle)</td></tr>
+    <tr><td>Left stick ←→</td><td>Ch4 (yaw)</td></tr>
+    <tr><td>SWA up/down</td><td>Ch5: one end ↔ other end</td></tr>
+    <tr><td>SWC up/middle/down</td><td>Ch6: end / middle / end</td></tr>
+  </table>
+  </div>
+  <p>Short CANCEL to exit. (Don't hold OK there: that starts "scrub mode", which sweeps all channels.) 📸 Photo the Display with SWC in the middle.</p>
+  <div class="expect">All bars move correctly = the <strong>transmitter is set up</strong> ✅. If these move but the Pixhawk's Raw Channel Monitor doesn't, the problem is the <strong>receiver → Pixhawk cable</strong>: do <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">Guide 04, Part C5</a> . In your case the fix was option B: i6X Output mode <strong>PWM</strong> so the PPM encoder works. Then the Radio calibration.</div>
+</div></div>
+
+<div class="box ok"><strong>✅ Step 7 done, GUIDE 05 COMPLETE (19:10):</strong> on the Display screen every control moved only its own bar: right stick ←→ Ch1, ↑↓ Ch2; left stick ↑↓ Ch3, ←→ Ch4; SWA Ch5; SWC Ch6 (end/middle/end). Only change made in this whole guide: <strong>Aux. channels Ch5 → SwA, Ch6 → SwC</strong>. Next: <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">Guide 04</a>, check QGC Radio, then Part C5 if needed.</div>
+
+<h2>Report back</h2>
+<div class="box ok">
+  <ul class="check">
+    <li>Main screen photo (RX battery bar visible? model number?)</li>
+    <li>Steps 2–6 done (anything you couldn't find, with a photo of the screen)</li>
+    <li>Step 7: did every bar move correctly on the i6X Display? (photo)</li>
+    <li>Then: Guide 04 C5 result. Do the Raw Channel Monitor dots in QGC follow the sticks?</li>
+  </ul>
+</div>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://perthradiosailing.com.au/uploads/FlySky%20FS-I6%20and%20I6X%20Programming%20for%20Winch%20and%20Rudder%20Control%20(Draft%2004).pdf">Perth Radio Sailing: FlySky FS-i6 / i6X programming (2022)</a>: photo of the home screen with the 4 trim bars ("All four slider trims set to zero")</li>
+  <li><a href="https://www.amyaclubs.org/HomeImages/HowTo/39.pdf">AMYA: Setting up a FlySky FS-i6</a>: home-screen trim bars "Far Left / Lower Edge Left / Lower Edge Right / Far Right"</li>
+
+  <li><a href="https://static1.squarespace.com/static/5bc852d6b9144934c40d499c/t/5d6f66305487dc0001e34939/1567581800555/FS-i6X+User+manual+20160817.pdf">FlySky FS-i6X Instruction Manual (PDF)</a>: §2.2.2 battery indicator, §2.2.3 trims, §4.2 binding, §5.2–5.13 Functions, §7 System (Sticks mode, Aux switches), §8 RX setup (RF standard, Failsafe, Output mode), §9 default channels</li>
+  <li><a href="https://www.manualslib.com/manual/1295793/Fly-Sky-Fs-I6x.html">FS-i6X Instruction Manual (ManualsLib mirror)</a></li>
+  <li><a href="https://discuss.ardupilot.org/t/connecting-an-fs-ia10b-receiver-to-pixhawk/27833">ArduPilot forum: FS-iA10B to Pixhawk</a> (PPM from PPM/CH1 into RC IN)</li>
+</ul>
+
+<footer>VTOL Y3 project · Guide 05 · created 2026-10-17 14:21 · rev 4 · previous: <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">Guide 04</a> · next: back to Guide 04 Part C5 → D (calibration)</footer>
+</main>
+</body>
+</html>
