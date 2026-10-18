@@ -358,6 +358,8 @@ The public overview is the [README](../README.md).
 
 - 2026-10-18 22:40: Tilt root cause: both tilt servos work backwards (QStabilize: vertical command row 9 ≈ 1843 / row 10 ≈ 852 but motors point forward; FBWA: motors rise toward vertical with throttle). Fix: Servo Outputs row 9 untick Reversed (SERVO9_REVERSED 1 → 0), row 10 tick Reversed (SERVO10_REVERSED 0 → 1). 22:45: user applied it, all 3 modes correct (SWC up/middle = up, down = forward). Not yet in a backup; end-point fine-tune optional. Guide 06 rev 5 written (Steps 13–15).
 
+- 2026-10-18 23:15: Guide 06 rewritten as a simple step-by-step guide (rev 6).
+
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.
 - ✅ Radio input solved (option B: i6X Output mode PWM, encoder kept). Optional later: option A (remove encoder, direct PPM/CH1 → RC IN) for fewer wires/failure points.

@@ -352,6 +352,8 @@ La présentation publique est le [README](../README.md).
 
 - 2026-10-18 22:40 : Cause du basculement : les deux servos de basculement fonctionnent à l'envers (QStabilize : commande verticale ligne 9 ≈ 1843 / ligne 10 ≈ 852 mais moteurs vers l'avant ; FBWA : moteurs qui se redressent avec les gaz). Correction : Servo Outputs ligne 9 décocher Reversed (SERVO9_REVERSED 1 → 0), ligne 10 cocher Reversed (SERVO10_REVERSED 0 → 1). 22:45 : appliqué par l'utilisateur, les 3 modes corrects (SWC haut/milieu = vertical, bas = avant). Pas encore dans une sauvegarde ; ajustement des butées facultatif. Guide 06 rév. 5 rédigé (étapes 13–15).
 
+- 2026-10-18 23:15 : Guide 06 réécrit en guide simple étape par étape (rév. 6).
+
 ### Questions ouvertes
 - ✅ Paramètres Q_ : simplement le téléchargement anticipé de QGC. Toujours faire Refresh ~30 s après le démarrage avant de modifier/enregistrer.
 - ✅ Entrée radio résolue (option B : i6X Output mode PWM, encodeur conservé). Facultatif plus tard : option A (retirer l'encodeur, PPM/CH1 direct → RC IN) pour moins de fils/points de défaillance.
