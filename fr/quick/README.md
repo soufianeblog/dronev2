@@ -1,6 +1,7 @@
 # VTOL Y3 · Listes de tâches rapides
 
-🌐 [English](../../quick/README.md) · **Français** · [العربية](../../ar/quick/README.md)
+[English](../../quick/README.md) · **Français** · [العربية](../../ar/quick/README.md)
+
 
 Des check-lists étape par étape pour configurer le VTOL Y3. Chacune se lit en quelques minutes.
 Vous voulez aussi les explications, les captures d'écran et les journaux ? Ouvrez les **[guides complets dans le navigateur](https://soufianeblog.github.io/dronev2/fr/)**.

@@ -1,6 +1,7 @@
 # 01 · Connecter et vérifier ArduPlane
 
-🌐 [English](../../quick/01-connect-and-check.md) · **Français** · [العربية](../../ar/quick/01-connect-and-check.md)
+[English](../../quick/01-connect-and-check.md) · **Français** · [العربية](../../ar/quick/01-connect-and-check.md)
+
 
 [Sommaire](README.md) · [Suivant : 02 →](02-update-firmware.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html)
 

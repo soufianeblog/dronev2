@@ -1,6 +1,7 @@
 # Notes du projet (fichier de travail)
 
-🌐 [English](../../docs/project-notes.md) · **Français** · [العربية](../../ar/docs/project-notes.md)
+[English](../../docs/project-notes.md) · **Français** · [العربية](../../ar/docs/project-notes.md)
+
 
 Notes internes de ce projet : notre méthode de travail, les faits vérifiés, le journal complet d'avancement et les questions ouvertes.
 La présentation publique est le [README](../README.md).

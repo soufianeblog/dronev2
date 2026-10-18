@@ -2,7 +2,8 @@
 
 # ملاحظات المشروع (ملف العمل)
 
-🌐 [English](../../docs/project-notes.md) · [Français](../../fr/docs/project-notes.md) · **العربية**
+[English](../../docs/project-notes.md) · [Français](../../fr/docs/project-notes.md) · **العربية**
+
 
 ملاحظات داخلية لهذا المشروع: طريقة عملنا، والحقائق المؤكدة، وسجل التقدم الكامل، والأسئلة المفتوحة.
 النظرة العامة المنشورة موجودة في [README](../README.md).

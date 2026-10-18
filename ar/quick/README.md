@@ -2,7 +2,8 @@
 
 # VTOL Y3 · قوائم مهام سريعة
 
-🌐 [English](../../quick/README.md) · [Français](../../fr/quick/README.md) · **العربية**
+[English](../../quick/README.md) · [Français](../../fr/quick/README.md) · **العربية**
+
 
 قوائم فحص بأسلوب "افعل هذا ثم ذاك" لإعداد VTOL Y3. قراءة كل واحدة منها تستغرق بضع دقائق.
 هل تريد الأسباب ولقطات الشاشة والسجلات أيضًا؟ افتح **[الأدلة الكاملة في المتصفح](https://soufianeblog.github.io/dronev2/ar/)**.

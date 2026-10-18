@@ -1,6 +1,7 @@
 # 03 · Orientation et calibration
 
-🌐 [English](../../quick/03-orientation-calibration.md) · **Français** · [العربية](../../ar/quick/03-orientation-calibration.md)
+[English](../../quick/03-orientation-calibration.md) · **Français** · [العربية](../../ar/quick/03-orientation-calibration.md)
+
 
 [← 02](02-update-firmware.md) · [Sommaire](README.md) · [Suivant : 05 →](05-flysky-i6x.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html)
 

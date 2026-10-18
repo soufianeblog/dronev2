@@ -2,7 +2,8 @@
 
 # العصي والمفاتيح: كيف تتحرك VTOL Y3
 
-🌐 [English](../../quick/ref-stick-controls.md) · [Français](../../fr/quick/ref-stick-controls.md) · **العربية**
+[English](../../quick/ref-stick-controls.md) · [Français](../../fr/quick/ref-stick-controls.md) · **العربية**
+
 
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-stick-controls.html)
 

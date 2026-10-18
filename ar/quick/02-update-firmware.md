@@ -2,7 +2,8 @@
 
 # 02 · التحديث إلى ArduPlane 4.7.2
 
-🌐 [English](../../quick/02-update-firmware.md) · [Français](../../fr/quick/02-update-firmware.md) · **العربية**
+[English](../../quick/02-update-firmware.md) · [Français](../../fr/quick/02-update-firmware.md) · **العربية**
+
 
 [← 01](01-connect-and-check.md) · [الفهرس](README.md) · [التالي: 03 →](03-orientation-calibration.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html)
 

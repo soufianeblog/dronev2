@@ -2,7 +2,8 @@
 
 # تغييرات المعاملات: قبل → بعد
 
-🌐 [English](../../quick/ref-parameter-changes.md) · [Français](../../fr/quick/ref-parameter-changes.md) · **العربية**
+[English](../../quick/ref-parameter-changes.md) · [Français](../../fr/quick/ref-parameter-changes.md) · **العربية**
+
 
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-parameter-changes.html)
 

@@ -2,7 +2,8 @@
 
 # 04 · معايرة الراديو، أوضاع الطيران، مفتاح التسليح
 
-🌐 [English](../../quick/04-radio-modes-arming.md) · [Français](../../fr/quick/04-radio-modes-arming.md) · **العربية**
+[English](../../quick/04-radio-modes-arming.md) · [Français](../../fr/quick/04-radio-modes-arming.md) · **العربية**
+
 
 [← 05](05-flysky-i6x.md) · [الفهرس](README.md) · التالي: 06 التوصيلات ⏳ · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html)
 

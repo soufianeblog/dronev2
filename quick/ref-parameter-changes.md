@@ -1,6 +1,7 @@
 # Parameter changes: before → after
 
-🌐 **English** · [Français](../fr/quick/ref-parameter-changes.md) · [العربية](../ar/quick/ref-parameter-changes.md)
+**English** · [Français](../fr/quick/ref-parameter-changes.md) · [العربية](../ar/quick/ref-parameter-changes.md)
+
 
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html)
 

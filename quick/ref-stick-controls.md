@@ -1,6 +1,7 @@
 # Sticks and switches: how the VTOL Y3 moves
 
-🌐 **English** · [Français](../fr/quick/ref-stick-controls.md) · [العربية](../ar/quick/ref-stick-controls.md)
+**English** · [Français](../fr/quick/ref-stick-controls.md) · [العربية](../ar/quick/ref-stick-controls.md)
+
 
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-stick-controls.html)
 

@@ -1,11 +1,12 @@
 # VTOL Y3 : un drone qui vole comme un avion
 
-🌐 [English](../README.md) · **Français** · [العربية](../ar/README.md)
+[English](../README.md) · **Français** · [العربية](../ar/README.md)
+
 
 Un **VTOL tricoptère** à rotors basculants. Il décolle et atterrit comme un drone et vole comme un avion. Il tourne sous **ArduPlane 4.7.2** (QuadPlane) sur un **Pixhawk 2.4.8**, configuré avec **QGroundControl 5.1.5** et une radio **FlySky i6X**.
 
 > **Commencez ici**
-> - 🌐 **Guides complets dans le navigateur :** https://soufianeblog.github.io/dronev2/ (hors ligne : ouvrez `index.html`)
+> - **Guides complets dans le navigateur :** https://soufianeblog.github.io/dronev2/fr/ (hors ligne : ouvrez `index.html`)
 > - ✅ **Listes de tâches courtes :** [`quick/`](quick/README.md)
 > - 💾 **Sauvegardes des paramètres :** [`backups/`](../backups/) (la plus récente : `params_after-guide04.params`)
 

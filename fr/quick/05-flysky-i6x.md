@@ -1,6 +1,7 @@
 # 05 · Configuration de l'émetteur FlySky i6X
 
-🌐 [English](../../quick/05-flysky-i6x.md) · **Français** · [العربية](../../ar/quick/05-flysky-i6x.md)
+[English](../../quick/05-flysky-i6x.md) · **Français** · [العربية](../../ar/quick/05-flysky-i6x.md)
+
 
 [← 03](03-orientation-calibration.md) · [Sommaire](README.md) · [Suivant : 04 →](04-radio-modes-arming.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html)
 

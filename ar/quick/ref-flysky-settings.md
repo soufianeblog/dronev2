@@ -2,7 +2,8 @@
 
 # FlySky i6X: كل الإعدادات في لمحة
 
-🌐 [English](../../quick/ref-flysky-settings.md) · [Français](../../fr/quick/ref-flysky-settings.md) · **العربية**
+[English](../../quick/ref-flysky-settings.md) · [Français](../../fr/quick/ref-flysky-settings.md) · **العربية**
+
 
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-flysky-settings.html)
 

@@ -1,6 +1,7 @@
 # Manches et interrupteurs : comment le VTOL Y3 bouge
 
-🌐 [English](../../quick/ref-stick-controls.md) · **Français** · [العربية](../../ar/quick/ref-stick-controls.md)
+[English](../../quick/ref-stick-controls.md) · **Français** · [العربية](../../ar/quick/ref-stick-controls.md)
+
 
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-stick-controls.html)
 
