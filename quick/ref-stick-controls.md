@@ -2,8 +2,6 @@
 
 **English** · [Français](../fr/quick/ref-stick-controls.md) · [العربية](../ar/quick/ref-stick-controls.md)
 
-
-
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-stick-controls.html)
 
 **Legend:** red circle = what you move · red line = what it acts on · orange = aileron / faster motor · green = V-tail · blue = spinning propeller · arrows = direction.
@@ -86,12 +84,26 @@ The tilt servos lean the **left** motor forward and the **right** motor back. Th
 **Move:** SWA ↓ **down**  
 Motors armed (only if all safety checks pass). **SWA up = motors off immediately.**
 
+### Arm with the stick
+
+![Arm with the stick](../assets/drawings/arm-stick.svg)
+
+**Move:** Left stick ↓ + → **3 s**  
+Also arms (`ARMING_RUDDER = 2`). Left stick ↓ + ← for 2 s = disarm. Throttle must be fully down.
+
+### Drone mode, direct
+
+![Drone mode, direct](../assets/drawings/mode-qstabilize.svg)
+
+**Move:** SWC ↑ **up** = QSTABILIZE  
+Front motors point up. The throttle stick sets motor power directly: no height hold. Used for the first motor tests.
+
 ### Drone mode
 
 ![Drone mode](../assets/drawings/mode-drone.svg)
 
 **Move:** SWC **middle** = QHOVER  
-Front motors point up, all 3 motors lift. (SWC up = QLAND: lands and stops the motors.)
+Front motors point up, all 3 motors lift. Throttle stick in the middle = hold height.
 
 ### Airplane mode
 
@@ -100,7 +112,14 @@ Front motors point up, all 3 motors lift. (SWC up = QLAND: lands and stops the m
 **Move:** SWC ↓ **down** = FBWA  
 The front motors tilt forward, the tail motor stops, ailerons and V-tail steer.
 
-> ⚠️ Every direction is checked on the real aircraft, props off, in Guide 08 (outputs) before the first flight.
+### Return home
+
+![Return home](../assets/drawings/rtl-swb.svg)
+
+**Move:** SWB ↓ **down** = QRTL  
+Flies back to the take-off point as a drone and lands vertically (`Q_RTL_MODE = 3`). SWB up = back to the SWC mode. Keep SWB up to arm.
+
+> ⚠️ Every direction is checked on the real aircraft, props off, in Guide 06 (outputs) before the first flight.
 
 ---
 © 2026 bellocloud.com

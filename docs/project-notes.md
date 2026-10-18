@@ -4,6 +4,7 @@
 
 
 
+
 Internal notes for this project: how we work, verified facts, the full progress log and open questions.
 The public overview is the [README](../README.md).
 
@@ -325,6 +326,14 @@ The public overview is the [README](../README.md).
 - 2026-10-18 00:52 — **Reference pages + 3 languages:** new `guides/ref-stick-controls.html` (12 CoreWing-style 3/4 drawings: plane + transmitter, highlighted stick/switch, red line to the surface/motor; airplane + drone mode + switches), `guides/ref-flysky-settings.html` (2 changes + 9 checked screens as i6X LCD drawings, channel map), `guides/ref-parameter-changes.html` (every param change before→after→what for, kept settings, auto-changing values), each with an MD version in `quick/`. Drawings in `assets/drawings/`. Everything translated to French (`fr/`) and Arabic (`ar/`, RTL) with a language switcher on every page (big buttons on the start pages). © 2026 bellocloud.com footers + LICENSE. Commit history rewritten to remove AI co-author trailers. 489 relative links checked: 0 broken.
 
 - 2026-10-18 02:11 — **Guide 06 started (outputs + servo test).** Component photos (10) saved to `guides/guide6_screenshots/component_*.jpg` (resized, metadata stripped). Output map confirmed with the user: MAIN 1/2 ailerons (L/R), MAIN 3/4 V-tail (L/R), MAIN 5/6/8 ESCs (M1 front-right, M2 front-left, M4 tail), AUX 1/2 tilt servos (front-left/right) = matches SERVOn_FUNCTION. Before first power: narrow SERVO9/10 to 1100–1900 (were 800–1940 / 700–2100). Servo rail needs 5 V from one ESC BEC or the PDB 5 V BEC (never 12 V). Open: do the ESC leads carry 5 V (3 wires)?
+
+- 2026-10-18 02:16 — The user plugs the ESCs too (MAIN 5 front-right, 6 front-left, 8 tail) to test everything in one go. Guide 06 step 1 updated: props off; if ESC leads have a red 5 V wire, keep it only on the tail ESC (MAIN 8) to power the servo rail and pull it out of MAIN 5/6 plugs. Order: servo test → single-motor test (low throttle, direction) → ESC calibration.
+
+- 2026-10-18: Audit of params_after-guide04 vs user's wishes. OK: SERVO5/6/8 = Motor1/2/4 (33/34/36), RC5_OPTION=153 (SWA arm), logging already full (LOG_BACKEND_TYPE=1, LOG_BITMASK=65535, LOG_DISARMED=1; needs microSD). Found: SWC up = QLAND → arming refused in QLAND and throttle ignored (explains "throttle does nothing"). Plan: FLTMODE1/2 → QSTABILIZE (17); SWB → RTL (RC7_OPTION=4, after checking which channel SWB drives); Q_RTL_MODE 2 → 3 (QRTL always) for the hover-testing phase; ARMING_RUDDER 0 → 2 (stick arm right 3 s / disarm left 2 s, works alongside SWA). Motors spinning on their own: diagnosis pending (idle spin Q_M_SPIN_ARM=0.1 after arming is normal; otherwise ESC calibration via Q_ESC_CAL).
+
+- 2026-10-18: User applied (verified in backups/params_after-switches.params): FlySky Aux channels Channel 7 = SwB; RC7_OPTION=4 (SWB down = RTL); Q_RTL_MODE=3 (QRTL always); FLTMODE1/2=17 (SWC up = QSTABILIZE, arming allowed, direct throttle); ARMING_RUDDER=2 (left stick down+right 3 s arms, down+left 2 s disarms). SERVO9/10 safe tilt limits not yet changed.
+
+- 2026-10-18: Bench test reports: front motors spun once, tail motor (MAIN8) never; after battery re-plug none spin; throttle and stick arming do nothing (likely not armed: safety switch / PreArm). Open: does the kit's red safety switch exist on the SWITCH port (BRD_SAFETY_DEFLT=1 locks outputs without it)? Front tilt ranges differ (SERVO9 800–1940 rev, SERVO10 700–2100); user sees one tilt off by a few degrees, software not hardware (swap test). Waiting for PreArm messages + which side/position is off.
 
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.

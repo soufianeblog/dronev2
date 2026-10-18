@@ -4,6 +4,7 @@
 
 
 
+
 [Sommaire](README.md) · [Suivant : 02 →](02-update-firmware.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html)
 
 **Objectif :** voir ce qu'il y a sur la carte et le sauvegarder. Rien n'est modifié.

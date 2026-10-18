@@ -15,12 +15,14 @@
 <div class="site-bar"><div class="site-bar-in"><a class="brand" href="../index.html"><span class="brand-dot"></span>VTOL Y3 <span class="brand-text" style="font-weight:500;color:var(--muted)">Guides</span></a><nav class="lang-switch" aria-label="Language"><span aria-current="page" lang="en">English</span><a href="../fr/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html" hreflang="fr" lang="fr">Français</a><a href="../ar/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html" hreflang="ar" lang="ar">العربية</a></nav><button class="theme-btn" type="button" data-label-dark="Switch to dark mode" data-label-light="Switch to light mode" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button></div></div><!-- /site-bar -->
 <main>
 <header>
-  <div class="meta"><span class="pill">Guide 06</span><span class="pill">Created 2026-10-18 · 02:10</span><span class="pill">Rev 1</span><span class="pill">⏱ ~45 min</span><span class="pill">Status: in progress</span></div>
+  <div class="meta"><span class="pill">Guide 06</span><span class="pill">Created 2026-10-18 · 02:10</span><span class="pill">Rev 2 · 2026-10-18 15:40</span><span class="pill">⏱ ~45 min</span><span class="pill">Status: in progress</span></div>
   <h1>Outputs: plug in and test the servos (then the motors)</h1>
   <p class="lead">Connect the 6 servos and 3 ESCs to the right Pixhawk outputs, power the servo rail, and check that every surface and tilt servo moves the right way. Servos first. Motors come at the end of this guide, <strong>props off</strong>.</p>
 </header>
 
 <div class="box danger"><strong>Safety, for this whole guide:</strong> <strong>propellers OFF</strong> on all 3 motors. The LiPo is only connected when a step says so. Keep fingers away from the tilt mounts when the servos get power: they can snap to an end position.</div>
+
+<div class="box info"><strong>Status now (rev 2):</strong> all servos and the 3 ESCs are plugged in, and the servos move. The switches are set up (SWB = return home, SWC up = QStabilize, stick arming on), see <a href="#switches">Step 6</a>. The motors don't spin yet because the Pixhawk refuses to arm. <a href="#prearm">Step 7</a> explains why and what is left: battery reading, compass calibration. Backup: <a href="../backups/params_after-switches.params" download><code>params_after-switches.params</code></a>.</div>
 
 <h2>Your parts</h2>
 <div class="lcd-grid"><figure><img src="guide6_screenshots/component_020039175.jpg" alt="4 × EMAX ES08MA II servos (wings + tail)" loading="lazy"><figcaption>4 × EMAX ES08MA II servos (wings + tail)</figcaption></figure><figure><img src="guide6_screenshots/component_020058500.jpg" alt="M8N GPS + compass" loading="lazy"><figcaption>M8N GPS + compass</figcaption></figure><figure><img src="guide6_screenshots/component_020110839.jpg" alt="3S 3000 mAh 60C LiPo" loading="lazy"><figcaption>3S 3000 mAh 60C LiPo</figcaption></figure><figure><img src="guide6_screenshots/component_020159193.jpg" alt="30A ESC + A2212 1000 KV motor" loading="lazy"><figcaption>30A ESC + A2212 1000 KV motor</figcaption></figure><figure><img src="guide6_screenshots/component_020202710.jpg" alt="PDB (XT60, 5 V + 12 V BEC)" loading="lazy"><figcaption>PDB (XT60, 5 V + 12 V BEC)</figcaption></figure><figure><img src="guide6_screenshots/component_020205063.jpg" alt="PDB, other side" loading="lazy"><figcaption>PDB, other side</figcaption></figure><figure><img src="guide6_screenshots/component_020212048.jpg" alt="Front motor on its tilt mount (tilt servo)" loading="lazy"><figcaption>Front motor on its tilt mount (tilt servo)</figcaption></figure><figure><img src="guide6_screenshots/component_020225335.jpg" alt="FS-iA10B receiver + encoder wires" loading="lazy"><figcaption>FS-iA10B receiver + encoder wires</figcaption></figure><figure><img src="guide6_screenshots/component_020231668.jpg" alt="Power module (XT60)" loading="lazy"><figcaption>Power module (XT60)</figcaption></figure><figure><img src="guide6_screenshots/component_020235669.jpg" alt="Power module v1.0" loading="lazy"><figcaption>Power module v1.0</figcaption></figure></div>
@@ -49,7 +51,8 @@
     <li>Each servo plug has 3 wires: <b>brown/black = −</b>, <b>red = +</b>, <b>orange/yellow/white = signal</b>.</li>
     <li>On the Pixhawk pin row, the <b>signal pin is the top row</b> (the side with the labels "MAIN OUT" / "AUX OUT"), <b>+ in the middle</b>, <b>− at the bottom</b> (next to the board's base). So: <b>orange/yellow on top, brown/black at the bottom</b>.</li>
     <li>Plug in following the table: MAIN 1 left aileron, MAIN 2 right aileron, MAIN 3 left tail, MAIN 4 right tail, AUX 1 left tilt, AUX 2 right tilt.</li>
-    <li>Leave the ESC plugs <b>out</b> for now.</li>
+    <li>Plug the 3 ESC signal leads: <b>MAIN 5</b> front right ESC, <b>MAIN 6</b> front left ESC, <b>MAIN 8</b> tail ESC (same orientation). <b>Propellers OFF.</b></li>
+    <li><b>ESC red wires (3-wire plugs):</b> keep the red (5 V) wire only on the <b>tail ESC (MAIN 8)</b>, which powers the servo rail. On MAIN 5 and MAIN 6, lift the plug's small plastic tab with a needle, pull the red wire's pin out, tape it. Two or three ESC BECs in parallel fight each other.</li>
   </ol>
   <p>📸 Photo of the pin row with the plugs in (so the order and the orientation can be checked).</p>
 </div></div>
@@ -84,7 +87,7 @@
   <ol>
     <li>Props off. Transmitter on, switches up, throttle down.</li>
     <li>USB in, then the LiPo (to power the rail).</li>
-    <li><b>Press and hold the safety button</b> (on the GPS mast or separate) until its light is <b>solid</b>. This only allows the outputs to move; it doesn't arm anything.</li>
+    <li><b>Press and hold the safety button</b> for 2 s until its light is <b>solid</b>. It is the small square red button with a light, on its own cable, plugged into the Pixhawk port <b>SWITCH</b> (not on the GPS). This only allows the outputs to move; it doesn't arm anything.</li>
     <li>SWC <b>down</b> (FBWA).</li>
     <li>QGC → <b>Vehicle Configuration → Servo Outputs</b>: each row shows the live <b>Position</b> of one output.</li>
     <li>Move the sticks and compare with the table (and the <a href="ref-stick-controls.html">drawings</a>):
@@ -108,6 +111,57 @@
   </ol>
 </div></div>
 
+<h2 id="switches">Step 6: Switches and modes (done 2026-10-18)</h2>
+<div class="step"><div class="num">6</div><div>
+  <p>What each control does now, and the setting behind it:</p>
+  <div class="table-wrap"><table><tr><th>Control</th><th>Action</th><th>Where it is set</th></tr>
+  <tr><td>Left stick ↑↓ (CH3)</td><td>Throttle of the 3 motors (only when armed)</td><td>Radio calibration</td></tr>
+  <tr><td><b>SWA</b> (CH5)</td><td>Down = arm (motors allowed), up = disarm</td><td><code>RC5_OPTION = 153</code></td></tr>
+  <tr><td><b>SWB</b> (CH7)</td><td>Down = <b>return home</b> (RTL), up = back to the SWC mode</td><td>FlySky <i>Aux. channels → Channel 7 = SwB</i> + <code>RC7_OPTION = 4</code></td></tr>
+  <tr><td><b>SWC</b> (CH6)</td><td>Up = <b>QStabilize</b> (drone, direct throttle) · middle = QHover (drone, holds height) · down = FBWA (airplane)</td><td><code>FLTMODE1</code>/<code>FLTMODE2</code> = 17, 3/4 = 18, 5/6 = 5</td></tr>
+  <tr><td>Left stick ↓ + → 3 s</td><td>Arm (same as SWA down)</td><td><code>ARMING_RUDDER = 2</code></td></tr>
+  <tr><td>Left stick ↓ + ← 2 s</td><td>Disarm</td><td><code>ARMING_RUDDER = 2</code></td></tr>
+  </table></div>
+  <p>How it was done, one change at a time:</p>
+  <ol>
+    <li><b>Check the channels:</b> QGC → <b>Vehicle Configuration → Radio</b>, <i>Channel Monitor</i>. Sticks = 1–4, SWA = 5, SWC = 6, SWB = nothing (not sent yet).</li>
+    <li><b>Send SWB on channel 7</b> (FlySky): hold <b>OK</b> → <b>Functions setup</b> → <b>Aux. channels</b> → <b>Channel 7</b> → <b>SwB</b> → hold <b>CANCEL</b> to save. Bar 7 in the Channel Monitor now jumps with SWB.</li>
+    <li><b>SWB = return home:</b> QGC → <b>Vehicle Configuration → Flight Modes</b> → <i>Switch Options</i> → <b>Channel option 7 = RTL</b>. The label turns yellow when SWB is down.</li>
+    <li><b>Return home as a drone:</b> <b>Parameters</b> → <code>Q_RTL_MODE</code> = <b>QRTL Always</b> (3). Was 2 (VTOL approach: flies home as an airplane, then lands vertically). Drone-style is simpler while all flights are near you; switch back once airplane mode is proven.</li>
+    <li><b>SWC up = QStabilize:</b> <b>Flight Modes</b> → <b>Flight Mode 1</b> and <b>2</b> = <b>QStabilize</b>. Was QLand: the Pixhawk <b>refuses to arm in QLand</b> and ignores the throttle there, which is why the throttle did nothing.</li>
+    <li><b>Stick arming:</b> <b>Parameters</b> → <code>ARMING_RUDDER</code> = <b>ArmOrDisarm</b> (2). Was 0 (off). Works together with SWA. Throttle must be fully down.</li>
+    <li><b>Backup:</b> <b>Parameters → Tools → Refresh</b>, then <b>Tools → Save to file</b> → <code>backups/params_after-switches.params</code>. All 5 changes verified in the file.</li>
+  </ol>
+</div></div>
+
+<h2 id="prearm">Step 7: Why the motors don't spin yet</h2>
+<div class="step"><div class="num">7</div><div>
+  <p>Motors only spin when the Pixhawk is <b>armed</b>. Before arming it runs a safety checklist (<i>PreArm checks</i>). If one item fails it refuses, so SWA, the stick and the throttle do nothing. This is the Pixhawk, not QGroundControl: QGC only shows the messages (click the status text in the top bar of the <b>Fly</b> screen, or the megaphone icon).</p>
+  <div class="table-wrap"><table><tr><th>Message</th><th>Meaning</th><th>Fix</th><th>Status</th></tr>
+  <tr><td><code>Hardware safety switch</code></td><td>Red safety button not pressed</td><td>Hold it 2 s until solid</td><td>✅ gone</td></tr>
+  <tr><td><code>QLand mode not armable</code></td><td>SWC up was QLand</td><td>Flight Mode 1/2 = QStabilize</td><td>✅ fixed</td></tr>
+  <tr><td><code>QRTL mode not armable</code></td><td>SWB was down</td><td>Keep SWB up to arm</td><td>✅ normal</td></tr>
+  <tr><td><code>RC calibrating</code></td><td>QGC's <b>Radio</b> page is open</td><td>Leave that page (go to <b>Fly</b>)</td><td>✅ easy</td></tr>
+  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>The Pixhawk reads less than 10.5 V (<code>BATT_LOW_VOLT</code>)</td><td>Charged battery read 12.48 V on the charger → the Pixhawk reading is probably wrong. Compare with the battery icon in QGC.</td><td>⏳ in progress</td></tr>
+  <tr><td><code>Compass not calibrated</code></td><td>Compass needs calibrating</td><td>Outdoors, <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">Guide 03</a> part E</td><td>⏳ to do</td></tr>
+  <tr><td><code>Board (4.2v) out of range</code></td><td>Pixhawk only on USB, voltage a bit low</td><td>Goes away with the battery + power module</td><td>ℹ️ info</td></tr>
+  </table></div>
+  <div class="box info"><strong>ESC beeps:</strong> while disarmed, each ESC beeps every few seconds, meaning "powered, waiting for a throttle signal". It is normal and stops when the Pixhawk arms.</div>
+  <div class="box info"><strong>Charging the battery (iMAX B6):</strong> program <b>LiPo</b>, <b>3S</b>, <b>3.0 A</b> (1C for 3000 mAh), balance lead plugged. Screen <code>LI3S 3.0A 12.48V CHG 000:31 00013</code> = LiPo 3 cells, 3 A, 12.48 V now, 31 s, 13 mAh in. Full = 12.6 V. Never leave it unattended.</div>
+</div></div>
+
+<h2>Still to do in this guide</h2>
+<ul class="check">
+  <li>Battery voltage: compare QGC's battery icon with the charger (12.6 V full), correct the reading if needed</li>
+  <li>Compass calibration outdoors</li>
+  <li>Arm test: SWA down, then the left stick. Motors start slow, stop on disarm</li>
+  <li>Throttle test: all 3 motors speed up together. Tail motor (MAIN 8) did not spin in the first try, check it here</li>
+  <li>ESC calibration if the motors don't start/stop evenly</li>
+  <li>Spin direction of each motor</li>
+  <li>Tilt servos (<code>SERVO9</code> left, <code>SERVO10</code> right): the ranges differ (800–1940 reversed vs 700–2100), so one motor stops a few degrees off. Read the live values in <b>Servo Outputs</b> in drone and airplane position, then adjust that end</li>
+  <li>SWB check: Flight mode shows QRTL when SWB is down</li>
+</ul>
+
 <h2>Report back</h2>
 <ul class="check">
   <li>Photo of the pin row (step 1)</li>
@@ -117,7 +171,7 @@
   <li>Tilt servos: up / forward correct? Any buzzing?</li>
 </ul>
 
-<footer><a href="../index.html">All guides</a> · VTOL Y3 · Guide 06 · created 2026-10-18 02:10 · rev 1 · © 2026 bellocloud.com</footer>
+<footer><a href="../index.html">All guides</a> · VTOL Y3 · Guide 06 · created 2026-10-18 02:10 · rev 2 (2026-10-18 15:40) · © 2026 bellocloud.com</footer>
 </main>
 </body>
 </html>

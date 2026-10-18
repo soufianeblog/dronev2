@@ -6,6 +6,7 @@
 
 
 
+
 [الفهرس](README.md) · [التالي: 02 →](02-update-firmware.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html)
 
 **الهدف:** معرفة ما هو موجود على اللوحة وأخذ نسخة احتياطية منه. لا يتم تغيير أي شيء.

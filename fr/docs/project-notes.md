@@ -4,6 +4,7 @@
 
 
 
+
 Notes internes de ce projet : notre méthode de travail, les faits vérifiés, le journal complet d'avancement et les questions ouvertes.
 La présentation publique est le [README](../README.md).
 
@@ -321,6 +322,12 @@ La présentation publique est le [README](../README.md).
 - 2026-10-17 21:46 — `quick/` réécrit dans un format convivial : la même mise en page dans chaque fichier (navigation ← Sommaire →, lien vers le guide complet, Objectif / Il vous faut, étapes à cocher ☐, ✅ Terminé quand, tableau Problèmes), plus un quick/README avec un résumé de l'appareil, la liste ordonnée (05 avant 04), les durées et les règles. Rendu vérifié avec l'API Markdown de GitHub (tableaux + 52 cases à cocher). README : ligne Sommaire.
 
 - 2026-10-17 21:48 — **Séparation du README** (utilisateur : le README contenait des informations internes inutiles) : README.md est maintenant une courte présentation publique (appareil, commandes, tableau d'avancement avec liens HTML + MD, matériel, sécurité, organisation du dépôt). Tout ce qui est interne (règles de travail, faits connus, plan des sorties, tableau PreArm, détails de la feuille de route, journal d'avancement, questions ouvertes) a été déplacé ici dans `docs/project-notes.md`, qui est désormais la source de vérité pour les faits et l'historique.
+
+- 2026-10-18 : Audit de params_after-guide04 par rapport aux souhaits de l'utilisateur. OK : SERVO5/6/8 = Motor1/2/4 (33/34/36), RC5_OPTION=153 (SWA arme), journalisation déjà complète (LOG_BACKEND_TYPE=1, LOG_BITMASK=65535, LOG_DISARMED=1 ; nécessite une microSD). Trouvé : SWC en haut = QLAND → armement refusé en QLAND et gaz ignorés (explique « les gaz ne font rien »). Plan : FLTMODE1/2 → QSTABILIZE (17) ; SWB → RTL (RC7_OPTION=4, après avoir vérifié quelle voie SWB commande) ; Q_RTL_MODE 2 → 3 (QRTL toujours) pour la phase d'essais en vol stationnaire ; ARMING_RUDDER 0 → 2 (armement au manche à droite 3 s / désarmement à gauche 2 s, fonctionne avec SWA). Moteurs qui tournent tout seuls : diagnostic en attente (rotation au ralenti Q_M_SPIN_ARM=0.1 après l'armement = normal ; sinon calibration des ESC via Q_ESC_CAL).
+
+- 2026-10-18 : Appliqué par l'utilisateur (vérifié dans backups/params_after-switches.params) : FlySky Aux. channels Channel 7 = SwB ; RC7_OPTION=4 (SWB en bas = RTL) ; Q_RTL_MODE=3 (QRTL toujours) ; FLTMODE1/2=17 (SWC en haut = QSTABILIZE, armement possible, gaz directs) ; ARMING_RUDDER=2 (manche gauche en bas+droite 3 s arme, en bas+gauche 2 s désarme). Limites sûres de basculement SERVO9/10 pas encore modifiées.
+
+- 2026-10-18 : Retours du test sur table : les moteurs avant ont tourné une fois, le moteur arrière (MAIN8) jamais ; après rebranchement de la batterie aucun ne tourne ; les gaz et l'armement au manche ne font rien (probablement pas armé : bouton de sécurité / PreArm). Ouvert : le bouton de sécurité rouge du kit est-il présent sur le port SWITCH (BRD_SAFETY_DEFLT=1 bloque les sorties sans lui) ? Les plages de basculement avant diffèrent (SERVO9 800–1940 inv., SERVO10 700–2100) ; l'utilisateur voit un basculement décalé de quelques degrés, logiciel et non matériel (test d'inversion). En attente des messages PreArm + quel côté/quelle position est décalé.
 
 ### Questions ouvertes
 - ✅ Paramètres Q_ : simplement le téléchargement anticipé de QGC. Toujours faire Refresh ~30 s après le démarrage avant de modifier/enregistrer.

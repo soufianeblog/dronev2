@@ -2,8 +2,6 @@
 
 **English** · [Français](../fr/quick/ref-flysky-settings.md) · [العربية](../ar/quick/ref-flysky-settings.md)
 
-
-
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-flysky-settings.html)
 
 Only **2 settings were changed**. 9 more screens were checked and were already correct.
@@ -26,9 +24,9 @@ Only **2 settings were changed**. 9 more screens were checked and were already c
 
 | Before | After |
 |---|---|
-| Channel 5 = VrA · Channel 6 = VrB | Channel 5 = **SwA** · Channel 6 = **SwC** |
+| Channel 5 = VrA · Channel 6 = VrB · Channel 7 = none | Channel 5 = **SwA** · Channel 6 = **SwC** · Channel 7 = **SwB** |
 
-SWA now arms/disarms (Pixhawk `RC5_OPTION=153`). SWC now picks the flight mode (Pixhawk `FLTMODE_CH=6`). The knobs VrA/VrB are no longer used.
+SWA now arms/disarms (Pixhawk `RC5_OPTION=153`). SWC now picks the flight mode (Pixhawk `FLTMODE_CH=6`). SWB (Channel 7, added 2026-10-18, Guide 06) = return home (Pixhawk `RC7_OPTION=4`). The knobs VrA/VrB are no longer used.
 
 ### System setup → RX setup → Output mode
 
@@ -63,7 +61,8 @@ A PPM encoder board sits between the receiver and the Pixhawk RC IN. It needs on
 | Ch3 | Left stick ↑↓ | Throttle |
 | Ch4 | Left stick ←→ | Yaw |
 | Ch5 | SWA | Arm (down) / disarm (up) |
-| Ch6 | SWC | QLAND (up) · QHOVER (middle) · FBWA (down) |
+| Ch6 | SWC | QSTABILIZE (up) · QHOVER (middle) · FBWA (down) |
+| Ch7 | SWB | Return home, QRTL (down) / back to the SWC mode (up) |
 
 > ⚠️ **Never open RX setup → RF standard.** Changing it can break the link to the receiver.
 

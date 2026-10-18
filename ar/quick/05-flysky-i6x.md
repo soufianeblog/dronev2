@@ -6,6 +6,7 @@
 
 
 
+
 [← 03](03-orientation-calibration.md) · [الفهرس](README.md) · [التالي: 04 →](04-radio-modes-arming.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html)
 
 **الهدف:** جهاز إرسال نظيف. بدون خلط، SWA على Ch5، وSWC على Ch6.

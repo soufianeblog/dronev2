@@ -4,9 +4,10 @@
 
 
 
+
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-parameter-changes.html)
 
-Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-guide04.params` (maintenant). **Gras** = modifié.
+Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-switches.params` (la plus récente, Guide 06). **Gras** = modifié.
 
 ## Toutes les modifications
 
@@ -38,7 +39,11 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | Interrupteurs | `RC13_OPTION` | 24 Auto mission reset | **0** | 04 | Ancienne fonction résiduelle supprimée. |
 | Interrupteurs | `RC14_OPTION` | 16 AUTO mode | **0** | 04 | Ancienne fonction résiduelle supprimée. |
 | Interrupteurs | `RC16_OPTION` | 154 ArmDisarm with AirMode | **0** | 04 | Ancienne fonction résiduelle supprimée (un second interrupteur d'armement sur une voie que le récepteur n'envoie pas). |
-| Armement | `ARMING_RUDDER` | 2 ArmOrDisarm | **0 Disabled** | 04 | Plus d'armement avec les manches (gaz en bas + lacet à droite). SWA est le seul moyen d'armer. |
+| Armement | `ARMING_RUDDER` | 2 ArmOrDisarm | **0 Disabled** | 04 | Plus d'armement avec les manches (gaz en bas + lacet à droite). SWA est le seul moyen d'armer. (Armement au manche réactivé dans le Guide 06, voir plus bas.) |
+| Interrupteurs et modes | `RC7_OPTION` | 0 Do Nothing | **4 RTL** | 06 | SWB (voie 7) en bas = retour au point de départ ; en haut = retour au mode de SWC. |
+| Interrupteurs et modes | `Q_RTL_MODE` | 2 approche VTOL | **3 QRTL Always** | 06 | Retour en drone et atterrissage vertical (avant : retour en avion, puis atterrissage vertical). |
+| Interrupteurs et modes | `FLTMODE1 / FLTMODE2` | 20 QLAND / 20 QLAND | **17 QSTABILIZE / 17 QSTABILIZE** | 06 | SWC en haut = QStabilize : drone avec gaz directs. Le Pixhawk ne peut pas s'armer en QLand et y ignorait les gaz. |
+| Interrupteurs et modes | `ARMING_RUDDER` | 0 Disabled | **2 ArmOrDisarm** | 06 | Manche gauche en bas + droite 3 s arme, en bas + gauche 2 s désarme. Fonctionne avec SWA. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmé) | 04 | GPS sur le port 1, détection automatique (u-blox M8N). Il a affiché 0 une fois car QGC avait chargé une liste incomplète ; réglé sur Auto et confirmé. |
 
 ## Réglages importants conservés de l'ancienne configuration

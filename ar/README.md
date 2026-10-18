@@ -6,12 +6,13 @@
 
 
 
+
 طائرة **VTOL ثلاثية المراوح** بمراوح قابلة للإمالة. تقلع وتهبط مثل الطائرة المسيّرة (الدرون) وتطير مثل الطائرة ذات الأجنحة. تعمل بنظام **ArduPlane 4.7.2** (QuadPlane) على **Pixhawk 2.4.8**، ويتم إعدادها باستخدام **QGroundControl 5.1.5** وجهاز الإرسال **FlySky i6X**.
 
 > **ابدأ من هنا**
 > - **الأدلة الكاملة في المتصفح:** https://soufianeblog.github.io/dronev2/ar/ (دون اتصال: افتح `index.html`)
 > - ✅ **قوائم مهام مختصرة:** [`quick/`](quick/README.md)
-> - 💾 **النسخ الاحتياطية للمعاملات:** [`backups/`](../backups/) (الأحدث: `params_after-guide04.params`) · **[⬇ تنزيل أحدث نسخة احتياطية](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-guide04.params)**
+> - 💾 **النسخ الاحتياطية للمعاملات:** [`backups/`](../backups/) (الأحدث: `params_after-switches.params`) · **[⬇ تنزيل أحدث نسخة احتياطية](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-switches.params)**
 
 ## الطائرة
 

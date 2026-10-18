@@ -6,6 +6,7 @@
 
 
 
+
 [← 05](05-flysky-i6x.md) · [الفهرس](README.md) · [التالي: 06 ←](06-outputs-servo-test.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html)
 
 **الهدف:** أن يقرأ Pixhawk إشارة الراديو. يختار SWC وضع الطيران، ويقوم SWA بالتسليح.

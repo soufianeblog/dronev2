@@ -6,6 +6,7 @@
 
 
 
+
 [← 01](01-connect-and-check.md) · [الفهرس](README.md) · [التالي: 03 →](03-orientation-calibration.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html)
 
 **الهدف:** تثبيت أحدث برنامج ثابت مستقر مع الاحتفاظ بجميع الإعدادات القديمة.

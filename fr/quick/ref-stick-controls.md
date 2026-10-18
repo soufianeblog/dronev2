@@ -4,6 +4,7 @@
 
 
 
+
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-stick-controls.html)
 
 **Légende :** cercle rouge = ce que vous bougez · trait rouge = ce sur quoi il agit · orange = aileron / moteur plus rapide · vert = empennage en V · bleu = hélice en rotation · flèches = sens.
@@ -86,12 +87,26 @@ Les servos de bascule inclinent le moteur **gauche** vers l'avant et le moteur *
 **Mouvement :** SWA ↓ **en bas**  
 Moteurs armés (seulement si toutes les vérifications de sécurité passent). **SWA en haut = moteurs coupés immédiatement.**
 
+### Armer au manche
+
+![Armer au manche](../../assets/drawings/arm-stick.svg)
+
+**Mouvement :** manche gauche ↓ + → **3 s**  
+Arme aussi (`ARMING_RUDDER = 2`). Manche gauche ↓ + ← pendant 2 s = désarmer. Les gaz doivent être tout en bas.
+
+### Mode drone, direct
+
+![Mode drone, direct](../../assets/drawings/mode-qstabilize.svg)
+
+**Mouvement :** SWC ↑ **en haut** = QSTABILIZE  
+Les moteurs avant pointent vers le haut. Le manche des gaz règle directement la puissance des moteurs : pas de maintien d'altitude. Utilisé pour les premiers tests moteurs.
+
 ### Mode drone
 
 ![Mode drone](../../assets/drawings/mode-drone.svg)
 
 **Mouvement :** SWC **au milieu** = QHOVER  
-Les moteurs avant pointent vers le haut, les 3 moteurs assurent la portance. (SWC en haut = QLAND : atterrit et coupe les moteurs.)
+Les moteurs avant pointent vers le haut, les 3 moteurs assurent la portance. Manche des gaz au milieu = maintien de l'altitude.
 
 ### Mode avion
 
@@ -100,7 +115,14 @@ Les moteurs avant pointent vers le haut, les 3 moteurs assurent la portance. (SW
 **Mouvement :** SWC ↓ **en bas** = FBWA  
 Les moteurs avant basculent vers l'avant, le moteur arrière s'arrête, les ailerons et l'empennage en V pilotent.
 
-> ⚠️ Chaque sens est vérifié sur l'appareil réel, hélices retirées, dans le Guide 08 (sorties) avant le premier vol.
+### Retour au point de départ
+
+![Retour au point de départ](../../assets/drawings/rtl-swb.svg)
+
+**Mouvement :** SWB ↓ **en bas** = QRTL  
+Revient au point de décollage en drone et atterrit à la verticale (`Q_RTL_MODE = 3`). SWB en haut = retour au mode de SWC. Gardez SWB en haut pour armer.
+
+> ⚠️ Chaque sens est vérifié sur l'appareil réel, hélices retirées, dans le Guide 06 (sorties) avant le premier vol.
 
 ---
 © 2026 bellocloud.com

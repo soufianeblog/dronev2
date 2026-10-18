@@ -4,6 +4,7 @@
 
 
 
+
 [← 05](05-flysky-i6x.md) · [Index](README.md) · [Next: 06 →](06-outputs-servo-test.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html)
 
 **Goal:** the Pixhawk reads the radio. SWC picks the flight mode, SWA arms.

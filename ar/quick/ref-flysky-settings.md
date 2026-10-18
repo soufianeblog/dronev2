@@ -6,6 +6,7 @@
 
 
 
+
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-flysky-settings.html)
 
 تم **تغيير إعدادين فقط**. وتم فحص 9 شاشات أخرى وكانت صحيحة أصلًا.
@@ -28,9 +29,9 @@
 
 | قبل | بعد |
 |---|---|
-| Channel 5 = VrA · Channel 6 = VrB | Channel 5 = **SwA** · Channel 6 = **SwC** |
+| Channel 5 = VrA · Channel 6 = VrB · Channel 7 = لا شيء | Channel 5 = **SwA** · Channel 6 = **SwC** · Channel 7 = **SwB** |
 
-أصبح SWA الآن يقوم بالتسليح/فك التسليح (في Pixhawk `RC5_OPTION=153`). وأصبح SWC يختار وضع الطيران (في Pixhawk `FLTMODE_CH=6`). لم يعد المقبضان VrA/VrB مستخدمين.
+أصبح SWA الآن يقوم بالتسليح/فك التسليح (في Pixhawk `RC5_OPTION=153`). وأصبح SWC يختار وضع الطيران (في Pixhawk `FLTMODE_CH=6`). و<bdi>SWB</bdi> (القناة 7، أُضيف في 2026-10-18، الدليل 06) = العودة إلى نقطة الإقلاع (في Pixhawk `RC7_OPTION=4`). لم يعد المقبضان VrA/VrB مستخدمين.
 
 ### System setup → RX setup → Output mode
 
@@ -65,7 +66,8 @@
 | Ch3 | العصا اليسرى ↑↓ | الخانق (Throttle) |
 | Ch4 | العصا اليسرى ←→ | الانعراج (Yaw) |
 | Ch5 | SWA | تسليح (للأسفل) / فك التسليح (للأعلى) |
-| Ch6 | SWC | QLAND (للأعلى) · QHOVER (الوسط) · FBWA (للأسفل) |
+| Ch6 | SWC | QSTABILIZE (للأعلى) · QHOVER (الوسط) · FBWA (للأسفل) |
+| Ch7 | SWB | العودة إلى نقطة الإقلاع، QRTL (للأسفل) / الرجوع إلى وضع SWC (للأعلى) |
 
 > ⚠️ **لا تفتح أبدًا RX setup → RF standard.** تغييره قد يقطع الاتصال بجهاز الاستقبال.
 

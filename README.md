@@ -4,12 +4,13 @@
 
 
 
+
 A tilt-rotor **tricopter VTOL**. It takes off and lands like a drone and flies like an airplane. Runs **ArduPlane 4.7.2** (QuadPlane) on a **Pixhawk 2.4.8**, set up with **QGroundControl 5.1.5** and a **FlySky i6X** radio.
 
 > **Start here**
 > - **Full guides in the browser:** https://soufianeblog.github.io/dronev2/ (offline: open `index.html`)
 > - ✅ **Short task lists:** [`quick/`](quick/README.md)
-> - 💾 **Parameter backups:** [`backups/`](backups/) · **[⬇ Download the latest backup](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-guide04.params)** (`params_after-guide04.params`)
+> - 💾 **Parameter backups:** [`backups/`](backups/) · **[⬇ Download the latest backup](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-switches.params)** (`params_after-switches.params`)
 
 ## The aircraft
 
