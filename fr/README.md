@@ -8,7 +8,7 @@ Un **VTOL tricoptère** à rotors basculants. Il décolle et atterrit comme un d
 > **Commencez ici**
 > - **Guides complets dans le navigateur :** https://soufianeblog.github.io/dronev2/fr/ (hors ligne : ouvrez `index.html`)
 > - ✅ **Listes de tâches courtes :** [`quick/`](quick/README.md)
-> - 💾 **Sauvegardes des paramètres :** [`backups/`](../backups/) (la plus récente : `params_after-guide04.params`)
+> - 💾 **Sauvegardes des paramètres :** [`backups/`](../backups/) (la plus récente : `params_after-guide04.params`) · **[⬇ Télécharger la dernière sauvegarde](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-guide04.params)**
 
 ## L'appareil
 
