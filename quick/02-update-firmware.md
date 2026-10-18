@@ -1,5 +1,7 @@
 # 02 · Update to ArduPlane 4.7.2
 
+🌐 **English** · [Français](../fr/quick/02-update-firmware.md) · [العربية](../ar/quick/02-update-firmware.md)
+
 [← 01](01-connect-and-check.md) · [Index](README.md) · [Next: 03 →](03-orientation-calibration.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html)
 
 **Goal:** install the latest stable firmware and keep all old settings.
@@ -33,3 +35,6 @@
 | *"Vehicle did not return the full parameter list"* | **Parameters → Tools → Refresh** |
 | The popup offers Multi-Rotor | Change it to **Plane**. It's the most common mistake. |
 | The flash failed | Click Flash again. The bootloader is safe, so the board can't be "bricked". |
+
+---
+© 2026 bellocloud.com

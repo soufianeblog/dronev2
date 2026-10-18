@@ -1,5 +1,7 @@
 # VTOL Y3 · Quick task lists
 
+🌐 **English** · [Français](../fr/quick/README.md) · [العربية](../ar/quick/README.md)
+
 Do-this-then-that checklists for setting up the VTOL Y3. Each one takes a few minutes to read.
 Want the reasons, screenshots and logs too? Open the **[full guides in the browser](https://soufianeblog.github.io/dronev2/)**.
 
@@ -24,6 +26,14 @@ Want the reasons, screenshots and logs too? Open the **[full guides in the brows
 | 04 | [Radio calibration, flight modes, arm switch](04-radio-modes-arming.md) | 30 min | ✅ Done |
 | 06 | Wiring | | ⏳ Next |
 
+## Reference pages
+
+| Page | What it shows |
+|---|---|
+| [Sticks and switches](ref-stick-controls.md) | Drawings: how each stick and switch moves the aircraft |
+| [FlySky i6X settings](ref-flysky-settings.md) | Every transmitter setting, changed and checked |
+| [Parameter changes](ref-parameter-changes.md) | Every ArduPlane parameter changed: before → after → why |
+
 > Do **05 before 04**: the transmitter must be set up before the Pixhawk can calibrate it.
 
 ## Rules for every task list
@@ -35,3 +45,6 @@ Want the reasons, screenshots and logs too? Open the **[full guides in the brows
   - **Setup pages:** click the purple **Q** icon (top-left) → **Vehicle Configuration**.
   - **Main map screen:** **Q** icon → **Fly**.
   - **Messages:** the message icon in the top bar.
+
+---
+© 2026 bellocloud.com

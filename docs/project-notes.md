@@ -1,9 +1,11 @@
 # Project notes (working file)
 
+🌐 **English** · [Français](../fr/docs/project-notes.md) · [العربية](../ar/docs/project-notes.md)
+
 Internal notes for this project: how we work, verified facts, the full progress log and open questions.
 The public overview is the [README](../README.md).
 
-**Contents:** [Working rules](#how-claude-helps-working-rules) · [Known facts](#known-facts-verified-on-the-real-hardware) · [Roadmap](#roadmap-planned-guides-may-change-as-we-learn) · [Progress log](#progress-log) · [Open questions](#open-questions)
+**Contents:** [Working rules](#working-rules) · [Known facts](#known-facts-verified-on-the-real-hardware) · [Roadmap](#roadmap-planned-guides-may-change-as-we-learn) · [Progress log](#progress-log) · [Open questions](#open-questions)
 
 ## Firmware targets
 
@@ -44,7 +46,7 @@ The public overview is the [README](../README.md).
 
 ---
 
-## How Claude helps (working rules)
+## Working rules
 
 ### 1. One step at a time, one HTML guide per step
 - Each step is a **separate HTML file** in `guides/`.
@@ -52,10 +54,10 @@ The public overview is the [README](../README.md).
 - Each guide shows its **guide number** and **creation date/time** at the top.
 - Open a guide by double-clicking it (it opens in Safari or Chrome). Guides work offline.
 
-### 2. You do the work, Claude guides
-- Claude **never changes your hardware, firmware or parameters itself**: no scripts, no MAVLink connection, no closing QGC. Claude writes instructions and you carry them out (confirmed by the user 2026-10-17).
+### 2. You do the work, the guides explain
+- The guides **never change your hardware, firmware or parameters automatically**: no scripts, no MAVLink connection, no closing QGC. Every change is written as an instruction and you carry it out (confirmed by the user 2026-10-17).
 - Each guide ends with a **"Report back"** section listing exactly what to send.
-- **Prefer files over questions:** Claude can't see the live Pixhawk (QGC holds the USB link), so instead of asking for single values it asks for a **parameter file** (Parameters → Tools → Save to file → `backups/`) plus the **Vehicle Messages**, and reads everything from those.
+- **Prefer files over questions:** the live Pixhawk can only be read through QGC, so instead of single values we use a **parameter file** (Parameters → Tools → Save to file → `backups/`) plus the **Vehicle Messages**, and reads everything from those.
 - The next guide is written **only after** you report back, so each guide builds on what actually happened.
 
 ### 3. Facts first
@@ -82,7 +84,7 @@ The public overview is the [README](../README.md).
 7. Sources
 
 ### 6. Project memory: always kept up to date
-- **Every time you report something** (a screenshot, messages, a value, a correction), Claude updates **both**:
+- **Every time you report something** (a screenshot, messages, a value, a correction), the project files are updated: **both**:
   1. **This notes file** (`docs/project-notes.md`): the **Known facts** table, the **Roadmap** status, the **Progress log** (with date/time), and **Open questions**. The public [README](../README.md) keeps only the overview and the status table.
   2. **The current guide**: a new **Rev N** with date/time, a status pill (which steps are done), a ✅ box on finished steps, a **Results** section explaining what was found, and the **Report back** list (done items crossed out, new questions added).
 - Guides that walk through device menus keep a **settings log table** (setting → result → changed? → what it means), updated after every step.
@@ -318,6 +320,8 @@ The public overview is the [README](../README.md).
 
 - 2026-10-17 21:48 — **README split** (user: README had unnecessary internal info): README.md is now a short public overview (aircraft, controls, progress table with HTML + MD links, hardware, safety, repo layout). Everything internal (working rules, known facts, output map, PreArm table, roadmap details, progress log, open questions) moved here to `docs/project-notes.md`, which is now the source of truth for facts and history.
 
+- 2026-10-18 00:52 — **Reference pages + 3 languages:** new `guides/ref-stick-controls.html` (12 CoreWing-style 3/4 drawings: plane + transmitter, highlighted stick/switch, red line to the surface/motor; airplane + drone mode + switches), `guides/ref-flysky-settings.html` (2 changes + 9 checked screens as i6X LCD drawings, channel map), `guides/ref-parameter-changes.html` (every param change before→after→what for, kept settings, auto-changing values), each with an MD version in `quick/`. Drawings in `assets/drawings/`. Everything translated to French (`fr/`) and Arabic (`ar/`, RTL) with a 🌐 switcher on every page (big buttons on the start pages). © 2026 bellocloud.com footers + LICENSE. Commit history rewritten to remove AI co-author trailers. 489 relative links checked: 0 broken.
+
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.
 - ✅ Radio input solved (option B: i6X Output mode PWM, encoder kept). Optional later: option A (remove encoder, direct PPM/CH1 → RC IN) for fewer wires/failure points.
@@ -329,3 +333,6 @@ The public overview is the [README](../README.md).
 - Is the Pixhawk **installed in the plane** yet? Does its **arrow point to the nose**? (Old `AHRS_ORIENTATION=2` = Yaw90.) → Guide 03
 - ✅ Tail = V-tail behaviour (user 19:46).
 - Add an **airspeed sensor** later? (Recommended for VTOL transitions, not required)
+
+---
+© 2026 bellocloud.com

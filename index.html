@@ -73,6 +73,7 @@
   .fig .unused { fill: var(--muted); opacity: .5; }
 </style>
 </head><body><main>
+<nav class="langs-bar" aria-label="Language" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px;margin:0 0 20px;border:1px solid var(--border);border-radius:14px;background:var(--card)"><span style="font-size:22px">🌐</span><a href="index.html" hreflang="en" style="background:var(--accent);color:var(--bg);display:inline-block;padding:8px 18px;border-radius:999px;font-weight:700;text-decoration:none;font-size:17px">English</a><a href="fr/index.html" hreflang="fr" style="background:var(--accent-bg);color:var(--accent);display:inline-block;padding:8px 18px;border-radius:999px;font-weight:700;text-decoration:none;font-size:17px">Français</a><a href="ar/index.html" hreflang="ar" style="background:var(--accent-bg);color:var(--accent);display:inline-block;padding:8px 18px;border-radius:999px;font-weight:700;text-decoration:none;font-size:17px">العربية</a></nav>
 <header><h1>VTOL Y3: setup guides</h1>
 <p class="lead">ArduPlane QuadPlane (tilt-rotor tricopter, V-tail) on a Pixhawk 2.4.8 with QGroundControl 5.1.5 and a FlySky i6X / iA10B. Step-by-step guides with results and logs. Overview: <a href="https://github.com/soufianeblog/dronev2">GitHub repo</a> · working notes and full log: <a href="docs/project-notes.md">docs/project-notes.md</a>.</p></header>
 <div class="table-wrap"><table>
@@ -84,6 +85,14 @@
     <tr><td>05</td><td><a href="guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html">FlySky i6X transmitter setup</a></td><td>✅</td></tr>
     <tr><td>06</td><td>Wiring plan (ESCs, servos, power)</td><td>⏳</td></tr>
 </table></div>
+<h2>Reference</h2>
+<div class="table-wrap"><table>
+    <tr><th>Page</th><th>What it shows</th></tr>
+    <tr><td><a href="guides/ref-stick-controls.html">Sticks and switches</a></td><td>Drawings: how each stick and switch moves the aircraft, airplane and drone mode</td></tr>
+    <tr><td><a href="guides/ref-flysky-settings.html">FlySky i6X settings</a></td><td>Every transmitter setting: changed and checked, with screen drawings</td></tr>
+    <tr><td><a href="guides/ref-parameter-changes.html">Parameter changes</a></td><td>Every ArduPlane parameter changed: before, after, what it is for</td></tr>
+</table></div>
 <p><strong>Short task lists (Markdown):</strong> <a href="https://github.com/soufianeblog/dronev2/tree/main/quick">quick/ on GitHub</a> (formatted) · <a href="quick/README.md">quick/README.md</a> (plain text, works offline). Just the steps, no explanations.</p>
 <p>Parameter backups: <code>backups/</code> (current reference: <code>params_after-guide04.params</code>). Screenshots and logs: <code>guides/guideN_screenshots/</code>.</p>
+<footer>VTOL Y3 · © 2026 bellocloud.com</footer>
 </main></body></html>

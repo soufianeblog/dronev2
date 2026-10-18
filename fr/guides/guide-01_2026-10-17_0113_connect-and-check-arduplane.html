@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide 01 — Connecter &amp; vérifier ArduPlane</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html" hreflang="en">English</a> · <strong>Français</strong> · <a href="../../ar/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html" hreflang="ar">العربية</a></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">Guide 01 / ~10</span>
+    <span class="pill">Créé le 2026-10-17 · 01:13</span>
+    <span class="pill">Rév. 8 · 2026-10-17 · 02:20</span>
+    <span class="pill">Statut : ✅ TERMINÉ (les 6 étapes)</span>
+    <span class="pill">⏱ ~20 min</span>
+  </div>
+  <h1>Connecter le Pixhawk et vérifier votre configuration ArduPlane</h1>
+  <p class="lead">Objectif : connecter la carte à QGroundControl, confirmer qu'elle tourne sous <strong>ArduPlane 4.7.1</strong>, voir ce qui reste de votre ancienne configuration Mission Planner, et en <strong>enregistrer une sauvegarde</strong>. <strong>Vous ne modifierez aucun réglage dans ce guide.</strong> La mise à jour du firmware vers 4.7.2 fait l'objet du Guide 02.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>État actuel (20:39), ce qui a changé après ce guide :</strong>
+<ul>
+<li>Le firmware est maintenant <strong>ArduPlane 4.7.2</strong> (Guide 02).</li>
+<li>Orientation de la carte corrigée en <code>AHRS_ORIENTATION=0</code>, accéléromètre + niveau calibrés (Guide 03).</li>
+<li>La petite carte noire sur RC IN est confirmée comme un <strong>encodeur PPM</strong> ; la radio fonctionne avec le mode de sortie i6X <strong>PWM</strong> (Guides 04/05). « Radio failsafe on » a disparu.</li>
+<li>La queue est confirmée comme un <strong>empennage en V</strong> : tangage = les deux ailes de queue ensemble, lacet = en opposition (vous, 19:46).</li>
+<li>Schéma ci-dessous redessiné à 20:39 (gouvernes sur les ailes de queue, servos de bascule représentés).</li>
+</ul></div>
+
+
+<div class="box danger">
+  <strong>Sécurité pour ce guide</strong>
+  <ul>
+    <li>Connectez le Pixhawk <strong>uniquement par USB</strong>. <strong>Aucune LiPo</strong> branchée.</li>
+    <li>Aucun moteur, ESC, servo ni hélice connecté.</li>
+  </ul>
+</div>
+
+<h2>Ce que nous savons déjà</h2>
+<div class="box info">
+  <ul>
+    <li>Vous avez déjà utilisé <strong>ArduPlane</strong> (avec Mission Planner), donc la carte tourne très probablement sous <strong>ArduPlane 4.7.1</strong>. QGC indique que 4.7.2 est la dernière version stable.</li>
+    <li>Préférences QGC : <strong>Firmware = ArduPilot</strong>, <strong>Vehicle = VTOL</strong>. ✅ Correct.</li>
+    <li>La carte contient peut-être encore d'<strong>anciens paramètres</strong> de l'époque Mission Planner. Aujourd'hui, nous les consultons et les sauvegardons. Le Guide 02 décidera s'il faut les garder ou repartir de zéro.</li>
+  </ul>
+</div>
+
+<h2>« QuadPlane » : pourquoi ce mot, alors que nous n'avons que 3 moteurs ?</h2>
+<p><strong>QuadPlane est simplement le nom donné par ArduPlane à sa fonction VTOL.</strong> Cela ne veut <em>pas</em> dire 4 moteurs. C'est la partie d'ArduPlane qui permet à un avion de décoller et d'atterrir verticalement grâce à des moteurs de sustentation, puis de voler sur ses ailes. Elle gère de nombreuses dispositions de moteurs : quad, hexa, octa, tailsitter, <strong>tricoptère</strong> et <strong>tilt-rotor</strong> (rotors basculants).</p>
+
+<p>Votre VTOL Y3 est un <strong>QuadPlane tricoptère à rotors basculants</strong> :</p>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="Vue de dessus du VTOL Y3 avec moteurs, servos de bascule, ailerons et empennage en V">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">nez</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="act"/><rect x="275" y="133" width="80" height="9" class="act"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="act"/><rect x="210" y="287" width="54" height="9" class="act"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="110" cy="80" r="18" class="wing"/>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="290" cy="80" r="18" class="wing"/>
+  <circle cx="200" cy="236" r="15" class="wing"/>
+  <text x="360" y="22" text-anchor="middle" class="t">VTOL Y3 vu de dessus</text>
+  <text x="110" y="52" text-anchor="middle">M2 avant gauche</text><text x="290" y="52" text-anchor="middle">M1 avant droit</text>
+  <path class="ln" d="M117 103 L150 96"/><text x="152" y="99" class="m">servo de bascule</text>
+  <text x="85" y="160" text-anchor="middle" class="m">aileron (servo)</text><text x="315" y="160" text-anchor="middle" class="m">aileron (servo)</text>
+  <text x="222" y="240" class="m">M4 moteur arrière (fixe)</text>
+  <text x="122" y="294" text-anchor="end" class="m">aile de queue G (servo)</text><text x="278" y="294" class="m">aile de queue D (servo)</text>
+  <text x="420" y="74" class="t">6 servos</text>
+  <text x="420" y="94"><tspan fill="var(--accent)" font-weight="700">■</tspan> 2 servos de bascule : moteurs avant haut ↔ avant</text>
+  <text x="434" y="110" class="m">(et lacet en mode drone)</text>
+  <text x="420" y="130"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 ailerons, bord de fuite de l'aile : roulis</text>
+  <text x="420" y="150"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 ailes de queue (empennage en V) :</text>
+  <text x="434" y="166" class="m">tangage = ensemble, lacet = en opposition</text>
+  <text x="420" y="192" class="t">3 moteurs</text>
+  <text x="420" y="210">M1 + M2 avant : basculent avec leurs servos</text>
+  <text x="420" y="226">M4 arrière : fixe, coupé en mode avion</text>
+  <text x="420" y="254" class="t">Empennage en V vu de l'arrière</text>
+  <line x1="500" y1="310" x2="460" y2="276" class="ln" stroke-width="4"/><line x1="500" y1="310" x2="540" y2="276" class="ln" stroke-width="4"/>
+  <circle cx="500" cy="312" r="7" class="body"/>
+  <text x="556" y="298" class="m">les 2 ailes de queue forment un « V »</text>
+</svg>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Élément</th><th>Servo ?</th><th>Rôle</th></tr>
+  <tr><td>Moteurs avant gauche + avant droit</td><td>✅ 1 servo de bascule chacun</td><td>Sustentation (vers le haut) ↔ poussée (vers l'avant)</td></tr>
+  <tr><td>Moteur arrière</td><td>❌ aucun</td><td>Sustentation en mode drone uniquement, coupé en mode avion</td></tr>
+  <tr><td>Aile principale, gauche + droite</td><td>✅ 1 servo chacune</td><td>Ailerons : roulis en mode avion</td></tr>
+  <tr><td><strong>Ailes de queue, gauche + droite</strong> (2 petites ailes à l'arrière)</td><td>✅ 1 servo chacune</td><td><strong>Empennage en V</strong> (confirmé) : tangage = elles bougent ensemble, lacet = elles bougent en opposition.</td></tr>
+</table>
+</div>
+<p><strong>Total : 6 servos</strong> = 2 de bascule + 2 ailerons + 2 ailes de queue.</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Phase</th><th>Moteurs avant</th><th>Moteur arrière</th><th>Qui contrôle l'appareil</th></tr>
+  <tr><td><strong>Mode drone</strong> (décollage / vol stationnaire / atterrissage) : modes <code>Q</code> comme QSTABILIZE, QHOVER, QLAND</td><td>Basculés <strong>vers le haut</strong>, ils assurent la sustentation</td><td><strong>En marche</strong>, il assure la sustentation</td><td>Les 3 moteurs (avec les servos de bascule pour le lacet)</td></tr>
+  <tr><td><strong>Transition</strong></td><td>Basculent du haut → vers l'avant</td><td>Ralentit</td><td>Mixte : moteurs + ailes, jusqu'à atteindre la vitesse air</td></tr>
+  <tr><td><strong>Mode avion</strong> : MANUAL, FBWA, CRUISE, AUTO…</td><td><strong>Vers l'avant</strong>, ils assurent la poussée</td><td><strong>Coupé</strong></td><td>Ailes : ailerons + 2 ailes de queue</td></tr>
+</table>
+</div>
+
+<p>Dans ArduPlane, cela se configure avec quelques paramètres <code>Q_</code>. Ils sont donnés à titre indicatif ; <strong>ne réglez rien maintenant</strong> :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Paramètre</th><th>Signification pour votre Y3</th></tr>
+  <tr><td><code>Q_ENABLE = 1</code></td><td>Active la fonction VTOL (QuadPlane) d'ArduPlane</td></tr>
+  <tr><td><code>Q_FRAME_CLASS = 7</code></td><td>Disposition des moteurs de sustentation = <strong>Tricoptère</strong> (3 moteurs)</td></tr>
+  <tr><td><code>Q_TILT_ENABLE = 1</code></td><td>Certains moteurs basculent</td></tr>
+  <tr><td><code>Q_TILT_MASK = 3</code></td><td>Quels moteurs basculent : moteur 1 + moteur 2 = les deux moteurs avant (1 + 2 = 3)</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td>Comment ils basculent (continu, binaire ou <strong>vectoriel</strong>). Vectoriel signifie que les servos de bascule gauche et droit bougent séparément pour piloter le lacet. Nous choisirons le type dans un guide ultérieur.</td></tr>
+</table>
+</div>
+<p><strong>Sans QuadPlane activé</strong>, ArduPlane traite l'appareil comme un avion normal et ne le ferait jamais décoller verticalement.</p>
+
+<h2>Étapes</h2>
+
+<div class="step"><div class="num">1</div><div>
+  <h3>Utiliser le bon câble USB</h3>
+  <ul>
+    <li>Le Pixhawk 2.4.8 possède un port <strong>micro-USB</strong> sur le côté.</li>
+    <li>Utilisez un câble de <strong>données</strong>. Les câbles de charge seule allument la carte, mais QGC ne se connecte jamais.</li>
+    <li>Branchez-le <strong>directement</strong> sur le Mac (un simple adaptateur USB-C convient), <strong>pas via un hub ou un dock</strong>.</li>
+    <li>macOS n'a besoin d'<strong>aucun pilote</strong>.</li>
+  </ul>
+</div></div>
+
+<div class="step"><div class="num">2</div><div>
+  <h3>Ouvrir QGroundControl, puis brancher le Pixhawk</h3>
+  <ol>
+    <li>Quittez <strong>Mission Planner</strong> s'il est encore ouvert quelque part (une seule application peut utiliser le port).</li>
+    <li>Ouvrez QGroundControl → branchez l'USB → attendez environ 10 secondes.</li>
+  </ol>
+  <div class="expect">Vous devriez voir : la barre du haut passer de <em>"Disconnected"</em> aux icônes d'état du véhicule. La fenêtre <em>"Running 4.7.1, latest stable is 4.7.2"</em> peut apparaître. Cliquez sur <strong>Ok</strong> et <strong>ne faites pas encore la mise à jour</strong> (Guide 02).</div>
+</div></div>
+
+<div class="step"><div class="num">3</div><div>
+  <h3>Lire les Vehicle Messages et obtenir une connexion stable</h3>
+  <p>Cette étape comporte 3 petites parties : <strong>3a</strong> ouvrir les messages, <strong>3b</strong> les comprendre, <strong>3c</strong> s'assurer que la connexion tient.</p>
+
+  <p><strong>3a. Ouvrir les messages.</strong> Cliquez sur le <strong>logo Q / la zone d'état du véhicule en haut à gauche</strong> de QGC (là où s'affiche "Comms Lost", "Ready" ou "Not Ready"). Un panneau <strong>Vehicle Messages</strong> s'ouvre.</p>
+
+  <p><strong>3b. Ce que montre votre capture d'écran ✅ (déjà fait)</strong></p>
+  <img src="../../guides/guide1_screenshots/vehicle-messages-2_2026-10-17_0143.png" alt="Votre capture des Vehicle Messages : calibration INS, Ground start, QuadPlane initialised, Frame: TRI" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <div class="table-wrap">
+  <table>
+    <tr><th>Ligne</th><th>Ce qu'elle signifie</th></tr>
+    <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td>🎉 <strong>La carte tourne sous ArduPlane</strong> (seul ArduPlane possède QuadPlane), <strong>QuadPlane est déjà activé</strong> (<code>Q_ENABLE = 1</code>), et le châssis est déjà <strong>Tricoptère</strong> (<code>Q_FRAME_CLASS = 7</code>). C'est un reste de votre ancienne configuration Mission Planner, et c'est correct pour le Y3.</td></tr>
+    <tr><td><code>Ground start</code></td><td>Normal : la carte a démarré au sol.</td></tr>
+    <tr><td><span style="color:var(--danger)"><code>ALERT: Beginning INS calibration. Do not move plane</code></span></td><td>Normal à chaque démarrage : elle calibre les gyroscopes pendant quelques secondes. <strong>Gardez le Pixhawk immobile sur le bureau pendant sa mise sous tension.</strong> Le rouge ici ne signifie pas une erreur.</td></tr>
+  </table>
+  </div>
+  <div class="box info">
+    <strong>Correction (rév. 5) :</strong> la rév. 4 disait que QGC n'affiche jamais les lignes « ArduPlane V4.7.1 / carte ». <strong>C'était faux.</strong> Elles apparaissent quand QGC est <strong>déjà ouvert pendant le démarrage de la carte</strong>. C'est ce qui s'est passé en 3c ci-dessous, et nous les avons obtenues. Elles manquaient sur la première capture uniquement parce que QGC s'était connecté après le démarrage.
+  </div>
+
+  <p><strong>3c. Corriger « Comms Lost » (barre du haut rouge)</strong></p>
+  <p>Votre capture montre <strong>"Comms Lost"</strong> avec une barre rouge. QGC ne reçoit plus de données du Pixhawk. Il nous faut une connexion <strong>stable</strong> avant le Guide 02 (un flashage sur une liaison instable peut échouer).</p>
+  <ol>
+    <li>Cliquez sur <strong>Disconnect</strong>, puis débranchez le câble USB.</li>
+    <li>Attendez 5 secondes. Rebranchez-le, <strong>directement sur le Mac</strong> (sans hub), et <strong>ne touchez pas la carte</strong> pendant son démarrage.</li>
+    <li>Surveillez la barre du haut pendant <strong>1 à 2 minutes</strong>.</li>
+  </ol>
+  <div class="expect">Bon signe : la barre du haut affiche <strong>"Not Ready"</strong> ou <strong>"Ready to Fly"</strong> (jaune ou vert), et <em>non</em> « Comms Lost » en rouge. « Not Ready » est normal pour l'instant, car rien n'est calibré ni câblé.</div>
+  <p>Si elle repasse en <strong>Comms Lost</strong> : essayez un autre câble USB (câble de données), puis un autre port. Dites-moi ce qui s'est passé dans votre compte rendu.</p>
+
+  <div class="box ok">
+    <strong>✅ Étape 3 terminée (01:47–01:50).</strong> La barre du haut affiche <strong>"Not Ready"</strong> et la liaison est stable. Le journal complet des messages est enregistré dans <code>guide1_screenshots/vehicle-messages-full_2026-10-17_0147.txt</code>. Les résultats sont expliqués dans <a href="#results">Résultats : ce que la carte nous a dit</a> ci-dessous.
+  </div>
+</div></div>
+
+<div class="step"><div class="num">4</div><div>
+  <h3>Lire les anciens réglages VTOL (lecture seule)</h3>
+  <div class="box info">
+    <strong>Correction (rév. 6) :</strong> le chemin de menu de la rév. 5 était trop vague, et dans les versions récentes de QGC le menu s'appelle <strong>"Vehicle Configuration"</strong>, et non "Vehicle Setup". Voici le chemin de clics exact :
+  </div>
+
+  <p><strong>4a. Si cette fenêtre apparaît, cliquez sur Ok et continuez. Elle est sans danger :</strong></p>
+  <img src="../../guides/guide1_screenshots/missing-params-popup_2026-10-17_0153.png" alt="Fenêtre QGC : Parameters are missing from firmware. Missing params: 1:FS_OPTIONS, 1:FS_GCS_TIMEOUT, 1:FS_GCS_ENABLE" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <p>QGC cherche <code>FS_GCS_ENABLE</code>, <code>FS_GCS_TIMEOUT</code> et <code>FS_OPTIONS</code>. Ce sont des noms <strong>de style ArduCopter</strong>. <strong>ArduPlane les écrit différemment</strong> (par exemple <code>FS_GCS_ENABL</code>, sans le E final), donc QGC ne les trouve pas. C'est une <strong>différence de nommage QGC ↔ ArduPlane</strong>. Votre firmware est correct et rien ne manque sur la carte. Cliquez sur <strong>Ok</strong>.</p>
+
+  <p><strong>4b. Ouvrir l'écran Parameters :</strong></p>
+  <ol>
+    <li>Cliquez sur l'<strong>icône Q violette</strong> dans le <strong>coin supérieur gauche</strong> (la même icône à côté de "Not Ready").</li>
+    <li>Un panneau intitulé <strong>"Select Tool"</strong> s'ouvre avec de grands boutons : <em>Plan Flight</em> · <em>Analyze Tools</em> · <strong><em>Vehicle Configuration</em></strong> (anciennes versions de QGC : <em>Vehicle Setup</em>) · <em>Application Settings</em>. Le <strong>numéro de version</strong> de QGC est affiché en bas de ce panneau (vous en aurez besoin à l'étape 6).</li>
+    <li>Cliquez sur <strong>Vehicle Configuration</strong>.</li>
+    <li>Une liste apparaît sur le <strong>côté gauche</strong> : Summary, Firmware, Frame, Sensors, Radio, Flight Modes, Power, Safety, Tuning… <strong>Parameters est le dernier élément</strong>. <strong>Faites défiler cette liste de gauche</strong> si vous ne le voyez pas.</li>
+    <li>Cliquez sur <strong>Parameters</strong>. Vous obtenez un grand tableau de noms et de valeurs avec un champ <strong>Search</strong> en haut.</li>
+  </ol>
+  <div class="expect">Vous devriez voir : un champ de recherche en haut, des groupes à gauche (Q, SERVO, FS…), et un bouton <strong>Tools</strong> en <strong>haut à droite</strong>.</div>
+
+  <p><strong>4c. Recherchez et notez chaque valeur</strong> (ou « introuvable »). Le plus simple pour me les envoyer est une capture d'écran après chaque recherche :</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Rechercher</th><th>Noter</th></tr>
+    <tr><td><code>Q_ENABLE</code></td><td>0 ou 1</td></tr>
+    <tr><td><code>Q_FRAME_CLASS</code></td><td>valeur (7 = Tri)</td></tr>
+    <tr><td><code>Q_TILT_ENABLE</code></td><td>valeur</td></tr>
+    <tr><td><code>Q_TILT_MASK</code></td><td>valeur</td></tr>
+    <tr><td><code>Q_TILT_TYPE</code></td><td>valeur</td></tr>
+    <tr><td><code>SERVO1_FUNCTION</code> … <code>SERVO14_FUNCTION</code></td><td>Capture d'écran de la liste (rechercher <code>_FUNCTION</code>)</td></tr>
+  </table>
+  </div>
+  <p>Remarque : <code>Q_FRAME_CLASS</code> et les paramètres <code>Q_TILT_*</code> <strong>n'apparaissent que lorsque <code>Q_ENABLE = 1</code></strong> (après un redémarrage). Vos messages indiquent que QuadPlane est déjà activé avec Frame TRI, attendez-vous donc à <code>Q_ENABLE = 1</code> et <code>Q_FRAME_CLASS = 7</code>. Les valeurs <code>Q_TILT_*</code> sont la partie intéressante : elles montrent si la bascule avait déjà été configurée.</p>
+  <div class="box warn"><strong>Ne modifiez rien ici.</strong> Lisez seulement.</div>
+  <div class="box ok"><strong>✅ Étape 4 terminée (02:01–02:09).</strong> 4 captures reçues. L'ancienne configuration est une <strong>configuration complète de Y3 à rotors basculants</strong>. Voir <a href="#results-params">Résultats : l'ancienne configuration</a> ci-dessous.</div>
+</div></div>
+
+<div class="step"><div class="num">5</div><div>
+  <h3>Enregistrer une sauvegarde des paramètres actuels</h3>
+  <ol>
+    <li>Sur la même page <strong>Parameters</strong>, cliquez sur <strong>Tools</strong> (en haut à droite).</li>
+    <li>Choisissez <strong>Save to file…</strong></li>
+    <li>Enregistrez-la sous <code>params-backup_2026-10-17_before-guide02.params</code> dans votre dossier <code>dronev2</code>.</li>
+  </ol>
+  <div class="expect">Vous devriez voir : un fichier <code>.params</code> dans le dossier. Si quelque chose tourne mal plus tard, il nous permettra de comparer avec l'ancienne configuration ou de la restaurer.</div>
+  <div class="box ok"><strong>✅ Étape 5 terminée (02:10).</strong> Sauvegarde enregistrée : 1 276 paramètres, en-tête <em>"Vehicle: Fixed Wing · Version 4.7.1"</em>. Je l'ai déplacée vers <code>dronev2/backups/params-backup_2026-10-17_before-guide02.params</code>. <strong>Ne la modifiez pas et ne la supprimez pas.</strong></div>
+</div></div>
+
+<div class="step"><div class="num">6</div><div>
+  <h3>Version de QGC + 2 photos de la carte</h3>
+  <ul>
+    <li><strong>Icône Q violette</strong> → le panneau <strong>Select Tool</strong> → le numéro de version (par ex. <code>v5.x.x</code>) est affiché en bas.</li>
+    <li>Photo du <strong>dessus</strong> du Pixhawk (étiquette) et du <strong>côté des connecteurs à broches</strong> (MAIN OUT / AUX OUT / RC IN).</li>
+  </ul>
+  <p>La question de la mémoire flash de 1 Mo est déjà réglée : la carte tourne avec la version complète <code>Pixhawk1</code> ✅. Les photos servent maintenant au <strong>Guide 04 (câblage)</strong>, pour que je puisse faire correspondre les libellés exacts des ports de <em>votre</em> carte, et voir ce qui est déjà branché (le GPS ?).</p>
+  <div class="box ok"><strong>✅ Étape 6 terminée (02:17).</strong> QGC <strong>5.1.5</strong>, 2 photos reçues. Voir <a href="#results-board">Résultats : étape 6</a>.</div>
+</div></div>
+
+<h2 id="results">Résultats : ce que la carte nous a dit (étape 3, 01:47)</h2>
+
+<h3>Identité de la carte ✅</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Message</th><th>Signification</th></tr>
+  <tr><td><code>ArduPlane V4.7.1 (dbe79216)</code></td><td>Firmware = <strong>ArduPlane 4.7.1</strong>, confirmé.</td></tr>
+  <tr><td><code>Pixhawk1 00200035 …</code></td><td><strong>Cible de la carte = <code>Pixhawk1</code></strong>. C'est la version normale à mémoire complète (2 Mo), <em>pas</em> la version limitée <code>Pixhawk1-1M</code>. Donc <strong>aucun problème de flash de 1 Mo</strong>. Dans le Guide 02, nous installons la version <code>Pixhawk1</code>.</td></tr>
+  <tr><td><code>IOMCU: 420 1001 …</code></td><td>Le second processeur qui pilote les broches <strong>MAIN OUT</strong> fonctionne.</td></tr>
+  <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td>Le VTOL est activé, avec le châssis tricoptère. Correct pour le Y3.</td></tr>
+  <tr><td><code>RCOut: PWM:1-14</code></td><td>Les <strong>14 sorties</strong> (MAIN 1–8 + AUX 1–6) sont en mode PWM, prêtes pour les ESC et les servos.</td></tr>
+  <tr><td><code>No airspeed sensor</code></td><td>Aucun capteur de vitesse air n'est installé. Voler en VTOL sans capteur est possible, mais ArduPilot en recommande un pour les transitions. Nous déciderons plus tard.</td></tr>
+  <tr><td><code>GPS 1: detected u-blox</code> · <code>HW: 00070000</code></td><td>⚠️ <strong>Un GPS est branché et fonctionne</strong> (u-blox, ID matériel 00070000). Vous aviez dit que rien n'était câblé, merci de vérifier : le GPS du combo est-il connecté ? « Bad fix » signifie simplement qu'il est en intérieur.</td></tr>
+</table>
+</div>
+
+<h3>« Not Ready » : les 7 messages PreArm expliqués</h3>
+<p>Ils se répètent toutes les 30 secondes. <strong>Ils sont tous attendus pour l'instant</strong>, car rien n'est encore câblé ni calibré. Aucun n'est un défaut. Chacun disparaîtra dans un guide ultérieur :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Message PreArm</th><th>Pourquoi il apparaît maintenant</th><th>Corrigé dans</th></tr>
+  <tr><td><code>Hardware safety switch</code></td><td>Le bouton de sécurité (bouton rouge clignotant) n'est pas connecté ou pas appuyé.</td><td>Guide 04 (câblage)</td></tr>
+  <tr><td><code>Compass not calibrated</code></td><td>La calibration du compas n'a pas encore été faite dans QGC.</td><td>Guide 03 (capteurs)</td></tr>
+  <tr><td><code>GPS 1: Bad fix</code></td><td>En intérieur, sans vue du ciel. Normal.</td><td>En extérieur, plus tard</td></tr>
+  <tr><td><code>AHRS: not using configured AHRS type</code></td><td>Le filtre de navigation (EKF3) attend un bon fix GPS et des capteurs calibrés. En attendant, la carte utilise une solution de secours plus simple (<code>AHRS: DCM active</code>).</td><td>Guide 03 + extérieur</td></tr>
+  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>Alimentée uniquement par USB, elle lit presque 0 V au lieu des 11,1 V de la LiPo.</td><td>Guide 04 (module d'alimentation)</td></tr>
+  <tr><td><code>Radio failsafe on</code></td><td>Aucun récepteur connecté. La carte s'est aussi mise d'elle-même en <strong>QLAND</strong> (<code>RC Long Failsafe On: switched to QLand</code>), ce qui est la bonne réaction de sécurité.</td><td>Guide 05 (FlySky)</td></tr>
+  <tr><td><code>QLand mode not armable</code></td><td>Un effet secondaire du failsafe radio qui l'a mise en QLAND.</td><td>Guide 05</td></tr>
+</table>
+</div>
+<div class="box warn">
+  <strong>Point à surveiller :</strong> <code>PreArm: Gyros inconsistent</code> est apparu <strong>une fois</strong>, juste après le démarrage, puis a disparu. C'est généralement parce que la carte chauffait encore ou a été bougée pendant le démarrage. Pas de problème s'il ne revient pas. Nous le revérifierons pendant la calibration au Guide 03.
+</div>
+
+<h3>Panneau Sensor Status</h3>
+<img src="../../guides/guide1_screenshots/sensor-status_2026-10-17_0150.png" alt="État des capteurs : GPS, récepteur RC, AHRS, Pre-Arm Check en erreur ; gyroscope, accéléromètre, magnétomètre, baromètre, journalisation, batterie normaux" style="width:100%;max-width:480px;border-radius:8px;border:1px solid var(--border)">
+<p><strong>Normal ✅</strong> gyroscope, accéléromètre, magnétomètre, baromètre, journalisation et surveillance de la batterie. Tous les capteurs principaux fonctionnent. <strong>Error</strong> GPS, récepteur RC, AHRS et Pre-Arm Check, soit exactement les éléments du tableau ci-dessus. <strong>Disabled</strong> contrôle de position et sorties moteurs, normal tant que l'appareil est désarmé.</p>
+
+<h2 id="results-params">Résultats : l'ancienne configuration (étapes 4–5, 02:01–02:10)</h2>
+<p>Sources : vos 4 captures (<code>guide1_screenshots/params-*.png</code>) et le fichier de sauvegarde complet. Dans QGC, une valeur en <span style="color:var(--warn)"><strong>orange</strong></span> signifie qu'elle a été <strong>modifiée par rapport à la valeur par défaut</strong>, donc que quelqu'un l'a configurée volontairement.</p>
+
+<h3>Réglages VTOL / bascule ✅ tous conformes au Y3</h3>
+<img src="../../guides/guide1_screenshots/params-q-tilt_2026-10-17_0201.png" alt="Capture des paramètres Q_TILT" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<div class="table-wrap">
+<table>
+  <tr><th>Paramètre</th><th>Valeur</th><th>Signification</th></tr>
+  <tr><td><code>Q_ENABLE</code></td><td>Enable</td><td>VTOL activé ✅</td></tr>
+  <tr><td><code>Q_FRAME_CLASS</code></td><td>Tri</td><td>3 moteurs de sustentation ✅</td></tr>
+  <tr><td><code>Q_TILT_ENABLE</code></td><td>Enable</td><td>Moteurs basculants activés ✅</td></tr>
+  <tr><td><code>Q_TILT_MASK</code></td><td>3</td><td>Les moteurs 1 + 2 (les deux moteurs avant) basculent ✅</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td>VectoredYaw (2)</td><td>Les servos de bascule gauche et droit bougent séparément pour piloter le lacet en mode drone, donc aucun servo de lacet supplémentaire n'est nécessaire ✅</td></tr>
+  <tr><td><code>Q_TILT_YAW_ANGLE</code></td><td>10</td><td>De combien (°) les moteurs peuvent basculer vers l'arrière au-delà de la verticale pour le lacet</td></tr>
+  <tr><td><code>Q_TILT_MAX</code></td><td>70°</td><td>Bascule maximale vers l'avant tout en restant dans les modes VTOL</td></tr>
+  <tr><td><code>Q_TILT_RATE_UP</code> / <code>_DN</code></td><td>80 / 25 °/s</td><td>Vitesse de bascule : retour à la verticale (rapide) / vers l'avant (lente)</td></tr>
+  <tr><td><code>Q_TILT_FIX_ANGLE</code> / <code>_FIX_GAIN</code></td><td>10° / 0.6</td><td>Permet à la bascule d'aider au pilotage en mode avion</td></tr>
+</table>
+</div>
+
+<h3>Carte des sorties : le rôle de chaque broche du Pixhawk</h3>
+<img src="../../guides/guide1_screenshots/params-servo-functions_2026-10-17_0202.png" alt="Capture des SERVOx_FUNCTION" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<p>Sur un Pixhawk 2.4.8, <strong>MAIN OUT 1–8 = SERVO1–8</strong> et <strong>AUX OUT 1–6 = SERVO9–14</strong>. L'ancienne configuration attend donc :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Broche Pixhawk</th><th>Paramètre</th><th>Fonction</th><th>À brancher ici</th></tr>
+  <tr><td><strong>MAIN 1</strong></td><td>SERVO1</td><td>Aileron</td><td>Servo d'aileron (une aile)</td></tr>
+  <tr><td><strong>MAIN 2</strong></td><td>SERVO2</td><td>Aileron</td><td>Servo d'aileron (l'autre aile)</td></tr>
+  <tr><td><strong>MAIN 3</strong></td><td>SERVO3</td><td><strong>VTailLeft</strong></td><td>Servo de l'aile de queue gauche</td></tr>
+  <tr><td><strong>MAIN 4</strong></td><td>SERVO4</td><td><strong>VTailRight</strong></td><td>Servo de l'aile de queue droite</td></tr>
+  <tr><td><strong>MAIN 5</strong></td><td>SERVO5</td><td>Motor1</td><td>ESC du moteur <strong>avant DROIT</strong></td></tr>
+  <tr><td><strong>MAIN 6</strong></td><td>SERVO6</td><td>Motor2</td><td>ESC du moteur <strong>avant GAUCHE</strong></td></tr>
+  <tr><td>MAIN 7</td><td>SERVO7</td><td>Disabled</td><td>(vide)</td></tr>
+  <tr><td><strong>MAIN 8</strong></td><td>SERVO8</td><td>Motor4</td><td>ESC du moteur <strong>ARRIÈRE</strong></td></tr>
+  <tr><td><strong>AUX 1</strong></td><td>SERVO9</td><td>TiltMotorFrontLeft</td><td>Servo de bascule, moteur avant GAUCHE</td></tr>
+  <tr><td><strong>AUX 2</strong></td><td>SERVO10</td><td>TiltMotorFrontRight</td><td>Servo de bascule, moteur avant DROIT</td></tr>
+  <tr><td>AUX 3–6</td><td>SERVO11–14</td><td>Disabled</td><td>(vide)</td></tr>
+</table>
+</div>
+<p>Dans la disposition tricoptère d'ArduPilot, <strong>Motor1 = avant droit, Motor2 = avant gauche, Motor4 = arrière</strong> (il n'y a pas de Motor3). C'est pourquoi <code>Q_TILT_MASK = 3</code> (moteurs 1 + 2) signifie « les deux moteurs avant ». Les <strong>6 servos + 3 ESC = 9 sorties</strong> sont tous affectés, ce qui correspond exactement à votre matériel. <strong>Cela répond à la question de la queue : l'ancienne configuration traite vos 2 ailes de queue comme un empennage en V</strong> (merci de confirmer quand même en regardant l'avion).</p>
+
+<h3>Autres constats dans le fichier de sauvegarde</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Constat</th><th>Valeur</th><th>Signification / action</th></tr>
+  <tr><td>⚠️ <strong>Orientation de la carte</strong></td><td><code>AHRS_ORIENTATION = 2</code> (Yaw90)</td><td>L'ancienne configuration attend un Pixhawk monté <strong>tourné de 90°</strong> (sa flèche pointant sur le côté, pas vers le nez). Elle <strong>doit correspondre à la position réelle de la carte dans l'avion</strong>. Vérifié au Guide 03.</td></tr>
+  <tr><td>Fins de course des servos de bascule</td><td>SERVO9 : 800–1940 µs, <strong>inversé</strong> · SERVO10 : 700–2100 µs</td><td>Quelqu'un les a ajustées au mécanisme réel. 700/2100 dépasse la plage normale d'un servo, nous vérifierons donc au Guide 07 (hélices retirées) que les servos ne grognent pas et ne forcent pas en butée.</td></tr>
+  <tr><td>Plages d'ailerons différentes</td><td>SERVO1 : 1100–1900 · SERVO2 : 1000–2000</td><td>Probablement pas volontaire. Revu au Guide 07.</td></tr>
+  <tr><td>Modes de vol</td><td><code>FLTMODE_CH = 8</code> : QStabilize · QLoiter · FBWA · QStabilize · RTL · FBWA</td><td>Les modes se changent avec la <strong>voie 8</strong> de la radio. Revu avec la FlySky au Guide 06.</td></tr>
+  <tr><td>⚠️ Port du récepteur</td><td><code>SERIAL2_PROTOCOL = 23</code> (entrée RC sur <strong>TELEM2</strong>)</td><td>L'ancienne configuration branchait peut-être le récepteur FlySky sur <strong>TELEM2</strong> (i-BUS série) au lieu de RC IN. Décidé au Guide 05.</td></tr>
+  <tr><td>Interrupteurs de la radio</td><td><code>RC5_OPTION = 153</code> (armer/désarmer), <code>RC6_OPTION = 4</code> (RTL), plus des options résiduelles sur RC9–RC16</td><td>Nettoyé au Guide 06.</td></tr>
+  <tr><td>Armement</td><td><code>ARMING_RUDDER = 2</code></td><td>Armer/désarmer avec le manche de direction est autorisé.</td></tr>
+  <tr><td>Surveillance batterie</td><td><code>BATT_MONITOR = 4</code>, capacité 3000 mAh, seuil bas 10,5 V → RTL</td><td>Valeurs standard du module d'alimentation Pixhawk, conformes à votre batterie 3S 3000 mAh ✅</td></tr>
+  <tr><td>Bouton de sécurité</td><td><code>BRD_SAFETY_DEFLT = 1</code></td><td>Le bouton de sécurité est obligatoire. C'est pourquoi « PreArm: Hardware safety switch » apparaît.</td></tr>
+  <tr><td>Compas</td><td>2 connus : <code>466441</code> (I²C externe, principal) + <code>131594</code></td><td>Le compas principal est un compas <strong>externe</strong>, très probablement dans le module GPS. Cela laisse aussi penser que le GPS+compas est branché. « Not calibrated » signifie probablement que le compas a changé ou doit être recalibré. Guide 03.</td></tr>
+  <tr><td>Vitesse air</td><td><code>ARSPD_TYPE = 0</code></td><td>Aucun capteur de vitesse air configuré (conforme au message de démarrage).</td></tr>
+  <tr><td>Limite des gaz</td><td><code>THR_MAX = 80</code></td><td>Gaz en vol avant plafonnés à 80 %.</td></tr>
+</table>
+</div>
+
+<div class="box info">
+  <strong>Ce que cela implique pour le Guide 02 (ma recommandation) :</strong> l'ancienne configuration est cohérente et conçue pour exactement cet appareil (Tri, bascule à lacet vectoriel, empennage en V, les 9 sorties affectées, fins de course de bascule ajustées). Donc <strong>gardez ces paramètres</strong> et mettez à jour le firmware de 4.7.1 vers 4.7.2. ArduPilot conserve les paramètres lors d'une mise à jour normale. Ensuite, nous <strong>vérifions chaque élément</strong> dans les Guides 03 à 07 au lieu de tout reconstruire. La sauvegarde nous permet de tout annuler. <strong>Dites-moi si vous préférez repartir complètement de zéro.</strong>
+</div>
+
+<h2 id="results-board">Résultats : étape 6, votre carte et ce qui est branché (02:17)</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+  <img src="../../guides/guide1_screenshots/board-top_2026-10-17_0217.jpg" alt="Pixhawk 2.4.8 vu de dessus avec les câbles" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <img src="../../guides/guide1_screenshots/board-header-end_2026-10-17_0217.jpg" alt="Côté connecteurs servos du Pixhawk" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+</div>
+<p>Ma lecture des photos. <strong>Corrigez-moi si une ligne est fausse :</strong></p>
+<div class="table-wrap">
+<table>
+  <tr><th>Port du Pixhawk</th><th>Ce qui est branché</th><th>État</th></tr>
+  <tr><td>USB</td><td>Câble vers le Mac</td><td>✅</td></tr>
+  <tr><td>POWER</td><td>Câble 6 fils vers le <strong>module d'alimentation</strong></td><td>✅ (pas encore de LiPo, donc « low voltage » est attendu)</td></tr>
+  <tr><td>GPS</td><td><strong>GPS M8N</strong> (données)</td><td>✅ correspond à « detected u-blox »</td></tr>
+  <tr><td>I2C</td><td><strong>Compas du M8N</strong></td><td>✅ correspond au compas principal externe</td></tr>
+  <tr><td>BUZZER</td><td>Buzzer (pièce ronde noire)</td><td>✅</td></tr>
+  <tr><td>SWITCH</td><td>Bouton de sécurité (la pièce noire avec le bouton transparent, photo 2)</td><td>✅ Probablement. L'appui sur ce bouton vient au Guide 04</td></tr>
+  <tr><td><strong>RC IN</strong> (bout de la rangée de broches)</td><td>Une prise 3 broches dont les fils vont à une <strong>petite carte électronique noire</strong>, elle-même reliée au <strong>boîtier du récepteur</strong> (en haut à droite)</td><td>❓ La petite carte ressemble à un <strong>encodeur PPM</strong> (convertit les voies séparées du récepteur en un seul signal pour RC IN). À confirmer</td></tr>
+  <tr><td>TELEM1 / TELEM2 / SERIAL 4/5 / SPKT/DSM / CAN / ADC</td><td>Vides</td><td>Remarque : l'ancien paramètre <code>SERIAL2_PROTOCOL=23</code> (récepteur sur TELEM2) ne correspond pas. TELEM2 est vide, c'est donc un reste. Corrigé au Guide 05</td></tr>
+  <tr><td>MAIN OUT 1–8 / AUX OUT 1–6</td><td>Vides (pas encore d'ESC ni de servos)</td><td>✅ Correct pour l'instant</td></tr>
+</table>
+</div>
+<div class="box info">
+  <strong>À propos de la petite carte (encodeur PPM, confirmé à 19:27, voir Guide 04 C5) :</strong> votre récepteur FlySky <strong>iA10B</strong> peut sortir du <strong>PPM</strong> ou de l'<strong>i-BUS</strong> sur un seul câble par lui-même, donc une carte d'encodage supplémentaire n'est généralement <strong>pas nécessaire</strong>. Moins de pièces, c'est moins de points de défaillance. Nous déciderons au Guide 05 (radio). Pour l'instant, laissez tel quel.
+</div>
+<div class="box warn">
+  <strong>Montage / orientation :</strong> vous avez dit que la carte est <strong>à plat, LED vers le haut</strong> ✅. La question restante est la <strong>direction de la flèche blanche</strong> imprimée sur la carte (sur la photo 1, vers le bas, entre POWER et I2C). Elle doit pointer vers le <strong>nez</strong> de l'avion. Si c'est le cas, <code>AHRS_ORIENTATION</code> doit passer de <code>2</code> (Yaw90) à <code>0</code> (None). Nous le ferons au <strong>Guide 03</strong>, avant la calibration. Autre point : sur la photo, la carte est posée sur une plaque de test sur le bureau. Est-elle déjà installée dans l'avion ?
+</div>
+
+<h2>Dépannage</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Problème</th><th>Essayez ceci</th></tr>
+  <tr><td>Reste sur « Disconnected »</td><td>Autre câble (de données) → autre port, sans hub → quittez Mission Planner → redémarrez QGC avec la carte branchée.</td></tr>
+  <tr><td>Se connecte, puis décroche à répétition</td><td>Généralement le câble ou un hub. Utilisez un port direct.</td></tr>
+  <tr><td>Messages rouges / erreurs « PreArm »</td><td>Normal pour l'instant (pas de GPS, pas de radio, pas calibré). Ignorez-les pour ce guide.</td></tr>
+  <tr><td>Fenêtre « Parameters are missing from firmware … FS_OPTIONS, FS_GCS_TIMEOUT, FS_GCS_ENABLE »</td><td>Différence de nommage QGC/ArduPlane sans danger (voir étape 4a). Cliquez sur Ok.</td></tr>
+  <tr><td>Impossible de trouver Parameters</td><td>Icône Q violette (en haut à gauche) → <strong>Vehicle Configuration</strong> → faites défiler jusqu'en <strong>bas</strong> de la liste de gauche → Parameters.</td></tr>
+  <tr><td>Vérifier que le Mac voit la carte</td><td>Dans le Terminal : <code>ls /dev/cu.usbmodem*</code>. Une ligne apparaît quand la carte est branchée.</td></tr>
+</table>
+</div>
+
+<h2>Compte rendu</h2>
+<div class="box ok">
+  <strong>✅ Guide 01 terminé (02:20). Tout est reçu :</strong>
+  <ul class="check">
+    <li><s>Messages / liaison stable</s> ✅ ArduPlane 4.7.1, Pixhawk1, QuadPlane TRI, « Not Ready » stable</li>
+    <li><s>Valeurs Q_TILT + SERVOx_FUNCTION</s> ✅ configuration Y3 complète</li>
+    <li><s>Sauvegarde .params</s> ✅ <code>backups/params-backup_2026-10-17_before-guide02.params</code></li>
+    <li><s>GPS branché ?</s> ✅ Oui, <strong>module GPS M8N avec compas</strong></li>
+    <li><s>Montage</s> ✅ À plat, LED vers le haut. Direction de la flèche par rapport au nez → vérifiée au Guide 03</li>
+    <li><s>Déjà volé ?</s> ✅ <strong>Non</strong>. L'ancienne configuration n'a jamais été testée, donc chaque élément sera vérifié</li>
+    <li><s>Garder ou réinitialiser les paramètres ?</s> ✅ <strong>Garder et corriger</strong> (validé)</li>
+    <li><s>Version de QGC</s> ✅ <strong>5.1.5</strong></li>
+    <li><s>2 photos</s> ✅ reçues (voir Résultats : étape 6)</li>
+    <li>Forme de la queue (empennage en V ?) : encore ouvert, pas nécessaire pour le Guide 02</li>
+  </ul>
+</div>
+<p><strong>➡️ Suite : <a href="guide-02_2026-10-17_0220_update-arduplane-4-7-2.html">Guide 02 : Mise à jour vers ArduPlane 4.7.2 (en gardant les paramètres)</a></strong></p>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/parameters.html">ArduPilot Plane : liste complète des paramètres</a> (Plane utilise <code>FS_GCS_ENABL</code>, et non <code>FS_GCS_ENABLE</code>)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-overview.html">ArduPilot Plane : présentation de QuadPlane</a> (ce qu'est QuadPlane, châssis pris en charge)</li>
+  <li><a href="https://ardupilot.org/plane/docs/guide-tilt-rotor.html">ArduPilot Plane : Tilt-Rotor Planes</a> (Q_FRAME_CLASS 7 Tri, Q_TILT_MASK 3, types de bascule, fonctions des servos de bascule 41 / 75 / 76)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-flight-modes.html">ArduPilot Plane : modes de vol QuadPlane</a> (QSTABILIZE, QHOVER, QLAND…)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/parameters.html">QGroundControl : Parameters</a> (Tools → Save to file)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/firmware.html">QGroundControl : Loading Firmware</a> (port USB direct, sans hub)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-pixhawk-overview.html">ArduPilot : présentation du Pixhawk</a> (premières révisions STM32F427 limitées à 1 Mo de flash)</li>
+</ul>
+
+<footer>Projet VTOL Y3 · Guide 01 · créé le 2026-10-17 01:13 · rév. 8 02:20 · ✅ terminé · suite : Guide 02, Mise à jour vers ArduPlane 4.7.2 · © 2026 bellocloud.com</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide 02 — Mise à jour d'ArduPlane</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html" hreflang="en">English</a> · <strong>Français</strong> · <a href="../../ar/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html" hreflang="ar">العربية</a></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">Guide 02 / ~10</span>
+    <span class="pill">Créé le 2026-10-17 · 02:20</span>
+    <span class="pill">Rév. 7 · 03:09</span>
+    <span class="pill">⏱ ~15 min</span>
+    <span class="pill">Statut : ✅ TERMINÉ (toutes les étapes)</span>
+  </div>
+  <h1>Mettre à jour le firmware vers ArduPlane 4.7.2 (en gardant vos paramètres)</h1>
+  <p class="lead">Objectif : remplacer ArduPlane <strong>4.7.1</strong> par la dernière version stable <strong>4.7.2</strong>, avec la bonne version pour votre carte (<strong><code>Pixhawk1</code></strong>), <strong>sans perdre l'ancienne configuration du Y3</strong>. Ensuite, vérifier que les paramètres ont été conservés.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>État actuel (20:39) :</strong> toujours sous <strong>ArduPlane 4.7.2</strong> (fb773567), confirmé à chaque démarrage. Le PreArm « Radio failsafe on » mentionné ici a été corrigé au Guide 04 (l'encodeur PPM nécessite le mode de sortie i6X PWM). <strong>Remarque :</strong> juste après la connexion, il peut manquer environ 144 réglages VTOL (<code>Q_…</code>) dans la liste des paramètres de QGC. Utilisez toujours <strong>Parameters → Tools → Refresh</strong> environ 30 s après le démarrage avant d'enregistrer une sauvegarde (constaté à 20:11).</div>
+
+
+<div class="box danger">
+  <strong>Sécurité pour ce guide</strong>
+  <ul>
+    <li><strong>USB uniquement. Pas de LiPo.</strong> La documentation de QGC indique que l'appareil ne doit pas être alimenté par batterie pendant le flashage.</li>
+    <li>Gardez votre Mac <strong>branché sur son chargeur</strong>. <strong>Ne débranchez jamais le câble USB pendant que la barre de progression avance.</strong></li>
+    <li>Si quelque chose tourne mal, le Pixhawk n'est <strong>pas « briqué »</strong> : son bootloader reste sur la carte et vous pouvez toujours le reflasher.</li>
+  </ul>
+</div>
+
+<h2>Point de départ (d'après le Guide 01)</h2>
+<div class="box info">
+  <ul>
+    <li>Carte : <strong>Pixhawk 2.4.8</strong>, cible ArduPilot <strong><code>Pixhawk1</code></strong> (version complète 2 Mo) · sous <strong>ArduPlane 4.7.1</strong> · QGC <strong>5.1.5</strong> sur macOS.</li>
+    <li>Ancienne configuration = configuration Y3 complète (Tri, bascule VectoredYaw, empennage en V…), <strong>jamais volée</strong>. Décision : <strong>la garder et la corriger</strong> dans les guides suivants.</li>
+    <li>Sauvegarde : <code>backups/params-backup_2026-10-17_before-guide02.params</code> ✅</li>
+    <li>J'ai vérifié le serveur officiel des firmwares ArduPilot (02:19) : <code>Plane/stable/Pixhawk1/</code> = <strong>"Plane: version to 4.7.2"</strong>, compilé le 2026-10-13. 4.7.2 est donc bien la version stable actuelle pour votre carte.</li>
+  </ul>
+</div>
+
+<h2>Est-ce vraiment la 4.7.2 et pas la 4.7.1 que vous avez déjà ? (vérifié à 02:25)</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Preuve</th><th>Indique</th></tr>
+  <tr><td>Message de démarrage de votre carte (Guide 01)</td><td><code>ArduPlane V4.7.1 (dbe79216)</code> : <strong>actuellement installé</strong></td></tr>
+  <tr><td>Fenêtre QGC (votre capture)</td><td>"Running 4.7.1, latest stable is 4.7.2"</td></tr>
+  <tr><td>Serveur <code>Plane/stable/Pixhawk1/firmware-version.txt</code></td><td><code>4.7.2-FIRMWARE_VERSION_TYPE_OFFICIAL</code></td></tr>
+  <tr><td>Serveur <code>git-version.txt</code></td><td>commit <code>fb773567</code>, "Plane: version to 4.7.2", 2026-10-11</td></tr>
+  <tr><td>En-tête du fichier téléchargeable <code>arduplane.apj</code></td><td>carte <code>Pixhawk1</code> (board_id 9), git <code>fb773567</code>, 1,56 Mo sur 2,08 Mo, donc il tient ✅</td></tr>
+  <tr><td>Liste des dossiers du serveur</td><td><code>stable-4.7.0</code>, <code>stable-4.7.1</code>, <code>stable-4.7.2</code> : 4.7.2 est la plus récente</td></tr>
+</table>
+</div>
+<p>La version installée est <code>dbe79216</code> et la nouvelle est <code>fb773567</code> : ce sont donc bien deux versions différentes. Après la mise à jour, le message de démarrage doit afficher <strong>V4.7.2 (fb773567)</strong>. C'est la preuve de l'étape 6.</p>
+
+<h2>Pourquoi les paramètres devraient être conservés</h2>
+<p>Le firmware (le programme) et les paramètres (vos réglages) sont stockés à <strong>des endroits différents</strong>. Sur un Pixhawk 1, les paramètres sont dans une puce mémoire séparée (FRAM). Une mise à jour normale <strong>ArduPlane → ArduPlane</strong> ne remplace que le programme. ArduPilot convertit automatiquement les paramètres renommés. Les paramètres ne sont effacés que si vous installez un <em>autre type de véhicule</em> (par ex. Copter). C'est pourquoi l'étape 4 comporte une liste de contrôle : <strong>il faut que ce soit Plane</strong>.</p>
+<p>Certains utilisateurs ont quand même constaté des réinitialisations (rare), c'est pourquoi nous avons fait la sauvegarde et pourquoi l'étape 7 vérifie.</p>
+
+<h2>Étapes</h2>
+
+<div class="box info">
+  <strong>Correction (rév. 3, 02:33) :</strong> la rév. 2 décrivait une ancienne disposition de QGC. Vous êtes sur <strong>QGC 5.1.5</strong>, où l'on appuie <strong>d'abord sur Flash</strong>, puis on débranche/rebranche <strong>ensuite</strong>. J'ai réécrit les étapes 1 à 5 à partir du <strong>code source réel de QGC 5.1.5</strong> (<code>FirmwareUpgrade.qml</code>, tag v5.1.5), donc les noms de boutons et l'ordre ci-dessous correspondent à votre écran.
+</div>
+
+<div class="step"><div class="num">1</div><div>
+  <h3>Ouvrir la page Firmware ✅ (fait à 02:31)</h3>
+  <p>Icône Q violette → <strong>Vehicle Configuration</strong> → <strong>Firmware</strong>. Vous voyez ceci :</p>
+  <img src="../../guides/guide2_screenshots/firmware-page_2026-10-17_0231.png" alt="Page firmware de QGC 5.1.5 : liste déroulante 'Pixhawk1 [ArduPilot ChibiOS]' et un bouton Flash" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <p>La liste déroulante indique <strong><code>Pixhawk1 [ArduPilot ChibiOS]</code></strong>. C'est votre carte, déjà sélectionnée ✅. <em>Rien n'a encore été modifié.</em> Le bouton Flash ne fait que lancer le processus ; la vraie confirmation d'installation vient plus tard (étape 4).</p>
+</div></div>
+
+<div class="step"><div class="num">2</div><div>
+  <h3>Cliquer sur <strong>Flash</strong></h3>
+  <p>La zone de texte sous les boutons affichera, en rouge :</p>
+  <p><em>"<strong>Now unplug your device and plug it back in to enter bootloader mode.</strong>"</em></p>
+  <p>Un bouton <strong>Cancel</strong> apparaît à la place de Flash : vous pouvez encore faire marche arrière ici.</p>
+  <img src="../../guides/guide2_screenshots/after-flash-click_2026-10-17_0235.png" alt="Après le clic sur Flash : 'Flashing - Pixhawk1 [ArduPilot ChibiOS]', bouton Cancel, et journal se terminant par 'Found device: ArduPilot ChibiOS (cu.usbmodem101)'" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <div class="box info"><strong>« Found device: ArduPilot ChibiOS (cu.usbmodem101) » juste après le clic sur Flash est normal</strong> (vu à 02:35). C'est QGC qui voit la carte <em>encore sous ArduPlane</em> (première détection). QGC n'en fait rien. Il <strong>attend maintenant que vous débranchiez et rebranchiez</strong>. Passez à l'étape 3. (Vérifié dans le code source de QGC 5.1.5 : le bootloader n'est contacté qu'à la <em>seconde</em> détection, après le rebranchement.)</div>
+  <div class="box ok"><strong>✅ Étape 2 terminée (02:35).</strong></div>
+</div></div>
+
+<div class="step"><div class="num">3</div><div>
+  <h3>Débrancher l'USB, attendre 3 secondes, le rebrancher</h3>
+  <p>Branchez directement sur le Mac. <strong>Ne cliquez sur rien dans QGC</strong>, observez simplement. La zone de texte devrait ajouter ces nouvelles lignes :</p>
+  <ol>
+    <li>Quand vous débranchez : <em>"<strong>Device disconnected — waiting for it to reappear in bootloader mode...</strong>"</em></li>
+    <li>Quand vous rebranchez : une <strong>seconde</strong> ligne <em>"Found device: …"</em></li>
+    <li>Puis : <em>"Connected to bootloader:"</em> · <em>"Version: …"</em> · <em>"<strong>Board ID: 9</strong>"</em> · <em>"Flash size: …"</em></li>
+  </ol>
+  <p>Si vous ne voyez pas la ligne 1 (« Device disconnected… »), le débranchement n'a pas été détecté. Débranchez à nouveau et attendez 3 secondes avant de rebrancher.</p>
+  <div class="box ok"><strong>✅ Étape 3 terminée (02:36).</strong> Journal : « Device disconnected… » → « Found device: ArduPilot ChibiOS (cu.usbmodem101) » → « Connected to bootloader: Version 5 · Board ID 255 · Flash size 2080768 » → fenêtre Firmware Setup ouverte.<br><small>Remarque : <em>Board ID 255</em> est un numéro inhabituel pour cette carte (le fichier firmware est prévu pour l'ID 9). Le flashage a quand même été accepté et <strong>vérifié</strong>, et la taille flash de 2 080 768 = exactement les 2 Mo attendus par le fichier Pixhawk1. Nous confirmons le résultat avec le message de démarrage à l'étape 6.</small></div>
+  <div class="expect">Ensuite, une fenêtre s'ouvre : <strong>"Firmware Setup"</strong>, avec le texte <em>"Detected Pixhawk board. You can select from the following flight stacks:"</em></div>
+  <p>Pas de fenêtre après environ 10 s ? Débranchez/rebranchez encore une fois. Toujours rien : appuyez sur <strong>Cancel</strong> et envoyez-moi une capture d'écran.</p>
+</div></div>
+
+<div class="step"><div class="num">4</div><div>
+  <h3>Remplir la fenêtre « Firmware Setup ». ⚠️ Changez le type de véhicule !</h3>
+  <ol>
+    <li>Sélectionnez le bouton radio <strong>ArduPilot</strong> (pas « PX4 Pro »). Trois listes déroulantes apparaissent en dessous.</li>
+    <li><strong>Liste 1 :</strong> <code>ChibiOS</code> (par défaut). Laissez-la ✅</li>
+    <li><strong>Liste 2 (type de véhicule) : elle démarre sur <code>Multi-Rotor</code>. ⚠️ CHANGEZ-LA EN <code>Plane</code>.</strong><br>
+      Les options sont : Multi-Rotor · Helicopter · <strong>Plane</strong> · Rover · Sub. Multi-Rotor correspond à ArduCopter et <strong>effacerait votre configuration</strong>. Votre VTOL QuadPlane est un <strong>Plane</strong>.</li>
+    <li><strong>Liste 3 (carte + version) :</strong> attendez que « Downloading list of available firmwares… » disparaisse. Puis choisissez exactement <strong><code>Pixhawk1 - 4.7.2</code></strong>.<br>
+      La liste contient aussi d'autres cartes avec la même version (par ex. <code>Pixhawk1-1M - 4.7.2</code>, <code>Pixhawk1-bdshot - 4.7.2</code>, <code>fmuv2</code>, <code>fmuv3</code>, <code>CubeBlack</code>, <code>CubePurple</code>…). QGC peut présélectionner la mauvaise, donc <strong>vérifiez</strong>. Si elle affiche « Choose board type », ouvrez-la et choisissez <code>Pixhawk1 - 4.7.2</code>.</li>
+    <li>Laissez <strong>« Advanced settings » décoché</strong>.</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>✋ Point de contrôle : avant de cliquer sur OK</th><th>Doit être</th></tr>
+    <tr><td>Flight stack</td><td><strong>ArduPilot</strong></td></tr>
+    <tr><td>Liste 1</td><td><strong>ChibiOS</strong></td></tr>
+    <tr><td>Liste 2</td><td><strong>Plane</strong> ← ❌ PAS Multi-Rotor</td></tr>
+    <tr><td>Liste 3</td><td><strong>Pixhawk1 - 4.7.2</strong> ← pas -1M, pas -bdshot, pas Cube…</td></tr>
+    <tr><td>Advanced settings</td><td>décoché</td></tr>
+  </table>
+  </div>
+  <p>📸 <strong>Faites une capture de la fenêtre.</strong> Si quelque chose ne correspond pas, ou en cas de doute : cliquez sur <strong>Cancel</strong> (rien n'est écrit sur la carte avant d'appuyer sur OK) et envoyez-moi la capture.</p>
+  <p><small>J'ai vérifié la liste officielle ArduPilot que QGC télécharge (<code>manifest.json</code>) : pour votre carte (ID 9), Plane stable contient l'entrée <code>Pixhawk1</code> en version <strong>4.7.2</strong>, fichier <code>Plane/stable/Pixhawk1/arduplane.apj</code>.</small></p>
+  <div class="box ok"><strong>✅ Étape 4 terminée (02:36–02:37). Les 5 contrôles sont corrects :</strong> ArduPilot ✅ · ChibiOS ✅ · <strong>Plane</strong> ✅ · <strong>Pixhawk1 - 4.7.2</strong> ✅ (QGC a présélectionné la bonne cette fois) · Advanced décoché ✅<br><img src="../../guides/guide2_screenshots/firmware-setup-popup_2026-10-17_0236.png" alt="Fenêtre Firmware Setup : ArduPilot, ChibiOS, Plane, Pixhawk1 - 4.7.2" style="width:100%;max-width:520px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><img src="../../guides/guide2_screenshots/board-list_2026-10-17_0237.png" alt="Liste des cartes : CubePurple, Pixhawk1-1M, Pixhawk1-1M-bdshot, Pixhawk1-bdshot, Pixhawk1 (sélectionnée), CubeBlack, mRo X2.1, fmuv3, CUAV-Pixhack-v3" style="width:100%;max-width:520px;border-radius:8px;border:1px solid var(--border);margin:6px 0"></div>
+</div></div>
+
+<div class="step"><div class="num">5</div><div>
+  <h3>Cliquer sur OK et patienter</h3>
+  <p>La zone de texte affiche : <em>Downloading firmware from …Plane/stable/Pixhawk1/arduplane.apj</em> → effacement → programmation → vérification, avec une <strong>barre de progression</strong>. Environ 1 à 2 minutes. Une fois l'effacement commencé, <strong>Cancel est grisé</strong>. C'est normal.</p>
+  <div class="box warn"><strong>Ne touchez ni au câble ni à la carte avant la fin.</strong></div>
+  <div class="expect">Vous devriez voir : un message « upgrade complete », puis le Pixhawk <strong>redémarre</strong> (bips du buzzer) et QGC <strong>se reconnecte tout seul</strong>. 📸 Faites une capture de la zone de texte.</div>
+  <p>Si la mise à jour échoue : QGC conseille lui-même de brancher <strong>directement</strong> sur un port USB alimenté (sans hub) et d'alimenter <strong>uniquement par USB, pas par batterie</strong>. Puis recommencez à partir de l'étape 2.</p>
+  <div class="box ok"><strong>✅ Étape 5 terminée (02:38). Flashage réussi.</strong> Journal : <em>Downloading firmware from https://firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj → Download complete → Erasing previous program… → Erase complete → Programming new version… → Verifying program… → Rebooting board</em>.<br>
+  Les 2 lignes <em>"Firmware file missing parameter_xml_size key"</em> / <em>"airframe_xml_size key"</em> sont <strong>sans danger</strong> : ces clés n'existent que dans les fichiers firmware PX4, pas dans les fichiers <code>.apj</code> d'ArduPilot.<br><img src="../../guides/guide2_screenshots/flash-log-complete_2026-10-17_0238.png" alt="Journal de flashage : téléchargement, effacement, programmation, vérification, redémarrage" style="width:100%;max-width:640px;border-radius:8px;border:1px solid var(--border);margin:6px 0"></div>
+</div></div>
+
+<div class="step"><div class="num">5b</div><div>
+  <h3>« Vehicle did not return the full parameter list » : se reconnecter proprement</h3>
+  <img src="../../guides/guide2_screenshots/after-reboot-param-list-incomplete_2026-10-17_0238.png" alt="Vehicle Configuration : 'Vehicle did not return the full parameter list. As a result, the configuration pages are not available.' et 'Beginning INS calibration. Do not move plane'" style="width:100%;max-width:640px;border-radius:8px;border:1px solid var(--border);margin:6px 0">
+  <p>Vu à 02:38, juste après le redémarrage. <strong>Cela ne veut pas dire que vos paramètres sont perdus.</strong> QGC s'est reconnecté alors que la carte <em>était encore en train de démarrer</em> (voir « Beginning INS calibration… ») et a commencé à télécharger tous les paramètres avant que la carte soit prête, donc le téléchargement était incomplet. Au premier démarrage d'un nouveau firmware, ArduPilot peut aussi être en train de convertir des paramètres, ce qui prend plus de temps.</p>
+  <ol>
+    <li><strong>Débranchez l'USB</strong>, attendez <strong>5 secondes</strong>, rebranchez-le.</li>
+    <li><strong>Ne touchez pas la carte et ne cliquez sur rien pendant 30 secondes</strong> (calibration des gyroscopes au démarrage + téléchargement des paramètres). Surveillez la barre de progression sous la barre d'outils supérieure de QGC.</li>
+    <li>Ouvrez à nouveau <strong>Vehicle Configuration</strong>. Les pages devraient maintenant s'ouvrir normalement.</li>
+  </ol>
+  <p>Toujours le même message ? Dans <strong>Parameters → Tools</strong>, cliquez sur <strong>Refresh</strong>. Toujours en échec → faites une capture et envoyez-la-moi ; <strong>ne chargez pas encore la sauvegarde</strong>.</p>
+</div></div>
+
+<div class="step"><div class="num">6</div><div>
+  <h3>Vérifier la nouvelle version dans Vehicle Messages</h3>
+  <ol>
+    <li>Laissez QGC ouvert. Débranchez l'USB, attendez 5 s, rebranchez-le, pour que QGC soit ouvert <strong>pendant le démarrage</strong> et capte les lignes de démarrage (comme vu au Guide 01).</li>
+    <li>Cliquez sur la <strong>zone d'état en haut à gauche</strong> (« Not Ready ») → <strong>Vehicle Messages</strong>.</li>
+  </ol>
+  <div class="expect">Vous devriez voir :<br>
+    <code>ArduPlane V4.7.2 (fb773567)</code> ← nouvelle version ✅ (l'ancienne était dbe79216)<br>
+    <code>Pixhawk1 00200035 …</code> ← même version de carte ✅<br>
+    <code>QuadPlane initialised, Frame: TRI</code> ← <strong>l'ancienne configuration a été conservée</strong> ✅<br>
+    et <strong>plus</strong> de fenêtre « not running latest stable firmware ».</div>
+  <p>📸 Faites une capture (ou un copier-coller) des messages.</p>
+</div></div>
+
+<div class="step"><div class="num">7</div><div>
+  <h3>Vérifier que les paramètres ont été conservés + enregistrer une nouvelle sauvegarde</h3>
+  <ol>
+    <li><strong>Vehicle Configuration → Parameters</strong>. (Si la fenêtre sans danger « Parameters are missing… FS_OPTIONS… » réapparaît, cliquez sur Ok. Voir Guide 01.)</li>
+    <li>Recherchez ces paramètres et comparez avec les valeurs du Guide 01 :
+      <div class="table-wrap">
+      <table>
+        <tr><th>Rechercher</th><th>Attendu (depuis 4.7.1)</th></tr>
+        <tr><td><code>Q_TILT_TYPE</code></td><td>VectoredYaw</td></tr>
+        <tr><td><code>Q_FRAME_CLASS</code></td><td>Tri</td></tr>
+        <tr><td><code>SERVO9_FUNCTION</code></td><td>TiltMotorFrontLeft</td></tr>
+        <tr><td><code>SERVO3_FUNCTION</code></td><td>VTailLeft</td></tr>
+        <tr><td><code>AHRS_ORIENTATION</code></td><td>Yaw90 (nous le corrigeons au Guide 03, ne le changez pas maintenant)</td></tr>
+      </table>
+      </div>
+    </li>
+    <li><strong>Tools → Save to file…</strong> → enregistrez sous <code>params_after-guide02_4.7.2.params</code> dans <code>dronev2/backups/</code>.</li>
+  </ol>
+  <div class="expect">Vous devriez voir : les mêmes valeurs qu'avant. Avec le nouveau fichier de sauvegarde, je vais <strong>comparer tous les paramètres</strong> anciens et nouveaux et vous dire exactement ce qui a changé (le cas échéant).</div>
+</div></div>
+
+<h2>Solution de repli : installer depuis un fichier téléchargé</h2>
+<p>À utiliser uniquement si les étapes 2–3 ne fonctionnent pas (carte jamais détectée, ou Plane/Pixhawk1 non proposé) :</p>
+<ol>
+  <li>Téléchargez le fichier officiel : <a href="https://firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj"><code>firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj</code></a>. Utilisez le fichier <strong>.apj</strong>, <strong>pas</strong> le <code>.hex</code> (documentation ArduPilot : le .hex sert uniquement en DFU/JTAG).</li>
+  <li>Page Firmware → <strong>Flash</strong> → débrancher/rebrancher → dans la fenêtre Firmware Setup : <strong>ArduPilot</strong> → cochez <strong>Advanced settings</strong> → dans la liste des versions, choisissez <strong>"Custom firmware file…"</strong> → OK → sélectionnez le fichier <code>arduplane.apj</code> téléchargé.</li>
+  <li>Puis reprenez à l'étape 5.</li>
+</ol>
+
+<h2 id="results">Résultats : firmware mis à jour ✅ (02:44–02:47)</h2>
+
+<h3>Étapes 5b–7 : tout est confirmé</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Vérification</th><th>Résultat</th></tr>
+  <tr><td>5b. Reconnexion</td><td>✅ Les pages de configuration fonctionnent à nouveau après la reconnexion propre</td></tr>
+  <tr><td>6. Message de démarrage</td><td>✅ <code>ArduPlane V4.7.2 (fb773567)</code> · <code>Pixhawk1 00200035…</code> (même version de carte) · <code>QuadPlane initialised, Frame: TRI</code> · IOMCU OK · <code>RCOut: PWM:1-14</code></td></tr>
+  <tr><td>7. Paramètres clés</td><td>✅ <code>Q_TILT_TYPE</code> = VectoredYaw · <code>Q_FRAME_CLASS</code> = Tri (7) · <code>SERVO9_FUNCTION</code> = TiltMotorFrontLeft (75) · <code>SERVO3_FUNCTION</code> = VTailLeft (79) · <code>AHRS_ORIENTATION</code> = Yaw90 (2, corrigé au Guide 03)</td></tr>
+  <tr><td>7. Nouvelle sauvegarde</td><td>✅ <code>backups/params_after-guide02_4.7.2.params</code>, en-tête "Version: 4.7.2 · Git Revision: fb773567"</td></tr>
+  <tr><td>Sensor Status</td><td>Comme avant : gyroscope, accéléromètre, magnétomètre, baromètre, journalisation, batterie Normal. GPS / RC / AHRS / Pre-Arm en « Error » pour les raisons connues.</td></tr>
+</table>
+</div>
+<p>Journal complet des messages : <code>guide2_screenshots/vehicle-messages-4.7.2-boot_2026-10-17_0244.txt</code></p>
+
+<h3>Comparaison de l'ancienne et de la nouvelle sauvegarde (tous les paramètres)</h3>
+<p><strong>Aucun paramètre n'a été perdu.</strong> 0 paramètre a disparu, et chaque réglage du Y3 (bascule, châssis, sorties, empennage en V, modes, batterie) est identique. Différences :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Changement</th><th>Avant → Après</th><th>Signification</th></tr>
+  <tr><td>Nombre de paramètres</td><td>1 276 → <strong>1 430</strong> (+154)</td><td>Le nouveau fichier contient les groupes QuadPlane complets : <code>Q_A_*</code> (PID d'attitude VTOL), <code>Q_P_*</code> (contrôle de position), <code>Q_M_*</code> (moteurs VTOL), <code>Q_LOIT_*</code>, <code>Q_WP_*</code>, <code>Q_WVANE_*</code>, <code>GPS1_*</code>. Ils sont tous aux <strong>valeurs par défaut</strong>, ce qui est normal pour une configuration jamais réglée ni volée. <em>On ne sait pas pourquoi l'ancienne sauvegarde ne les contenait pas. Peut-être un enregistrement incomplet dans QGC. Le nouveau fichier est désormais notre référence.</em></td></tr>
+  <tr><td>⚠️ <code>SERVO7_FUNCTION</code></td><td>0 (Disabled) → <strong>39</strong></td><td>39 = la sortie <strong>servo de lacet arrière</strong> du tricoptère. ArduPilot l'affecte automatiquement pour un châssis Tri. Votre Y3 utilise <strong>VectoredYaw</strong> (lacet par les 2 servos de bascule), donc <strong>rien n'est branché sur MAIN 7</strong>, et c'est correct. <strong>Laissez MAIN 7 vide.</strong> Nous revoyons cela au Guide 07.</td></tr>
+  <tr><td><code>GPS1_TYPE</code></td><td>0 → 1 (Auto)</td><td>GPS activé. Conforme à la détection du M8N ✅</td></tr>
+  <tr><td><code>RC1–4_DZ</code></td><td>0 → 30</td><td>Zone morte des manches (par défaut). Vérifiée lors de la calibration radio au Guide 05.</td></tr>
+  <tr><td><code>EK3_CHECK_SCALE</code> 150 → 100 · <code>BRD_SD_SLOWDOWN</code> 1 → 2</td><td></td><td>Retour aux valeurs par défaut du firmware. Pas de souci.</td></tr>
+  <tr><td>Offsets des gyroscopes / pression au sol du baromètre / compteur de démarrages</td><td>petites variations</td><td>Normal : remesurés à chaque démarrage.</td></tr>
+</table>
+</div>
+
+<h3>⚠️ Un nouveau message : <code>PreArm: Internal errors 0x100000 l:1375 flow_of_ctrl</code></h3>
+<p>Il est apparu une fois au démarrage (<code>02:44:24 Critical: Internal Errors 0x100000</code>). Il n'était <strong>pas</strong> dans le journal de démarrage de la 4.7.1. Je l'ai décodé à partir du code source d'ArduPilot 4.7.2 :</p>
+<ul>
+  <li><code>0x100000</code> = contrôle interne <strong>"flow_of_control"</strong> (situations « on ne devrait jamais arriver ici »).</li>
+  <li><code>l:1375</code> = ligne 1375 de <code>AP_HAL_ChibiOS/RCOutput.cpp</code>, dans <code>RCOutput::push()</code> : les <strong>sorties servos/moteurs ont été envoyées (« push ») sans avoir d'abord été regroupées (« cork »)</strong>. C'est un contrôle logiciel de séquencement sur le pilote des sorties, <strong>pas un capteur cassé ni une carte défectueuse</strong>.</li>
+  <li>Le code de Plane qui pilote les sorties n'a pas changé entre 4.7.1 et 4.7.2 (j'ai comparé les deux versions). Le déclencheur est donc plus probablement <strong>la configuration</strong> que la mise à jour. Une piste est le <code>SERVO7_FUNCTION = 39</code> nouvellement affecté automatiquement sur un Tri VectoredYaw, mais <strong>c'est une hypothèse, pas une certitude</strong>.</li>
+  <li>Il <strong>empêche l'armement</strong> (c'est une erreur PreArm), il doit donc avoir disparu avant tout test moteur. Il n'a pas d'importance pour les guides suivants (orientation, calibration).</li>
+</ul>
+
+<div class="step"><div class="num">8</div><div>
+  <h3>Test de suivi : l'erreur interne revient-elle ?</h3>
+  <p>Les erreurs internes sont mémorisées jusqu'au prochain redémarrage, nous vérifions donc si elle se reproduit lors d'un démarrage propre :</p>
+  <ol>
+    <li>Débranchez l'USB, attendez 5 s, rebranchez-le. Ne touchez pas la carte pendant 30 s.</li>
+    <li>Ouvrez <strong>Vehicle Messages</strong> et cherchez <code>Internal Errors</code>.</li>
+  </ol>
+  <div class="expect">Compte rendu : <strong>« L'erreur interne est revenue »</strong> ou <strong>« disparue »</strong>. Copiez-collez les messages comme la dernière fois.</div>
+  <p>Selon la réponse, soit je poursuis l'investigation (un changement de paramètre à la fois, expliqué au préalable), soit nous passons au Guide 03. <strong>Ne modifiez encore aucun paramètre vous-même pour cela.</strong></p>
+  <div class="box ok"><strong>✅ Étape 8 terminée (03:04–03:08) : l'erreur interne a DISPARU.</strong> Redémarrage propre : aucune ligne <code>Internal Errors</code> au démarrage, et la liste PreArm (répétée 6× sur 2,5 min) ne la contient plus. Il ne reste que les 7 éléments PreArm attendus. C'était donc un <strong>événement unique au premier démarrage après le flashage</strong>. Ce démarrage a aussi affecté automatiquement <code>SERVO7_FUNCTION=39</code> et créé les nouveaux paramètres Q_, ce qui correspond à une séquence d'initialisation au premier démarrage, même si le déclencheur exact n'est pas prouvé. <strong>Point à surveiller :</strong> si elle réapparaît un jour, notez ce qui s'est passé juste avant (par ex. un changement de paramètre).<br>Journal : <code>guide2_screenshots/vehicle-messages-recheck_2026-10-17_0304.txt</code></div>
+  <div class="box info"><strong>Constat bonus :</strong> la première ligne de ce démarrage était <code>Debug: RCInput: decoding PPM (IOMCU)</code>. Le Pixhawk <strong>reçoit un signal PPM sur RC IN</strong> depuis la chaîne de votre récepteur FlySky. « Radio failsafe on » est toujours présent (émetteur éteint ? gaz trop bas ?). Nous réglons cela au Guide 05.</div>
+</div></div>
+
+<h2>Dépannage</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Problème</th><th>Essayez ceci</th></tr>
+  <tr><td>Carte jamais détectée sur la page Firmware</td><td>Assurez-vous que QGC est sur la page Firmware <em>avant</em> de brancher. Essayez un autre câble de données/port. Quittez Mission Planner s'il est ouvert.</td></tr>
+  <tr><td>Flashage arrêté à mi-chemin / erreur</td><td>Pas de panique. Débranchez, attendez, rebranchez sur la page Firmware et recommencez. Le bootloader est toujours là.</td></tr>
+  <tr><td>Après le flashage, les valeurs sont revenues par défaut (par ex. <code>Q_ENABLE</code> = 0, pas de message « Frame: TRI »)</td><td>Restaurer : Parameters → <strong>Tools → Load from file…</strong> → <code>backups/params-backup_2026-10-17_before-guide02.params</code> → puis <strong>Tools → Reboot Vehicle</strong>. Prévenez-moi avant de le faire.</td></tr>
+  <tr><td>Affiche toujours « not running latest stable »</td><td>Envoyez-moi les Vehicle Messages. Le flashage ne s'est peut-être pas terminé.</td></tr>
+</table>
+</div>
+
+<h2>Compte rendu</h2>
+<div class="box ok">
+  <strong>Reçu (02:47) :</strong>
+  <ul class="check">
+    <li><s>Capture Firmware Setup</s> ✅ ArduPilot / ChibiOS / Plane / Pixhawk1 - 4.7.2</li>
+    <li><s>Journal de flashage</s> ✅ effacement → programmation → vérification → redémarrage</li>
+    <li><s>Vehicle Messages après redémarrage</s> ✅ V4.7.2 (fb773567), Frame TRI</li>
+    <li><s>5 valeurs + nouvelle sauvegarde</s> ✅ toutes identiques ; sauvegarde enregistrée</li>
+    <li><s>Qu'y a-t-il sur RC IN ?</s> ✅ Récepteur FlySky iA10B</li>
+    <li><s>Étape 8 : erreur interne après un redémarrage propre ?</s> ✅ <strong>Disparue</strong> (03:04)</li>
+    <li>Encore ouvert : le Pixhawk est-il <strong>installé dans l'avion</strong>, et dans quelle direction pointe sa flèche ?</li>
+  </ul>
+</div>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/firmware.html">QGroundControl : Loading Firmware</a> (pas de batterie, USB direct, option ArduPilot, Advanced settings)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-loading-firmware-onto-pixhawk.html">ArduPilot : Loading Firmware</a> (« le firmware Pixhawk1 est généralement le meilleur choix » ; utiliser .apj, pas .hex)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/Vehicle/VehicleSetup/FirmwareUpgrade.qml">Code source de QGroundControl v5.1.5 : FirmwareUpgrade.qml</a> (Flash → débrancher/rebrancher → fenêtre « Firmware Setup » ; types de véhicule Multi-Rotor/Helicopter/Plane/Rover/Sub, Multi-Rotor par défaut)</li>
+  <li><a href="https://github.com/ArduPilot/ardupilot/blob/fb773567896014da007bca58358704d4a0d8516f/libraries/AP_HAL_ChibiOS/RCOutput.cpp#L1375">Code source d'ArduPilot 4.7.2 : RCOutput.cpp ligne 1375</a> (push() sans cork() → flow_of_control) et <a href="https://github.com/ArduPilot/ardupilot/blob/fb773567896014da007bca58358704d4a0d8516f/libraries/AP_InternalError/AP_InternalError.h#L64">AP_InternalError.h</a> (0x100000 = flow_of_control)</li>
+  <li><a href="https://firmware.ardupilot.org/manifest.json.gz">Manifeste des firmwares ArduPilot</a> (board_id 9, Plane OFFICIAL : "Pixhawk1 - 4.7.2")</li>
+  <li><a href="https://firmware.ardupilot.org/Plane/stable/Pixhawk1/">Serveur de firmwares ArduPilot : Plane / stable / Pixhawk1</a> (git-version.txt : "Plane: version to 4.7.2")</li>
+  <li><a href="https://discuss.ardupilot.org/t/update-to-the-newest-firmware/143619">Forum ArduPilot : Update to the newest firmware</a> (configuration conservée lors des mises à jour ; la 4.7 convertit automatiquement les paramètres renommés)</li>
+  <li><a href="https://discuss.ardupilot.org/t/all-parameters-set-to-default-by-themselves/52983">Forum ArduPilot : paramètres réinitialisés après flashage</a> (rare, donc gardez une sauvegarde)</li>
+</ul>
+
+<footer>Projet VTOL Y3 · Guide 02 · créé le 2026-10-17 02:20 · rév. 7 03:09 · ✅ terminé · précédent : <a href="guide-01_2026-10-17_0113_connect-and-check-arduplane.html">Guide 01</a> · suite : <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">Guide 03, Orientation + calibration des capteurs</a> · © 2026 bellocloud.com</footer>
+</main>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # 05 · FlySky i6X transmitter setup
 
+🌐 **English** · [Français](../fr/quick/05-flysky-i6x.md) · [العربية](../ar/quick/05-flysky-i6x.md)
+
 [← 03](03-orientation-calibration.md) · [Index](README.md) · [Next: 04 →](04-radio-modes-arming.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html)
 
 **Goal:** a clean transmitter. No mixing, SWA on Ch5, SWC on Ch6.
@@ -62,3 +64,6 @@ Every control moves only its own bar on the Display screen.
 | *"Turn off receiver first"* | Unplug the Pixhawk USB, change the setting, plug it back in |
 | *"This will change the AFHDS mode, are you sure?"* | Press **CANCEL** / **No** (you opened RF standard by mistake) |
 | Step 15: PWM or PPM? | **PWM** if a PPM encoder board sits between the receiver and RC IN (our setup). **PPM** only with a direct cable from PPM/CH1 to RC IN. |
+
+---
+© 2026 bellocloud.com

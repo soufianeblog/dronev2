@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدليل 01 — توصيل وفحص ArduPlane</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html" hreflang="en">English</a> · <a href="../../fr/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html" hreflang="fr">Français</a> · <strong>العربية</strong></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">الدليل 01 / ~10</span>
+    <span class="pill">أُنشئ 2026-10-17 · 01:13</span>
+    <span class="pill">المراجعة 8 · 2026-10-17 · 02:20</span>
+    <span class="pill">الحالة: ✅ مكتمل (جميع الخطوات الست)</span>
+    <span class="pill">⏱ ~20 دقيقة</span>
+  </div>
+  <h1>وصّل الـ <bdi>Pixhawk</bdi> وافحص إعداد <bdi>ArduPlane</bdi></h1>
+  <p class="lead">الهدف: وصّل اللوحة بـ <bdi>QGroundControl</bdi>، وتأكد أنها تعمل بـ <strong><bdi>ArduPlane 4.7.1</bdi></strong>، واطّلع على ما تبقى من إعدادك القديم في <bdi>Mission Planner</bdi>، ثم <strong>احفظ نسخة احتياطية</strong> منه. <strong>لن تغيّر أي إعداد في هذا الدليل.</strong> تحديث البرنامج الثابت إلى 4.7.2 هو موضوع الدليل 02.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>الحالة الآن (20:39)، ما تغيّر بعد هذا الدليل:</strong>
+<ul>
+<li>البرنامج الثابت الآن هو <strong><bdi>ArduPlane 4.7.2</bdi></strong> (الدليل 02).</li>
+<li>صُحّح اتجاه اللوحة إلى <code>AHRS_ORIENTATION=0</code>، وتمت معايرة مقياس التسارع والاستواء (الدليل 03).</li>
+<li>تأكدنا أن اللوحة السوداء الصغيرة على <bdi>RC IN</bdi> هي <strong>مُرمِّز <bdi>PPM</bdi></strong>؛ ويعمل جهاز التحكم مع وضع الإخراج في <bdi>i6X</bdi> على <strong><bdi>PWM</bdi></strong> (الدليلان 04/05). اختفت رسالة <bdi>"Radio failsafe on"</bdi>.</li>
+<li>تأكدنا أن الذيل <strong>على شكل V</strong>: الانحدار (pitch) = جناحا الذيل معًا، والانعراج (yaw) = بشكل متعاكس (أنت، 19:46).</li>
+<li>أُعيد رسم المخطط أدناه في 20:39 (أسطح التحكم على جناحي الذيل، مع إظهار سيرفوهات الإمالة).</li>
+</ul></div>
+
+
+<div class="box danger">
+  <strong>السلامة في هذا الدليل</strong>
+  <ul>
+    <li>وصّل الـ <bdi>Pixhawk</bdi> عبر <strong><bdi>USB</bdi> فقط</strong>. <strong>لا بطارية <bdi>LiPo</bdi></strong> موصولة.</li>
+    <li>لا محركات ولا منظمات سرعة (<bdi>ESC</bdi>) ولا سيرفوهات ولا مراوح موصولة.</li>
+  </ul>
+</div>
+
+<h2>ما نعرفه حتى الآن</h2>
+<div class="box info">
+  <ul>
+    <li>استخدمت <strong><bdi>ArduPlane</bdi></strong> سابقًا (مع <bdi>Mission Planner</bdi>)، لذا فالأرجح أن اللوحة تعمل بـ <strong><bdi>ArduPlane 4.7.1</bdi></strong>. يقول <bdi>QGC</bdi> إن 4.7.2 هو أحدث إصدار مستقر.</li>
+    <li>تفضيلات <bdi>QGC</bdi>: <strong><bdi>Firmware = ArduPilot</bdi></strong>، <strong><bdi>Vehicle = VTOL</bdi></strong>. ✅ صحيح.</li>
+    <li>قد تحتفظ اللوحة بـ <strong>معاملات قديمة</strong> من أيام <bdi>Mission Planner</bdi>. اليوم نطّلع عليها ونحفظ نسخة احتياطية منها. يحدد الدليل 02 هل نحتفظ بها أم نبدأ من جديد.</li>
+  </ul>
+</div>
+
+<h2><bdi>"QuadPlane"</bdi>: لماذا هذه الكلمة، ولدينا 3 محركات فقط؟</h2>
+<p><strong><bdi>QuadPlane</bdi> هو مجرد الاسم الذي يطلقه <bdi>ArduPlane</bdi> على ميزة الإقلاع والهبوط العمودي (<bdi>VTOL</bdi>).</strong> وهو <em>لا</em> يعني 4 محركات. إنه الجزء من <bdi>ArduPlane</bdi> الذي يسمح للطائرة بالإقلاع والهبوط عموديًا بمحركات الرفع، ثم الطيران على أجنحتها. يدعم توزيعات محركات كثيرة: رباعي، سداسي، ثماني، <bdi>tailsitter</bdi>، <strong>ثلاثي (<bdi>tricopter</bdi>)</strong> و<strong>مراوح قابلة للإمالة (<bdi>tilt-rotor</bdi>)</strong>.</p>
+
+<p>طائرتك <bdi>VTOL Y3</bdi> هي <strong><bdi>QuadPlane</bdi> ثلاثية المحركات بمراوح قابلة للإمالة</strong>:</p>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="منظر علوي لطائرة VTOL Y3 مع المحركات وسيرفوهات الإمالة والجنيحات والذيل على شكل V">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">المقدمة</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="act"/><rect x="275" y="133" width="80" height="9" class="act"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="act"/><rect x="210" y="287" width="54" height="9" class="act"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="110" cy="80" r="18" class="wing"/>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="290" cy="80" r="18" class="wing"/>
+  <circle cx="200" cy="236" r="15" class="wing"/>
+  <text x="360" y="22" text-anchor="middle" class="t">VTOL Y3 من الأعلى</text>
+  <text x="110" y="52" text-anchor="middle">M2 أمامي أيسر</text><text x="290" y="52" text-anchor="middle">M1 أمامي أيمن</text>
+  <path class="ln" d="M117 103 L150 96"/><text x="152" y="99" class="m">سيرفو الإمالة</text>
+  <text x="85" y="160" text-anchor="middle" class="m">جنيح (سيرفو)</text><text x="315" y="160" text-anchor="middle" class="m">جنيح (سيرفو)</text>
+  <text x="222" y="240" class="m">M4 محرك الذيل (ثابت)</text>
+  <text x="122" y="294" text-anchor="end" class="m">جناح الذيل L (سيرفو)</text><text x="278" y="294" class="m">جناح الذيل R (سيرفو)</text>
+  <text x="420" y="74" class="t">6 سيرفوهات</text>
+  <text x="420" y="94"><tspan fill="var(--accent)" font-weight="700">■</tspan> 2 سيرفو إمالة: المحركان الأماميان للأعلى ↔ للأمام</text>
+  <text x="434" y="110" class="m">(والانعراج في وضع الدرون)</text>
+  <text x="420" y="130"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 جنيح، الحافة الخلفية للجناح: الدحرجة</text>
+  <text x="420" y="150"><tspan fill="var(--warn)" font-weight="700">■</tspan> 2 جناح ذيل (ذيل على شكل V):</text>
+  <text x="434" y="166" class="m">الانحدار = معًا، الانعراج = متعاكسان</text>
+  <text x="420" y="192" class="t">3 محركات</text>
+  <text x="420" y="210">M1 + M2 أماميان: يميلان مع سيرفوهاتهما</text>
+  <text x="420" y="226">M4 الذيل: ثابت، متوقف في وضع الطائرة</text>
+  <text x="420" y="254" class="t">الذيل على شكل V من الخلف</text>
+  <line x1="500" y1="310" x2="460" y2="276" class="ln" stroke-width="4"/><line x1="500" y1="310" x2="540" y2="276" class="ln" stroke-width="4"/>
+  <circle cx="500" cy="312" r="7" class="body"/>
+  <text x="556" y="298" class="m">جناحا الذيل يشكّلان حرف "V"</text>
+</svg>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>الجزء</th><th>سيرفو؟</th><th>الوظيفة</th></tr>
+  <tr><td>المحركان الأمامي الأيسر والأمامي الأيمن</td><td>✅ سيرفو إمالة واحد لكل منهما</td><td>رفع (متجه للأعلى) ↔ دفع (متجه للأمام)</td></tr>
+  <tr><td>محرك الذيل</td><td>❌ لا يوجد</td><td>رفع في وضع الدرون فقط، متوقف في وضع الطائرة</td></tr>
+  <tr><td>الجناح الرئيسي، يسار + يمين</td><td>✅ سيرفو واحد لكل منهما</td><td>الجنيحات: الدحرجة في وضع الطائرة</td></tr>
+  <tr><td><strong>جناحا الذيل، يسار + يمين</strong> (جناحان صغيران في الخلف)</td><td>✅ سيرفو واحد لكل منهما</td><td><strong>ذيل على شكل V</strong> (مؤكد): الانحدار = يتحركان معًا، الانعراج = يتحركان بشكل متعاكس.</td></tr>
+</table>
+</div>
+<p><strong>المجموع: 6 سيرفوهات</strong> = 2 إمالة + 2 جنيح + 2 جناح ذيل.</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>المرحلة</th><th>المحركان الأماميان</th><th>محرك الذيل</th><th>من يتحكم في الطائرة</th></tr>
+  <tr><td><strong>وضع الدرون</strong> (الإقلاع / التحويم / الهبوط): أوضاع <code>Q</code> مثل <bdi>QSTABILIZE</bdi> و<bdi>QHOVER</bdi> و<bdi>QLAND</bdi></td><td>مائلان <strong>للأعلى</strong>، يوفّران الرفع</td><td><strong>يعمل</strong>، يوفّر الرفع</td><td>المحركات الثلاثة (مع سيرفوهات الإمالة للانعراج)</td></tr>
+  <tr><td><strong>الانتقال</strong></td><td>يميلان من الأعلى → إلى الأمام</td><td>يتباطأ</td><td>مختلط: المحركات + الأجنحة، حتى بلوغ السرعة الجوية</td></tr>
+  <tr><td><strong>وضع الطائرة</strong>: <bdi>MANUAL</bdi>، <bdi>FBWA</bdi>، <bdi>CRUISE</bdi>، <bdi>AUTO</bdi>…</td><td><strong>للأمام</strong>، يوفّران الدفع</td><td><strong>متوقف</strong></td><td>الأجنحة: الجنيحات + جناحا الذيل</td></tr>
+</table>
+</div>
+
+<p>في <bdi>ArduPlane</bdi> يُضبط هذا ببضعة معاملات <code>Q_</code>. هي للاطلاع فقط؛ <strong>لا تضبط أي شيء الآن</strong>:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>المعامل</th><th>معناه لطائرتك <bdi>Y3</bdi></th></tr>
+  <tr><td><code>Q_ENABLE = 1</code></td><td>تفعيل ميزة <bdi>VTOL</bdi> (<bdi>QuadPlane</bdi>) في <bdi>ArduPlane</bdi></td></tr>
+  <tr><td><code>Q_FRAME_CLASS = 7</code></td><td>توزيع محركات الرفع = <strong><bdi>Tricopter</bdi></strong> (3 محركات)</td></tr>
+  <tr><td><code>Q_TILT_ENABLE = 1</code></td><td>بعض المحركات تميل</td></tr>
+  <tr><td><code>Q_TILT_MASK = 3</code></td><td>المحركات التي تميل: المحرك 1 + المحرك 2 = المحركان الأماميان (1 + 2 = 3)</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td>طريقة الإمالة (مستمرة، ثنائية أو <strong>موجَّهة <bdi>vectored</bdi></strong>). الموجَّهة تعني أن سيرفو الإمالة الأيسر والأيمن يتحركان كلٌّ على حدة لتوجيه الانعراج. نختار النوع في دليل لاحق.</td></tr>
+</table>
+</div>
+<p><strong>دون تفعيل <bdi>QuadPlane</bdi></strong>، يعامل <bdi>ArduPlane</bdi> الطائرة كطائرة عادية ولن يرفعها عموديًا أبدًا.</p>
+
+<h2>الخطوات</h2>
+
+<div class="step"><div class="num">1</div><div>
+  <h3>استخدم كابل <bdi>USB</bdi> المناسب</h3>
+  <ul>
+    <li>في جانب الـ <bdi>Pixhawk 2.4.8</bdi> منفذ <strong><bdi>micro-USB</bdi></strong>.</li>
+    <li>استخدم كابل <strong>بيانات</strong>. كابلات الشحن فقط تُضيء اللوحة لكن <bdi>QGC</bdi> لن يتصل أبدًا.</li>
+    <li>وصّله <strong>مباشرة</strong> بالماك (محوّل <bdi>USB-C</bdi> بسيط مقبول)، <strong>وليس عبر موزّع (hub) أو قاعدة توصيل (dock)</strong>.</li>
+    <li>لا يحتاج <bdi>macOS</bdi> إلى <strong>أي تعريف (driver)</strong>.</li>
+  </ul>
+</div></div>
+
+<div class="step"><div class="num">2</div><div>
+  <h3>افتح <bdi>QGroundControl</bdi>، ثم وصّل الـ <bdi>Pixhawk</bdi></h3>
+  <ol>
+    <li>أغلق <strong><bdi>Mission Planner</bdi></strong> إن كان لا يزال مفتوحًا في أي مكان (تطبيق واحد فقط يمكنه استخدام المنفذ).</li>
+    <li>افتح <bdi>QGroundControl</bdi> ← وصّل <bdi>USB</bdi> ← انتظر نحو 10 ثوانٍ.</li>
+  </ol>
+  <div class="expect">يجب أن ترى: الشريط العلوي يتغير من <em><bdi>"Disconnected"</bdi></em> إلى أيقونات حالة المركبة. قد تظهر نافذة <em><bdi>"Running 4.7.1, latest stable is 4.7.2"</bdi></em>. اضغط <strong><bdi>Ok</bdi></strong> و<strong>لا تحدّث الآن</strong> (الدليل 02).</div>
+</div></div>
+
+<div class="step"><div class="num">3</div><div>
+  <h3>اقرأ رسائل المركبة (<bdi>Vehicle Messages</bdi>)، واحصل على اتصال مستقر</h3>
+  <p>لهذه الخطوة 3 أجزاء صغيرة: <strong>3a</strong> افتح الرسائل، <strong>3b</strong> افهمها، <strong>3c</strong> تأكد أن الاتصال يبقى قائمًا.</p>
+
+  <p><strong>3a. افتح الرسائل.</strong> اضغط على <strong>شعار Q / منطقة حالة المركبة في أعلى اليسار</strong> من <bdi>QGC</bdi> (حيث يظهر <bdi>"Comms Lost"</bdi> أو <bdi>"Ready"</bdi> أو <bdi>"Not Ready"</bdi>). تنفتح لوحة <strong><bdi>Vehicle Messages</bdi></strong>.</p>
+
+  <p><strong>3b. ما تُظهره لقطة الشاشة التي أرسلتها ✅ (تم بالفعل)</strong></p>
+  <img src="../../guides/guide1_screenshots/vehicle-messages-2_2026-10-17_0143.png" alt="لقطة شاشة رسائل المركبة: معايرة INS، بدء أرضي، تهيئة QuadPlane، Frame: TRI" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <div class="table-wrap">
+  <table>
+    <tr><th>السطر</th><th>معناه</th></tr>
+    <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td>🎉 <strong>اللوحة تعمل بـ <bdi>ArduPlane</bdi></strong> (وحده <bdi>ArduPlane</bdi> يحتوي على <bdi>QuadPlane</bdi>)، و<strong><bdi>QuadPlane</bdi> مفعّل بالفعل</strong> (<code>Q_ENABLE = 1</code>)، والهيكل مضبوط بالفعل على <strong><bdi>Tricopter</bdi></strong> (<code>Q_FRAME_CLASS = 7</code>). هذا متبقٍّ من إعدادك القديم في <bdi>Mission Planner</bdi>، وهو صحيح لطائرة <bdi>Y3</bdi>.</td></tr>
+    <tr><td><code>Ground start</code></td><td>عادي: أقلعت اللوحة (بدأ تشغيلها) على الأرض.</td></tr>
+    <tr><td><span style="color:var(--danger)"><code>ALERT: Beginning INS calibration. Do not move plane</code></span></td><td>عادي عند كل تشغيل: تعاير الجيروسكوبات لبضع ثوانٍ. <strong>أبقِ الـ <bdi>Pixhawk</bdi> ثابتًا على المكتب أثناء التشغيل.</strong> اللون الأحمر هنا لا يعني خطأ.</td></tr>
+  </table>
+  </div>
+  <div class="box info">
+    <strong>تصحيح (المراجعة 5):</strong> قالت المراجعة 4 إن <bdi>QGC</bdi> لا يعرض أبدًا أسطر <bdi>"ArduPlane V4.7.1 / board"</bdi>. <strong>كان ذلك خطأ.</strong> تظهر هذه الأسطر عندما يكون <bdi>QGC</bdi> <strong>مفتوحًا بالفعل أثناء تشغيل اللوحة</strong>. هذا ما حدث في 3c أدناه، وحصلنا عليها. لم تظهر في لقطة الشاشة الأولى فقط لأن <bdi>QGC</bdi> اتصل بعد التشغيل.
+  </div>
+
+  <p><strong>3c. أصلح <bdi>"Comms Lost"</bdi> (شريط علوي أحمر)</strong></p>
+  <p>تُظهر لقطة الشاشة <strong><bdi>"Comms Lost"</bdi></strong> مع شريط أحمر. توقف <bdi>QGC</bdi> عن استقبال البيانات من الـ <bdi>Pixhawk</bdi>. نحتاج اتصالًا <strong>مستقرًا</strong> قبل الدليل 02 (التحميل عبر اتصال سيئ قد يفشل).</p>
+  <ol>
+    <li>اضغط <strong><bdi>Disconnect</bdi></strong>، ثم افصل كابل <bdi>USB</bdi>.</li>
+    <li>انتظر 5 ثوانٍ. أعد توصيله، <strong>مباشرة بالماك</strong> (دون موزّع)، و<strong>لا تلمس اللوحة</strong> أثناء التشغيل.</li>
+    <li>راقب الشريط العلوي لمدة <strong>1–2 دقيقة</strong>.</li>
+  </ol>
+  <div class="expect">جيد: يُظهر الشريط العلوي <strong><bdi>"Not Ready"</bdi></strong> أو <strong><bdi>"Ready to Fly"</bdi></strong> (أصفر أو أخضر)، <em>وليس</em> <bdi>"Comms Lost"</bdi> الأحمر. <bdi>"Not Ready"</bdi> أمر عادي الآن، لأن لا شيء مُعايَر أو موصول.</div>
+  <p>إذا عاد إلى <strong><bdi>Comms Lost</bdi></strong>: جرّب كابل <bdi>USB</bdi> آخر (كابل بيانات)، ثم منفذًا آخر. أخبرني بما حدث في التقرير.</p>
+
+  <div class="box ok">
+    <strong>✅ اكتملت الخطوة 3 (01:47–01:50).</strong> يُظهر الشريط العلوي <strong><bdi>"Not Ready"</bdi></strong> والاتصال مستقر. سجل الرسائل الكامل محفوظ في <code>guide1_screenshots/vehicle-messages-full_2026-10-17_0147.txt</code>. النتائج مشروحة في <a href="#results">النتائج: ما أخبرتنا به اللوحة</a> أدناه.
+  </div>
+</div></div>
+
+<div class="step"><div class="num">4</div><div>
+  <h3>اقرأ إعدادات <bdi>VTOL</bdi> المتبقية (قراءة فقط)</h3>
+  <div class="box info">
+    <strong>تصحيح (المراجعة 6):</strong> كان مسار القائمة في المراجعة 5 غامضًا جدًا، وفي إصدارات <bdi>QGC</bdi> الأحدث اسم القائمة <strong><bdi>"Vehicle Configuration"</bdi></strong> وليس <bdi>"Vehicle Setup"</bdi>. إليك مسار النقرات بالضبط:
+  </div>
+
+  <p><strong>4a. إذا ظهرت هذه النافذة، اضغط <bdi>Ok</bdi> وتابع. إنها غير ضارة:</strong></p>
+  <img src="../../guides/guide1_screenshots/missing-params-popup_2026-10-17_0153.png" alt="نافذة QGC: Parameters are missing from firmware. Missing params: 1:FS_OPTIONS, 1:FS_GCS_TIMEOUT, 1:FS_GCS_ENABLE" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <p>يبحث <bdi>QGC</bdi> عن <code>FS_GCS_ENABLE</code> و<code>FS_GCS_TIMEOUT</code> و<code>FS_OPTIONS</code>. هذه أسماء <strong>بأسلوب <bdi>ArduCopter</bdi></strong>. <strong><bdi>ArduPlane</bdi> يكتبها بشكل مختلف</strong> (مثلًا <code>FS_GCS_ENABL</code>، دون حرف E الأخير)، لذا لا يجدها <bdi>QGC</bdi>. إنه <strong>اختلاف في التسمية بين <bdi>QGC</bdi> ↔ <bdi>ArduPlane</bdi></strong>. البرنامج الثابت سليم ولا شيء ناقص في اللوحة. اضغط <strong><bdi>Ok</bdi></strong>.</p>
+
+  <p><strong>4b. افتح شاشة <bdi>Parameters</bdi>:</strong></p>
+  <ol>
+    <li>اضغط على <strong>أيقونة Q البنفسجية</strong> في <strong>الزاوية العلوية اليسرى</strong> (نفس الأيقونة بجانب <bdi>"Not Ready"</bdi>).</li>
+    <li>تنفتح لوحة بعنوان <strong><bdi>"Select Tool"</bdi></strong> فيها أزرار كبيرة: <em><bdi>Plan Flight</bdi></em> · <em><bdi>Analyze Tools</bdi></em> · <strong><em><bdi>Vehicle Configuration</bdi></em></strong> (في <bdi>QGC</bdi> الأقدم: <em><bdi>Vehicle Setup</bdi></em>) · <em><bdi>Application Settings</bdi></em>. يظهر <strong>رقم إصدار</strong> <bdi>QGC</bdi> أسفل هذه اللوحة (ستحتاجه في الخطوة 6).</li>
+    <li>اضغط <strong><bdi>Vehicle Configuration</bdi></strong>.</li>
+    <li>تظهر قائمة على <strong>الجانب الأيسر</strong>: <bdi>Summary</bdi>، <bdi>Firmware</bdi>، <bdi>Frame</bdi>، <bdi>Sensors</bdi>، <bdi>Radio</bdi>، <bdi>Flight Modes</bdi>، <bdi>Power</bdi>، <bdi>Safety</bdi>، <bdi>Tuning</bdi>… <strong><bdi>Parameters</bdi> هو العنصر الأخير</strong>. <strong>مرّر تلك القائمة اليسرى للأسفل</strong> إن لم تره.</li>
+    <li>اضغط <strong><bdi>Parameters</bdi></strong>. يظهر جدول كبير من الأسماء والقيم مع مربع <strong><bdi>Search</bdi></strong> في الأعلى.</li>
+  </ol>
+  <div class="expect">يجب أن ترى: مربع بحث في الأعلى، ومجموعات على اليسار (<bdi>Q</bdi>، <bdi>SERVO</bdi>، <bdi>FS</bdi>…)، وزر <strong><bdi>Tools</bdi></strong> في <strong>أعلى اليمين</strong>.</div>
+
+  <p><strong>4c. ابحث عن كل قيمة ودوّنها</strong> (أو "غير موجود"). أسهل طريقة لإرسالها هي لقطة شاشة بعد كل بحث:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>ابحث عن</th><th>دوّن</th></tr>
+    <tr><td><code>Q_ENABLE</code></td><td>0 أو 1</td></tr>
+    <tr><td><code>Q_FRAME_CLASS</code></td><td>القيمة (7 = <bdi>Tri</bdi>)</td></tr>
+    <tr><td><code>Q_TILT_ENABLE</code></td><td>القيمة</td></tr>
+    <tr><td><code>Q_TILT_MASK</code></td><td>القيمة</td></tr>
+    <tr><td><code>Q_TILT_TYPE</code></td><td>القيمة</td></tr>
+    <tr><td><code>SERVO1_FUNCTION</code> … <code>SERVO14_FUNCTION</code></td><td>لقطة شاشة للقائمة (ابحث عن <code>_FUNCTION</code>)</td></tr>
+  </table>
+  </div>
+  <p>ملاحظة: <code>Q_FRAME_CLASS</code> ومعاملات <code>Q_TILT_*</code> <strong>لا تظهر إلا عندما يكون <code>Q_ENABLE = 1</code></strong> (بعد إعادة التشغيل). تقول رسائلك إن <bdi>QuadPlane</bdi> مفعّل بالفعل مع <bdi>Frame TRI</bdi>، لذا توقّع <code>Q_ENABLE = 1</code> و<code>Q_FRAME_CLASS = 7</code>. قيم <code>Q_TILT_*</code> هي الجزء المهم: تُظهر هل ضُبطت الإمالة من قبل.</p>
+  <div class="box warn"><strong>لا تعدّل أي شيء هنا.</strong> اقرأ فقط.</div>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 4 (02:01–02:09).</strong> وصلت 4 لقطات شاشة. الإعداد القديم هو <strong>إعداد كامل لطائرة <bdi>Y3</bdi> بمراوح قابلة للإمالة</strong>. انظر <a href="#results-params">النتائج: الإعداد القديم</a> أدناه.</div>
+</div></div>
+
+<div class="step"><div class="num">5</div><div>
+  <h3>احفظ نسخة احتياطية من المعاملات الحالية</h3>
+  <ol>
+    <li>في نفس صفحة <strong><bdi>Parameters</bdi></strong>، اضغط <strong><bdi>Tools</bdi></strong> (أعلى اليمين).</li>
+    <li>اختر <strong><bdi>Save to file…</bdi></strong></li>
+    <li>احفظه باسم <code>params-backup_2026-10-17_before-guide02.params</code> في مجلد <code>dronev2</code>.</li>
+  </ol>
+  <div class="expect">يجب أن ترى: ملف <code>.params</code> في المجلد. إذا حدث خطأ لاحقًا، يتيح لنا هذا المقارنة مع الإعداد القديم أو استعادته.</div>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 5 (02:10).</strong> حُفظت النسخة الاحتياطية: 1,276 معاملًا، والترويسة <em><bdi>"Vehicle: Fixed Wing · Version 4.7.1"</bdi></em>. نقلتها إلى <code>dronev2/backups/params-backup_2026-10-17_before-guide02.params</code>. <strong>لا تعدّلها ولا تحذفها.</strong></div>
+</div></div>
+
+<div class="step"><div class="num">6</div><div>
+  <h3>إصدار <bdi>QGC</bdi> + صورتان للوحة</h3>
+  <ul>
+    <li><strong>أيقونة Q البنفسجية</strong> ← لوحة <strong><bdi>Select Tool</bdi></strong> ← رقم الإصدار (مثلًا <code>v5.x.x</code>) يظهر في الأسفل.</li>
+    <li>صورة لـ <strong>الوجه العلوي</strong> للـ <bdi>Pixhawk</bdi> (الملصق) ولـ <strong>طرف صفوف الدبابيس</strong> (<bdi>MAIN OUT</bdi> / <bdi>AUX OUT</bdi> / <bdi>RC IN</bdi>).</li>
+  </ul>
+  <p>سؤال ذاكرة الفلاش 1 MB أُجيب عنه بالفعل: اللوحة تعمل بإصدار <code>Pixhawk1</code> الكامل ✅. الصور الآن من أجل <strong>الدليل 04 (التوصيلات)</strong>، لأطابق أسماء المنافذ بالضبط على لوحتك <em>أنت</em>، ولأرى ما هو موصول بالفعل (الـ <bdi>GPS</bdi>؟).</p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 6 (02:17).</strong> <bdi>QGC</bdi> <strong>5.1.5</strong>، ووصلت صورتان. انظر <a href="#results-board">النتائج: الخطوة 6</a>.</div>
+</div></div>
+
+<h2 id="results">النتائج: ما أخبرتنا به اللوحة (الخطوة 3، 01:47)</h2>
+
+<h3>هوية اللوحة ✅</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>الرسالة</th><th>المعنى</th></tr>
+  <tr><td><code>ArduPlane V4.7.1 (dbe79216)</code></td><td>البرنامج الثابت = <strong><bdi>ArduPlane 4.7.1</bdi></strong>، مؤكد.</td></tr>
+  <tr><td><code>Pixhawk1 00200035 …</code></td><td><strong>هدف اللوحة = <code>Pixhawk1</code></strong>. هذا هو الإصدار العادي بالذاكرة الكاملة (2 MB)، <em>وليس</em> الإصدار المحدود <code>Pixhawk1-1M</code>. إذن <strong>لا توجد مشكلة فلاش 1 MB</strong>. في الدليل 02 نثبّت إصدار <code>Pixhawk1</code>.</td></tr>
+  <tr><td><code>IOMCU: 420 1001 …</code></td><td>المعالج الثاني الذي يشغّل دبابيس <strong><bdi>MAIN OUT</bdi></strong> يعمل.</td></tr>
+  <tr><td><code>QuadPlane initialised, Frame: TRI</code></td><td><bdi>VTOL</bdi> مفعّل، مع الهيكل الثلاثي. صحيح لطائرة <bdi>Y3</bdi>.</td></tr>
+  <tr><td><code>RCOut: PWM:1-14</code></td><td>جميع <strong>المخارج الـ 14</strong> (<bdi>MAIN 1–8</bdi> + <bdi>AUX 1–6</bdi>) في وضع <bdi>PWM</bdi>، جاهزة لمنظمات السرعة والسيرفوهات.</td></tr>
+  <tr><td><code>No airspeed sensor</code></td><td>لا يوجد حساس سرعة جوية مركّب. الطيران العمودي ممكن دونه، لكن <bdi>ArduPilot</bdi> يوصي بواحد للانتقالات. سنقرر لاحقًا.</td></tr>
+  <tr><td><code>GPS 1: detected u-blox</code> · <code>HW: 00070000</code></td><td>⚠️ <strong>يوجد <bdi>GPS</bdi> موصول ويعمل</strong> (<bdi>u-blox</bdi>، معرّف العتاد 00070000). قلت إن لا شيء موصول، لذا تحقق من فضلك: هل الـ <bdi>GPS</bdi> الذي جاء مع المجموعة موصول؟ <bdi>"Bad fix"</bdi> تعني فقط أنه داخل المبنى.</td></tr>
+</table>
+</div>
+
+<h3><bdi>"Not Ready"</bdi>: شرح رسائل <bdi>PreArm</bdi> السبع</h3>
+<p>تتكرر هذه كل 30 ثانية. <strong>كلها متوقعة الآن</strong>، لأن لا شيء موصول أو مُعايَر بعد. لا يوجد بينها عطل. كل واحدة تختفي في دليل لاحق:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>رسالة <bdi>PreArm</bdi></th><th>لماذا تظهر الآن</th><th>تُصلَح في</th></tr>
+  <tr><td><code>Hardware safety switch</code></td><td>زر الأمان (الزر الأحمر الوامض) غير موصول أو غير مضغوط.</td><td>الدليل 04 (التوصيلات)</td></tr>
+  <tr><td><code>Compass not calibrated</code></td><td>لم تتم معايرة البوصلة في <bdi>QGC</bdi> بعد.</td><td>الدليل 03 (الحساسات)</td></tr>
+  <tr><td><code>GPS 1: Bad fix</code></td><td>داخل المبنى، دون رؤية للسماء. عادي.</td><td>في الخارج لاحقًا</td></tr>
+  <tr><td><code>AHRS: not using configured AHRS type</code></td><td>مرشّح الملاحة (<bdi>EKF3</bdi>) ينتظر تثبيت <bdi>GPS</bdi> جيدًا وحساسات مُعايَرة. حتى ذلك الحين تستخدم اللوحة بديلًا أبسط (<code>AHRS: DCM active</code>).</td><td>الدليل 03 + في الخارج</td></tr>
+  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>التغذية عبر <bdi>USB</bdi> فقط، لذا تقرأ نحو 0 V بدلًا من 11.1 V من بطارية <bdi>LiPo</bdi>.</td><td>الدليل 04 (وحدة الطاقة)</td></tr>
+  <tr><td><code>Radio failsafe on</code></td><td>لا يوجد جهاز استقبال موصول. وقد حوّلت اللوحة نفسها أيضًا إلى <strong><bdi>QLAND</bdi></strong> (<code>RC Long Failsafe On: switched to QLand</code>)، وهي ردة الفعل الآمنة الصحيحة.</td><td>الدليل 05 (<bdi>FlySky</bdi>)</td></tr>
+  <tr><td><code>QLand mode not armable</code></td><td>أثر جانبي لوضع حماية فقدان الإشارة الذي نقلها إلى <bdi>QLAND</bdi>.</td><td>الدليل 05</td></tr>
+</table>
+</div>
+<div class="box warn">
+  <strong>بند للمراقبة:</strong> ظهرت <code>PreArm: Gyros inconsistent</code> <strong>مرة واحدة</strong>، بعد التشغيل مباشرة، ثم اختفت. يحدث هذا عادة لأن اللوحة كانت لا تزال تسخن أو تحركت أثناء بدء التشغيل. لا مشكلة إن لم تعد. سنتحقق منها مجددًا أثناء المعايرة في الدليل 03.
+</div>
+
+<h3>لوحة حالة الحساسات (<bdi>Sensor Status</bdi>)</h3>
+<img src="../../guides/guide1_screenshots/sensor-status_2026-10-17_0150.png" alt="حالة الحساسات: GPS وجهاز استقبال RC وAHRS وPre-Arm Check في حالة Error؛ الجيروسكوب ومقياس التسارع والمغناطيسية والبارومتر والتسجيل والبطارية في حالة Normal" style="width:100%;max-width:480px;border-radius:8px;border:1px solid var(--border)">
+<p><strong><bdi>Normal</bdi> ✅</strong> الجيروسكوب، مقياس التسارع، مقياس المغناطيسية، البارومتر، التسجيل ومراقبة البطارية. جميع الحساسات الأساسية تعمل. <strong><bdi>Error</bdi></strong> الـ <bdi>GPS</bdi>، جهاز استقبال <bdi>RC</bdi>، <bdi>AHRS</bdi> و<bdi>Pre-Arm Check</bdi>، وهي بالضبط البنود في الجدول أعلاه. <strong><bdi>Disabled</bdi></strong> التحكم في الموضع ومخارج المحركات، وهذا عادي ما دامت الطائرة غير مسلّحة.</p>
+
+<h2 id="results-params">النتائج: الإعداد القديم (الخطوتان 4–5، 02:01–02:10)</h2>
+<p>المصادر: لقطات الشاشة الأربع (<code>guide1_screenshots/params-*.png</code>) وملف النسخة الاحتياطية الكامل. في <bdi>QGC</bdi>، القيمة <span style="color:var(--warn)"><strong>البرتقالية</strong></span> تعني أنها <strong>غُيّرت عن القيمة الافتراضية</strong>، أي أن أحدًا ضبطها عمدًا.</p>
+
+<h3>إعدادات <bdi>VTOL</bdi> / الإمالة ✅ كلها تطابق <bdi>Y3</bdi></h3>
+<img src="../../guides/guide1_screenshots/params-q-tilt_2026-10-17_0201.png" alt="لقطة شاشة معاملات Q_TILT" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<div class="table-wrap">
+<table>
+  <tr><th>المعامل</th><th>القيمة</th><th>المعنى</th></tr>
+  <tr><td><code>Q_ENABLE</code></td><td><bdi>Enable</bdi></td><td><bdi>VTOL</bdi> مفعّل ✅</td></tr>
+  <tr><td><code>Q_FRAME_CLASS</code></td><td><bdi>Tri</bdi></td><td>3 محركات رفع ✅</td></tr>
+  <tr><td><code>Q_TILT_ENABLE</code></td><td><bdi>Enable</bdi></td><td>المحركات القابلة للإمالة مفعّلة ✅</td></tr>
+  <tr><td><code>Q_TILT_MASK</code></td><td>3</td><td>المحركان 1 + 2 (المحركان الأماميان) يميلان ✅</td></tr>
+  <tr><td><code>Q_TILT_TYPE</code></td><td><bdi>VectoredYaw</bdi> (2)</td><td>سيرفو الإمالة الأيسر والأيمن يتحركان كلٌّ على حدة لتوجيه الانعراج في وضع الدرون، فلا حاجة لسيرفو انعراج إضافي ✅</td></tr>
+  <tr><td><code>Q_TILT_YAW_ANGLE</code></td><td>10</td><td>مقدار (°) ميل المحركات للخلف بعد الوضع العمودي من أجل الانعراج</td></tr>
+  <tr><td><code>Q_TILT_MAX</code></td><td>70°</td><td>أقصى ميل للأمام وما زالت الطائرة في أوضاع <bdi>VTOL</bdi></td></tr>
+  <tr><td><code>Q_TILT_RATE_UP</code> / <code>_DN</code></td><td>80 / 25 °/s</td><td>سرعة الإمالة: العودة إلى الوضع العمودي (سريعة) / للأمام (بطيئة)</td></tr>
+  <tr><td><code>Q_TILT_FIX_ANGLE</code> / <code>_FIX_GAIN</code></td><td>10° / 0.6</td><td>تسمح للإمالة بالمساعدة في التوجيه في وضع الطائرة</td></tr>
+</table>
+</div>
+
+<h3>خريطة المخارج: وظيفة كل دبوس في الـ <bdi>Pixhawk</bdi></h3>
+<img src="../../guides/guide1_screenshots/params-servo-functions_2026-10-17_0202.png" alt="لقطة شاشة SERVOx_FUNCTION" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border)">
+<p>في <bdi>Pixhawk 2.4.8</bdi>، <strong><bdi>MAIN OUT 1–8 = SERVO1–8</bdi></strong> و<strong><bdi>AUX OUT 1–6 = SERVO9–14</bdi></strong>. لذا يتوقع الإعداد القديم:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>دبوس الـ <bdi>Pixhawk</bdi></th><th>المعامل</th><th>الوظيفة</th><th>ما يوصَل هنا</th></tr>
+  <tr><td><strong><bdi>MAIN 1</bdi></strong></td><td>SERVO1</td><td><bdi>Aileron</bdi></td><td>سيرفو الجنيح (أحد الجناحين)</td></tr>
+  <tr><td><strong><bdi>MAIN 2</bdi></strong></td><td>SERVO2</td><td><bdi>Aileron</bdi></td><td>سيرفو الجنيح (الجناح الآخر)</td></tr>
+  <tr><td><strong><bdi>MAIN 3</bdi></strong></td><td>SERVO3</td><td><strong><bdi>VTailLeft</bdi></strong></td><td>سيرفو جناح الذيل الأيسر</td></tr>
+  <tr><td><strong><bdi>MAIN 4</bdi></strong></td><td>SERVO4</td><td><strong><bdi>VTailRight</bdi></strong></td><td>سيرفو جناح الذيل الأيمن</td></tr>
+  <tr><td><strong><bdi>MAIN 5</bdi></strong></td><td>SERVO5</td><td><bdi>Motor1</bdi></td><td>منظم سرعة (<bdi>ESC</bdi>) المحرك <strong>الأمامي الأيمن</strong></td></tr>
+  <tr><td><strong><bdi>MAIN 6</bdi></strong></td><td>SERVO6</td><td><bdi>Motor2</bdi></td><td>منظم سرعة المحرك <strong>الأمامي الأيسر</strong></td></tr>
+  <tr><td><bdi>MAIN 7</bdi></td><td>SERVO7</td><td><bdi>Disabled</bdi></td><td>(فارغ)</td></tr>
+  <tr><td><strong><bdi>MAIN 8</bdi></strong></td><td>SERVO8</td><td><bdi>Motor4</bdi></td><td>منظم سرعة محرك <strong>الذيل</strong></td></tr>
+  <tr><td><strong><bdi>AUX 1</bdi></strong></td><td>SERVO9</td><td><bdi>TiltMotorFrontLeft</bdi></td><td>سيرفو الإمالة، المحرك <strong>الأمامي الأيسر</strong></td></tr>
+  <tr><td><strong><bdi>AUX 2</bdi></strong></td><td>SERVO10</td><td><bdi>TiltMotorFrontRight</bdi></td><td>سيرفو الإمالة، المحرك <strong>الأمامي الأيمن</strong></td></tr>
+  <tr><td><bdi>AUX 3–6</bdi></td><td>SERVO11–14</td><td><bdi>Disabled</bdi></td><td>(فارغ)</td></tr>
+</table>
+</div>
+<p>في توزيع المحركات الثلاثي في <bdi>ArduPilot</bdi>، <strong><bdi>Motor1</bdi> = الأمامي الأيمن، <bdi>Motor2</bdi> = الأمامي الأيسر، <bdi>Motor4</bdi> = الذيل</strong> (لا يوجد <bdi>Motor3</bdi>). لهذا يعني <code>Q_TILT_MASK = 3</code> (المحركان 1 + 2) "المحركين الأماميين". جميع <strong>السيرفوهات الستة + منظمات السرعة الثلاثة = 9 مخارج</strong> مخصّصة، وهذا بالضبط عتادك. <strong>هذا يجيب عن سؤال الذيل: الإعداد القديم يعامل جناحي الذيل كذيل على شكل V</strong> (من فضلك أكّد ذلك بالنظر إلى الطائرة).</p>
+
+<h3>نتائج أخرى في ملف النسخة الاحتياطية</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>النتيجة</th><th>القيمة</th><th>المعنى / الإجراء</th></tr>
+  <tr><td>⚠️ <strong>اتجاه اللوحة</strong></td><td><code>AHRS_ORIENTATION = 2</code> (<bdi>Yaw90</bdi>)</td><td>يتوقع الإعداد القديم أن يكون الـ <bdi>Pixhawk</bdi> مركّبًا <strong>بدوران 90°</strong> (سهمه يشير جانبًا، لا نحو المقدمة). <strong>يجب أن يطابق طريقة تركيب اللوحة في الطائرة</strong>. يُفحص في الدليل 03.</td></tr>
+  <tr><td>حدود سيرفوهات الإمالة</td><td>SERVO9: 800–1940 µs، <strong>معكوس</strong> · SERVO10: 700–2100 µs</td><td>ضبطها أحدهم على الآلية الحقيقية. 700/2100 خارج النطاق العادي للسيرفو، لذا نتحقق من طنين السيرفو أو إجهاده عند الأطراف في الدليل 07 (دون مراوح).</td></tr>
+  <tr><td>نطاقات الجنيحات مختلفة</td><td>SERVO1: 1100–1900 · SERVO2: 1000–2000</td><td>على الأرجح غير مقصود. يُراجَع في الدليل 07.</td></tr>
+  <tr><td>أوضاع الطيران</td><td><code>FLTMODE_CH = 8</code>: <bdi>QStabilize · QLoiter · FBWA · QStabilize · RTL · FBWA</bdi></td><td>تُبدَّل الأوضاع بـ <strong>القناة 8</strong> في جهاز الإرسال. تُراجَع مع <bdi>FlySky</bdi> في الدليل 06.</td></tr>
+  <tr><td>⚠️ منفذ جهاز الاستقبال</td><td><code>SERIAL2_PROTOCOL = 23</code> (دخل <bdi>RC</bdi> على <strong><bdi>TELEM2</bdi></strong>)</td><td>ربما وصّل الإعداد القديم جهاز استقبال <bdi>FlySky</bdi> بـ <strong><bdi>TELEM2</bdi></strong> (<bdi>i-BUS</bdi> تسلسلي) بدلًا من <bdi>RC IN</bdi>. يُحسم في الدليل 05.</td></tr>
+  <tr><td>مفاتيح جهاز الإرسال</td><td><code>RC5_OPTION = 153</code> (تسليح/فك التسليح)، <code>RC6_OPTION = 4</code> (<bdi>RTL</bdi>)، إضافة إلى خيارات متبقية على <bdi>RC9–RC16</bdi></td><td>تُنظَّف في الدليل 06.</td></tr>
+  <tr><td>التسليح</td><td><code>ARMING_RUDDER = 2</code></td><td>التسليح/فك التسليح بعصا الدفة مسموح.</td></tr>
+  <tr><td>مراقب البطارية</td><td><code>BATT_MONITOR = 4</code>، السعة 3000 mAh، الانخفاض 10.5 V ← <bdi>RTL</bdi></td><td>قيم وحدة الطاقة القياسية للـ <bdi>Pixhawk</bdi>، تطابق بطاريتك <bdi>3S</bdi> بسعة 3000 mAh ✅</td></tr>
+  <tr><td>مفتاح الأمان</td><td><code>BRD_SAFETY_DEFLT = 1</code></td><td>زر الأمان مطلوب. لهذا تظهر <bdi>"PreArm: Hardware safety switch"</bdi>.</td></tr>
+  <tr><td>البوصلات</td><td>اثنتان معروفتان: <code>466441</code> (<bdi>I²C</bdi> خارجية، أساسية) + <code>131594</code></td><td>البوصلة الأساسية <strong>خارجية</strong>، على الأرجح داخل وحدة الـ <bdi>GPS</bdi>. هذا يشير أيضًا إلى أن وحدة <bdi>GPS</bdi>+البوصلة موصولة. <bdi>"Not calibrated"</bdi> تعني غالبًا أن البوصلة تغيّرت أو تحتاج إلى إعادة معايرة. الدليل 03.</td></tr>
+  <tr><td>السرعة الجوية</td><td><code>ARSPD_TYPE = 0</code></td><td>لا يوجد حساس سرعة جوية مضبوط (يطابق رسالة التشغيل).</td></tr>
+  <tr><td>حد الخانق</td><td><code>THR_MAX = 80</code></td><td>الخانق الأمامي محدود عند 80%.</td></tr>
+</table>
+</div>
+
+<div class="box info">
+  <strong>ما يعنيه هذا للدليل 02 (توصيتي):</strong> الإعداد القديم متّسق ومبني لهذه الطائرة بالضبط (<bdi>Tri</bdi>، إمالة <bdi>vectored-yaw</bdi>، ذيل على شكل V، جميع المخارج التسعة مخصّصة، حدود إمالة مضبوطة). لذا <strong>احتفظ بهذه المعاملات</strong> وحدّث البرنامج الثابت من 4.7.1 إلى 4.7.2. يحتفظ <bdi>ArduPilot</bdi> بالمعاملات خلال التحديث العادي. بعد ذلك <strong>نتحقق من كل بند</strong> في الأدلة 03–07 بدلًا من إعادة البناء من الصفر. النسخة الاحتياطية تتيح لنا التراجع عن أي شيء. <strong>أخبرني إن كنت تفضّل البدء من جديد تمامًا.</strong>
+</div>
+
+<h2 id="results-board">النتائج: الخطوة 6، لوحتك وما هو موصول بها (02:17)</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+  <img src="../../guides/guide1_screenshots/board-top_2026-10-17_0217.jpg" alt="منظر علوي للـ Pixhawk 2.4.8 مع الكابلات" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <img src="../../guides/guide1_screenshots/board-header-end_2026-10-17_0217.jpg" alt="طرف صفوف دبابيس السيرفو في الـ Pixhawk" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+</div>
+<p>قراءتي للصور. <strong>من فضلك صحّحني إن كان أي سطر خاطئًا:</strong></p>
+<div class="table-wrap">
+<table>
+  <tr><th>منفذ الـ <bdi>Pixhawk</bdi></th><th>ما هو موصول</th><th>الحالة</th></tr>
+  <tr><td><bdi>USB</bdi></td><td>كابل إلى الماك</td><td>✅</td></tr>
+  <tr><td><bdi>POWER</bdi></td><td>كابل بـ 6 أسلاك إلى <strong>وحدة الطاقة</strong></td><td>✅ (لا بطارية <bdi>LiPo</bdi> بعد، لذا <bdi>"low voltage"</bdi> متوقعة)</td></tr>
+  <tr><td><bdi>GPS</bdi></td><td><strong><bdi>GPS M8N</bdi></strong> (بيانات)</td><td>✅ يطابق <bdi>"detected u-blox"</bdi></td></tr>
+  <tr><td><bdi>I2C</bdi></td><td><strong>بوصلة <bdi>M8N</bdi></strong></td><td>✅ يطابق البوصلة الأساسية الخارجية</td></tr>
+  <tr><td><bdi>BUZZER</bdi></td><td>الطنّان (القطعة السوداء المستديرة)</td><td>✅</td></tr>
+  <tr><td><bdi>SWITCH</bdi></td><td>مفتاح الأمان (القطعة السوداء ذات الزر الشفاف، الصورة 2)</td><td>✅ على الأرجح. الضغط عليه يأتي في الدليل 04</td></tr>
+  <tr><td><strong><bdi>RC IN</bdi></strong> (نهاية صف الدبابيس)</td><td>قابس بـ 3 دبابيس تذهب أسلاكه إلى <strong>لوحة دارة سوداء صغيرة</strong>، تتصل بـ <strong>علبة جهاز الاستقبال</strong> (أعلى اليمين)</td><td>❓ تبدو اللوحة الصغيرة <strong>مُرمِّز <bdi>PPM</bdi></strong> (يحوّل قنوات جهاز الاستقبال المنفصلة إلى إشارة واحدة لـ <bdi>RC IN</bdi>). يحتاج تأكيدًا</td></tr>
+  <tr><td><bdi>TELEM1 / TELEM2 / SERIAL 4/5 / SPKT/DSM / CAN / ADC</bdi></td><td>فارغة</td><td>ملاحظة: المعامل القديم <code>SERIAL2_PROTOCOL=23</code> (جهاز الاستقبال على <bdi>TELEM2</bdi>) لا يتطابق. <bdi>TELEM2</bdi> فارغ، إذن هو متبقٍّ قديم. يُصلَح في الدليل 05</td></tr>
+  <tr><td><bdi>MAIN OUT 1–8 / AUX OUT 1–6</bdi></td><td>فارغة (لا منظمات سرعة ولا سيرفوهات بعد)</td><td>✅ صحيح حاليًا</td></tr>
+</table>
+</div>
+<div class="box info">
+  <strong>عن اللوحة الصغيرة (مُرمِّز <bdi>PPM</bdi>، تأكّد في 19:27، انظر الدليل 04 C5):</strong> جهاز الاستقبال <bdi>FlySky</bdi> <strong><bdi>iA10B</bdi></strong> يستطيع بنفسه إخراج <strong><bdi>PPM</bdi></strong> أو <strong><bdi>i-BUS</bdi></strong> على كابل واحد، لذا فلوحة المُرمِّز الإضافية <strong>غير ضرورية</strong> عادةً. قطع أقل تعني نقاط عطل أقل. سنقرر في الدليل 05 (جهاز التحكم). اتركها كما هي الآن.
+</div>
+<div class="box warn">
+  <strong>التركيب / الاتجاه:</strong> قلت إن اللوحة <strong>مسطحة والأضواء (<bdi>LEDs</bdi>) للأعلى</strong> ✅. السؤال المتبقي هو <strong>اتجاه السهم الأبيض</strong> المطبوع على اللوحة (في الصورة 1، قرب الأسفل، بين <bdi>POWER</bdi> و<bdi>I2C</bdi>). يجب أن يشير إلى <strong>مقدمة</strong> الطائرة. إن كان كذلك، يجب تغيير <code>AHRS_ORIENTATION</code> من <code>2</code> (<bdi>Yaw90</bdi>) إلى <code>0</code> (<bdi>None</bdi>). نفعل ذلك في <strong>الدليل 03</strong>، قبل المعايرة. أيضًا: في الصورة اللوحة موضوعة على صفيحة اختبار فوق المكتب. هل رُكّبت في الطائرة بعد؟
+</div>
+
+<h2>استكشاف الأخطاء وإصلاحها</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>المشكلة</th><th>جرّب هذا</th></tr>
+  <tr><td>يبقى <bdi>"Disconnected"</bdi></td><td>كابل (بيانات) مختلف ← منفذ مختلف، دون موزّع ← أغلق <bdi>Mission Planner</bdi> ← أعد تشغيل <bdi>QGC</bdi> واللوحة موصولة.</td></tr>
+  <tr><td>يتصل ثم ينقطع مرارًا</td><td>غالبًا السبب الكابل أو الموزّع. استخدم منفذًا مباشرًا.</td></tr>
+  <tr><td>رسائل حمراء / أخطاء <bdi>"PreArm"</bdi></td><td>عادي الآن (لا <bdi>GPS</bdi>، لا جهاز تحكم، لا معايرة). تجاهلها في هذا الدليل.</td></tr>
+  <tr><td>نافذة <bdi>"Parameters are missing from firmware … FS_OPTIONS, FS_GCS_TIMEOUT, FS_GCS_ENABLE"</bdi></td><td>اختلاف تسمية غير ضار بين <bdi>QGC</bdi>/<bdi>ArduPlane</bdi> (انظر الخطوة 4a). اضغط <bdi>Ok</bdi>.</td></tr>
+  <tr><td>لا أجد <bdi>Parameters</bdi></td><td>أيقونة Q البنفسجية (أعلى اليسار) ← <strong><bdi>Vehicle Configuration</bdi></strong> ← مرّر إلى <strong>أسفل</strong> القائمة اليسرى ← <bdi>Parameters</bdi>.</td></tr>
+  <tr><td>تحقق أن الماك يرى اللوحة</td><td>في <bdi>Terminal</bdi>: <code>ls /dev/cu.usbmodem*</code>. يظهر سطر عندما تكون اللوحة موصولة.</td></tr>
+</table>
+</div>
+
+<h2>أرسل تقريرك</h2>
+<div class="box ok">
+  <strong>✅ اكتمل الدليل 01 (02:20). وصل كل شيء:</strong>
+  <ul class="check">
+    <li><s>الرسائل / اتصال مستقر</s> ✅ <bdi>ArduPlane 4.7.1</bdi>، <bdi>Pixhawk1</bdi>، <bdi>QuadPlane TRI</bdi>، <bdi>"Not Ready"</bdi> مستقر</li>
+    <li><s>قيم <bdi>Q_TILT</bdi> + <bdi>SERVOx_FUNCTION</bdi></s> ✅ إعداد <bdi>Y3</bdi> كامل</li>
+    <li><s>نسخة <bdi>.params</bdi> احتياطية</s> ✅ <code>backups/params-backup_2026-10-17_before-guide02.params</code></li>
+    <li><s>الـ <bdi>GPS</bdi> موصول؟</s> ✅ نعم، <strong>وحدة <bdi>GPS M8N</bdi> مع بوصلة</strong></li>
+    <li><s>التركيب</s> ✅ مسطحة، الأضواء للأعلى. اتجاه السهم مقابل المقدمة ← يُفحص في الدليل 03</li>
+    <li><s>هل طارت من قبل؟</s> ✅ <strong>لا</strong>. الإعداد القديم غير مُختبَر، لذا يُتحقق من كل بند</li>
+    <li><s>الاحتفاظ بالمعاملات أم إعادة ضبطها؟</s> ✅ <strong>الاحتفاظ والإصلاح</strong> (متفق عليه)</li>
+    <li><s>إصدار <bdi>QGC</bdi></s> ✅ <strong>5.1.5</strong></li>
+    <li><s>صورتان</s> ✅ وصلتا (انظر النتائج: الخطوة 6)</li>
+    <li>شكل الذيل (على شكل V؟): لا يزال مفتوحًا، غير مطلوب للدليل 02</li>
+  </ul>
+</div>
+<p><strong>➡️ التالي: <a href="guide-02_2026-10-17_0220_update-arduplane-4-7-2.html">الدليل 02: التحديث إلى <bdi>ArduPlane 4.7.2</bdi> (مع الاحتفاظ بالمعاملات)</a></strong></p>
+
+<h2>المصادر</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/parameters.html"><bdi>ArduPilot Plane</bdi>: القائمة الكاملة للمعاملات</a> (يستخدم <bdi>Plane</bdi> <code>FS_GCS_ENABL</code>، وليس <code>FS_GCS_ENABLE</code>)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-overview.html"><bdi>ArduPilot Plane</bdi>: نظرة عامة على <bdi>QuadPlane</bdi></a> (ما هو <bdi>QuadPlane</bdi>، والهياكل المدعومة)</li>
+  <li><a href="https://ardupilot.org/plane/docs/guide-tilt-rotor.html"><bdi>ArduPilot Plane</bdi>: <bdi>Tilt-Rotor Planes</bdi></a> (<bdi>Q_FRAME_CLASS 7 Tri</bdi>، <bdi>Q_TILT_MASK 3</bdi>، أنواع الإمالة، وظائف سيرفو الإمالة 41 / 75 / 76)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-flight-modes.html"><bdi>ArduPilot Plane</bdi>: أوضاع طيران <bdi>QuadPlane</bdi></a> (<bdi>QSTABILIZE</bdi>، <bdi>QHOVER</bdi>، <bdi>QLAND</bdi>…)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/parameters.html"><bdi>QGroundControl</bdi>: <bdi>Parameters</bdi></a> (<bdi>Tools → Save to file</bdi>)</li>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/firmware.html"><bdi>QGroundControl</bdi>: <bdi>Loading Firmware</bdi></a> (منفذ <bdi>USB</bdi> مباشر، دون موزّع)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-pixhawk-overview.html"><bdi>ArduPilot</bdi>: نظرة عامة على <bdi>Pixhawk</bdi></a> (المراجعات المبكرة من <bdi>STM32F427</bdi> محدودة بفلاش 1 MB)</li>
+</ul>
+
+<footer>مشروع <bdi>VTOL Y3</bdi> · الدليل 01 · أُنشئ 2026-10-17 01:13 · المراجعة 8 02:20 · ✅ مكتمل · التالي: الدليل 02، التحديث إلى <bdi>ArduPlane 4.7.2</bdi> · <bdi>© 2026 bellocloud.com</bdi></footer>
+</main>
+</body>
+</html>

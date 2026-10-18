@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدليل 03 — الاتجاه والمعايرة</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-03_2026-10-17_0309_orientation-and-calibration.html" hreflang="en">English</a> · <a href="../../fr/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html" hreflang="fr">Français</a> · <strong>العربية</strong></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">الدليل 03 / ~10</span>
+    <span class="pill">أُنشئ 2026-10-17 · 03:09</span>
+    <span class="pill">المراجعة 3 · 03:21</span>
+    <span class="pill">⏱ ~30 دقيقة (+ البوصلة في الخارج)</span>
+    <span class="pill">الحالة: A–D ✅ · F ✅ · E البوصلة بعد التوصيلات</span>
+  </div>
+  <h1>اتجاه اللوحة + معايرة مقياس التسارع والاستواء</h1>
+  <p class="lead">الهدف: إخبار <bdi>ArduPlane</bdi> <strong>بالاتجاه الذي يواجهه الـ <bdi>Pixhawk</bdi></strong> داخل الطائرة، ثم معايرة <strong>مقياس التسارع</strong> (6 أوضاع) و<strong>الاستواء</strong>. تأتي <strong>البوصلة</strong> أخيرًا، في الخارج. هذه الخطوات تزيل خطأين من أخطاء <bdi>PreArm</bdi> (<bdi>"Compass not calibrated"</bdi> ولاحقًا <bdi>"AHRS…"</bdi>) وهي مطلوبة قبل أي اختبار لأوضاع الطيران أو المحركات.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>الحالة الآن (20:39)، تم التحقق منها في النسخ الاحتياطية:</strong>
+<ul>
+<li>✅ A/B الاتجاه: <code>AHRS_ORIENTATION=0</code> (السهم ← المقدمة).</li>
+<li>✅ C مقياس التسارع: <code>INS_ACCOFFS/SCAL</code> مضبوطة.</li>
+<li>✅ D الاستواء: <code>AHRS_TRIM_X/Y</code> ≈ −0.016 / −0.006.</li>
+<li>⏳ E البوصلة: لا تزال <strong><bdi>"PreArm: Compass not calibrated"</bdi></strong>. نُقلت إلى <strong>ما بعد التوصيلات</strong> (الدليل 06)، لأن كابلات الطاقة والمحركات تغيّر المجال المغناطيسي. نفّذها في الخارج.</li>
+<li>✅ F النسخة الاحتياطية: <code>params_after-guide03.params</code> (03:32)، <code>params_after-guide03_2.params</code> (03:54).</li>
+</ul></div>
+
+
+<div class="box danger">
+  <strong>السلامة في هذا الدليل</strong>
+  <ul>
+    <li><strong><bdi>USB</bdi> فقط. لا بطارية <bdi>LiPo</bdi>. لا مراوح.</strong> ستقلب الطائرة في كل الاتجاهات.</li>
+    <li>عند قلب الطائرة رأسًا على عقب وكابل <bdi>USB</bdi> موصول: استخدم <strong>كابلًا طويلًا</strong>، أو اطلب من مساعد أن يمسك الكابل. لا تدع الكابل يشدّ الـ <bdi>Pixhawk</bdi>.</li>
+  </ul>
+</div>
+
+<div class="box info" id="reboot">
+  <strong>🔁 ما معنى "إعادة التشغيل" (<bdi>reboot</bdi>) في هذه الأدلة (أُضيف في المراجعة 2)</strong>
+  <p style="margin:6px 0"><strong>إعادة التشغيل = إعادة تشغيل الـ <bdi>Pixhawk</bdi></strong> (وليس الماك، وليس <bdi>QGC</bdi>). يقرأ <bdi>ArduPilot</bdi> إعدادات الاتجاه والمعايرة <strong>عند بدء التشغيل فقط</strong>، لذا بعد تغييرها يجب أن تُعاد تشغيل اللوحة لتستخدمها. يقول <bdi>QGC</bdi> نفسه: <em><bdi>"YOU MUST REBOOT YOUR VEHICLE AFTER EACH CALIBRATION."</bdi></em></p>
+  <p style="margin:6px 0"><strong>الطريقة (اختر واحدة):</strong></p>
+  <ol style="margin:4px 0">
+    <li><strong>الزر:</strong> بعد المعايرة، يعرض <bdi>QGC</bdi> زر <strong><bdi>"Reboot Vehicle"</bdi></strong> في صفحة <bdi>Sensors</bdi>. اضغطه. أو في أي وقت: <strong><bdi>Vehicle Configuration → Parameters → Tools</bdi> (أعلى اليمين) ← <bdi>Reboot Vehicle</bdi> ← <bdi>Ok</bdi></strong>.</li>
+    <li><strong>الكابل:</strong> افصل <bdi>USB</bdi> عن الـ <bdi>Pixhawk</bdi>، انتظر 5 ثوانٍ، ثم أعد توصيله.</li>
+  </ol>
+  <p style="margin:6px 0">في الحالتين: <strong>لا تحرّك الطائرة لمدة ~30 ثانية</strong> أثناء بدء التشغيل (معايرة الجيروسكوب، <bdi>"Do not move plane"</bdi>). يعيد <bdi>QGC</bdi> الاتصال تلقائيًا؛ ويعرض الشريط العلوي <bdi>"Not Ready"</bdi> من جديد.</p>
+</div>
+
+<h2>من أين نبدأ</h2>
+<div class="box info">
+  <ul>
+    <li><bdi>ArduPlane</bdi> <strong>4.7.2</strong> على <bdi>Pixhawk1</bdi>، وجميع إعدادات <bdi>Y3</bdi> سليمة (الدليل 02 ✅). النسخة الاحتياطية المرجعية: <code>backups/params_after-guide02_4.7.2.params</code>.</li>
+    <li><code>AHRS_ORIENTATION = 2</code> (<strong><bdi>Yaw90</bdi></strong>)، متبقٍّ من الإعداد القديم. يعني "اللوحة مُدارة 90° جانبيًا". قلت إن اللوحة <strong>مسطحة والأضواء للأعلى</strong>. نتحقق الآن من <strong>اتجاه السهم</strong>.</li>
+    <li>توجد قيم معايرة قديمة لمقياس التسارع والبوصلة من أيام <bdi>Mission Planner</bdi>، لكن البوصلة تظهر <strong>"غير مُعايَرة"</strong>، وتغيير الاتجاه يُبطل المعايرات القديمة على أي حال. لذا <strong>نعيد الاثنتين</strong>.</li>
+    <li><bdi>QGC 5.1.5</bdi>: كل شيء يتم في <strong><bdi>Vehicle Configuration → Sensors</bdi></strong>. تحققت من أسماء الأزرار وترتيب الخطوات في الشيفرة المصدرية لـ <bdi>QGC 5.1.5</bdi>.</li>
+  </ul>
+</div>
+
+<h2>الجزء A: أين رُكّب الـ <bdi>Pixhawk</bdi>؟</h2>
+<p>تقول وثائق <bdi>ArduPilot</bdi>: <em><bdi>"You should calibrate the board mounted in the vehicle if possible."</bdi></em> البوصلة خصوصًا يجب معايرتها <strong>في موضعها النهائي</strong>، لأن الأسلاك والمعادن القريبة تغيّر قراءاتها.</p>
+
+<div class="step"><div class="num">A</div><div>
+  <h3>جد السهم واختر مسارك</h3>
+  <p>على الوجه العلوي للـ <bdi>Pixhawk</bdi> يوجد <strong>سهم أبيض</strong> (في صورتك: قرب الحافة السفلية، بين <bdi>POWER</bdi> و<bdi>I2C</bdi>، يشير <strong>بعيدًا عن</strong> صف دبابيس السيرفو). دبابيس السيرفو هي <em>خلف</em> اللوحة، والسهم هو <em>أمامها</em>.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>وضعك</th><th>افعل هذا</th></tr>
+    <tr><td><strong>1. الـ <bdi>Pixhawk</bdi> مركّب بالفعل في الطائرة</strong></td><td>تحقق: مسطح ✅، والسهم يشير <strong>نحو المقدمة</strong>؟ إذن انتقل إلى الجزء B مع <strong><bdi>Rotation = None</bdi></strong>. إن كان السهم يشير إلى أحد الجناحين أو إلى الذيل، أخبرني بالاتجاه <em>قبل</em> الجزء B (فهي قيمة دوران مختلفة).</td></tr>
+    <tr><td><strong>2. غير مركّب بعد، ويمكنك تركيبه الآن</strong></td><td>ركّبه أولًا (قائمة التحقق أدناه)، ثم الجزء B.</td></tr>
+    <tr><td><strong>3. غير مركّب بعد، ولا يمكنك تركيبه الآن</strong></td><td>بديل مسموح (وثائق <bdi>ArduPilot</bdi>): نفّذ الجزأين B وC <strong>على طاولة العمل</strong> باللوحة وحدها، والسهم = "الأمام". ثم <strong>بعد التركيب</strong>، أعد الجزء D (<bdi>Level</bdi>) والجزء E (<bdi>Compass</bdi>).</td></tr>
+  </table>
+  </div>
+  <div class="box ok"><strong>جوابك (03:16): الوضع 1، مركّب في الطائرة ✅.</strong> لا يزال مطلوبًا: إلى أين يشير <strong>السهم الأبيض</strong> (المقدمة / الجناح الأيسر / الجناح الأيمن / الذيل)؟ انظر الجزء B. هذا يحدد القيمة الصحيحة.</div>
+  <p><strong>قائمة تحقق التركيب</strong> (للمسار 2):</p>
+  <ul>
+    <li>قرب <strong>مركز ثقل</strong> الطائرة، على <strong>مخمّدات الاهتزاز الزرقاء</strong> الموجودة لديك، <strong>مسطحًا</strong>، <strong>السهم ← المقدمة</strong>.</li>
+    <li>وحدة <strong><bdi>GPS</bdi>/البوصلة <bdi>M8N</bdi></strong> في الأعلى، بأبعد ما يمكن (10 سم أو أكثر) عن <strong>وحدة الطاقة، ولوحة توزيع الطاقة (<bdi>PDB</bdi>)، ومنظمات السرعة، وأسلاك البطارية والمحركات</strong>. سهمها أيضًا يشير <strong>نحو المقدمة</strong>.</li>
+    <li>منفذ <bdi>USB</bdi> لا يزال في المتناول.</li>
+  </ul>
+</div></div>
+
+<h2>الجزء B: اضبط اتجاه اللوحة</h2>
+
+<div class="step"><div class="num">B</div><div>
+  <h3>اضبط <bdi>"Autopilot Rotation"</bdi> على <bdi>None</bdi>، ثم أعد التشغيل</h3>
+  <ol>
+    <li><strong><bdi>Vehicle Configuration → Sensors</bdi></strong>. في صفحة <bdi>Sensors</bdi> ترى <strong>عمودًا من الأزرار على الجانب الأيسر من الصفحة</strong> (على يمين قائمة <bdi>Vehicle Configuration</bdi> الرئيسية): <em><bdi>Accelerometer · Compass · Level Horizon · Pressure (Baro/Airspeed) · Sensor Settings</bdi></em> (وربما <bdi>CompassMot</bdi>). <small>(تصحيح: ذكرت المراجعة 1 أيضًا <bdi>"Gyro"</bdi>. يُخفي <bdi>QGC 5.1.5</bdi> هذا الزر للطائرات.)</small></li>
+    <li>اضغط <strong><bdi>Sensor Settings</bdi></strong>. ترى <strong><bdi>"Autopilot Rotation:"</bdi></strong> مع التلميح <em><bdi>"If mounted in the direction of flight, select None."</bdi></em></li>
+    <li>يعرض حاليًا <strong><bdi>Yaw90</bdi></strong> (من الإعداد القديم). غيّره إلى <strong><code>None</code></strong> (إن كان سهمك يشير نحو المقدمة). اضغط <strong><bdi>OK</bdi></strong>.</li>
+    <li>في نفس النافذة، تحقق من <strong>البوصلة الخارجية</strong> (<bdi>M8N</bdi>): يجب أن يكون اتجاهها <strong><bdi>None</bdi></strong> أيضًا. تلميح <bdi>QGC</bdi>: <em><bdi>"If the compass or GPS module is mounted in flight direction, leave the default value (None)"</bdi></em>. لا تغيّر علامات <bdi>"Use Compass"</bdi>.</li>
+    <li><strong><a href="#reboot">أعد تشغيل</a></strong> الـ <bdi>Pixhawk</bdi> (<bdi>Parameters → Tools → Reboot Vehicle</bdi>، أو افصل/أعد توصيل <bdi>USB</bdi>) ولا تلمسه لمدة 30 ثانية.</li>
+  </ol>
+  <div class="expect">تحقق: <strong><bdi>Parameters</bdi></strong> ← ابحث عن <code>AHRS_ORIENTATION</code> ← يجب أن يعرض <strong><bdi>None</bdi> (0)</strong>. ثم الاختبار السريع (أدناه). 📸 التقط لقطة شاشة لكليهما.</div>
+  <div class="box warn">
+    <strong>⚠️ لماذا لا تكفي ملاحظة "الأفق يبدو صحيحًا والطائرة ساكنة" (جوابك، 03:16):</strong> عندما تكون الطائرة <strong>مسطحة</strong>، يبدو الأفق مستويًا <em>مهما كان</em> إعداد الاتجاه. خطأ جانبي بـ 90° لا يظهر إلا عندما <strong>تُميل</strong> الطائرة. نفّذ <strong>اختبار الإمالة</strong> هذا في <strong>شاشة الطيران (<bdi>Fly view</bdi>)</strong> (أيقونة Q البنفسجية ← العودة إلى الخريطة، أو أغلق <bdi>Vehicle Configuration</bdi>):
+    <div class="table-wrap">
+    <table>
+      <tr><th>تفعل</th><th>يجب أن يُظهر الأفق</th><th>إن أظهر بدلًا من ذلك…</th></tr>
+      <tr><td>ارفع <strong>الذيل</strong> (تنخفض المقدمة)</td><td><strong>المقدمة للأسفل</strong> (بنّي/أرض أكثر)</td><td><strong>دحرجة</strong> (يميل خط الأفق) ← الاتجاه خاطئ</td></tr>
+      <tr><td>ارفع <strong>الجناح الأيسر</strong> (دحرجة لليمين)</td><td>خط الأفق <strong>يميل</strong></td><td>المقدمة للأعلى/للأسفل ← الاتجاه خاطئ</td></tr>
+    </table>
+    </div>
+    <div class="box ok" style="margin-top:8px"><strong>جوابك (03:21):</strong> <strong>غيّرت <code>AHRS_ORIENTATION</code></strong>، والإمالة على المحورين تحرّك الأفق. مقبول حاليًا ✅. سأتأكد من القيمة الدقيقة بنفسي من ملف المعاملات في الخطوة F (لا مزيد من الأسئلة عنها). <em>"المقدمة" = الجزء الأمامي من الطائرة.</em></div>
+    <s>أخبرني: <strong>(1)</strong> القيمة الحالية لـ <code>AHRS_ORIENTATION</code> (هل غيّرتها، أم لا تزال <bdi>Yaw90</bdi>؟)، <strong>(2)</strong> نتيجة هاتين الإمالتين، <strong>(3)</strong> إلى أين يشير السهم على الـ <bdi>Pixhawk</bdi>. إن كانت الإمالات صحيحة <em>مع <bdi>Yaw90</bdi></em>، فلوحتك مركّبة فعلًا جانبيًا و<bdi>Yaw90</bdi> صحيح. لا بأس بذلك، لكننا نحتاج أن نعرف.</s>
+  </div>
+</div></div>
+
+<h2>الجزء C: معايرة مقياس التسارع (6 أوضاع)</h2>
+
+<div class="step"><div class="num">C</div><div>
+  <h3>معايرة <bdi>Accelerometer</bdi></h3>
+  <ol>
+    <li><strong>أين:</strong> أيقونة Q البنفسجية ← <strong><bdi>Vehicle Configuration</bdi></strong> ← في القائمة اليسرى الكبيرة اضغط <strong><bdi>Sensors</bdi></strong> ← في صفحة <bdi>Sensors</bdi>، <strong>الزر الأول</strong> في عمود الأزرار هو <strong><bdi>Accelerometer</bdi></strong>. اضغطه. تعرض نافذة <bdi>"Autopilot Rotation:"</bdi> مجددًا. يجب أن تقول <strong><bdi>None</bdi></strong> الآن. اترك <strong><bdi>"Simple accelerometer calibration"</bdi> غير محدد</strong> (فهو أقل دقة ومخصص فقط للمركبات الأكبر من أن تُقلب).</li>
+    <li>اضغط <strong><bdi>OK</bdi></strong>. يعرض <bdi>QGC</bdi> 6 صور. لكل واحدة: ضع الطائرة في ذلك الوضع، <strong>أمسكها ثابتة تمامًا</strong>، ثم اضغط <strong><bdi>Next</bdi></strong>. نص <bdi>QGC</bdi> نفسه: <em><bdi>"Hold still in the current orientation and press Next when ready."</bdi></em></li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>#</th><th>الوضع (ترتيب <bdi>ArduPilot</bdi>)</th><th>نصيحة للطائرة</th></tr>
+    <tr><td>1</td><td><strong>مستوية</strong></td><td>على الطاولة، العجلات/البطن للأسفل</td></tr>
+    <tr><td>2</td><td><strong>الجانب الأيمن</strong> للأسفل</td><td>طرف الجناح الأيمن للأسفل، أمسك الطائرة من جسمها</td></tr>
+    <tr><td>3</td><td><strong>الجانب الأيسر</strong> للأسفل</td><td>طرف الجناح الأيسر للأسفل</td></tr>
+    <tr><td>4</td><td><strong>المقدمة للأسفل</strong></td><td>المقدمة تشير إلى الأرض</td></tr>
+    <tr><td>5</td><td><strong>المقدمة للأعلى</strong></td><td>الذيل على الأرض</td></tr>
+    <tr><td>6</td><td><strong>على ظهرها</strong></td><td>مقلوبة، مع وسادة تحت الجناح</td></tr>
+  </table>
+  </div>
+  <p><strong>اتبع الترتيب الذي يعرضه <bdi>QGC</bdi></strong> إن كان مختلفًا. وثائق <bdi>ArduPilot</bdi>: <em><bdi>"being still matters more than exact angles"</bdi></em>. زاوية 90° تقريبية تكفي، لكن لا تتحرك أثناء القياس.</p>
+  <div class="expect">يجب أن ترى: كل صورة تصبح <strong>خضراء</strong>، ثم <strong><bdi>"Calibration complete"</bdi></strong> (أو <bdi>"Successfully completed"</bdi>). يقول <bdi>QGC</bdi>: <strong><bdi>"YOU MUST REBOOT YOUR VEHICLE AFTER EACH CALIBRATION"</bdi></strong>، لذا اضغط زر <strong><bdi>Reboot Vehicle</bdi></strong> الذي يظهر في صفحة <bdi>Sensors</bdi> (أو افصل/أعد توصيل <bdi>USB</bdi>، انظر <a href="#reboot">إعادة التشغيل</a>). انتظر 30 ثانية دون تحريك الطائرة. 📸 التقط لقطة شاشة للنتيجة.</div>
+  <p>فشلت؟ السبب عادة الحركة أثناء القياس. أعدها فقط.</p>
+</div></div>
+
+<h2>الجزء D: <bdi>Level Horizon</bdi></h2>
+
+<div class="step"><div class="num">D</div><div>
+  <h3><bdi>Level Horizon</bdi> (الطائرة في وضعية الطيران المستوي)</h3>
+  <ol>
+    <li>ضع الطائرة في <strong>وضعية الطيران المستوي</strong>: الجناحان مستويان، والجسم كما يكون في الطيران المستقيم المستوي. (استخدم تطبيق ميزان على الهاتف عند جذر الجناح إن شئت.)</li>
+    <li><strong>أين:</strong> <bdi>Vehicle Configuration</bdi> ← <strong><bdi>Sensors</bdi></strong> ← زر <strong><bdi>Level Horizon</bdi></strong> (الزر الثالث في العمود) ← <strong><bdi>OK</bdi></strong>. <bdi>QGC</bdi>: <em><bdi>"To level the horizon you need to place the vehicle in its level flight position and press OK."</bdi></em></li>
+    <li>انتظر <bdi>"Calibration complete"</bdi>، ثم <strong><a href="#reboot">أعد تشغيل</a></strong> الـ <bdi>Pixhawk</bdi>: اضغط <strong><bdi>Reboot Vehicle</bdi></strong> في صفحة <bdi>Sensors</bdi>، أو افصل/أعد توصيل <bdi>USB</bdi>. انتظر 30 ثانية.</li>
+  </ol>
+  <div class="box info"><strong>ما معنى "مستوية" بالضبط (سُئل 03:27):</strong> نعم، الطائرة موضوعة <strong>بشكل عادي على طاولة مسطحة</strong>، <em>إن</em> كانت تستقر مسطحة عليها. تحقق من أمرين:
+    <ol style="margin:4px 0">
+      <li><strong>الجناحان مستويان يسارًا/يمينًا</strong>: لا طرف جناح أخفض من الآخر.</li>
+      <li><strong>الجسم أفقي من الأمام/الخلف</strong>: إن كانت <bdi>Y3</bdi> تستقر على عجلات هبوط أو زلاجات تميلها بمقدمة مرتفعة أو منخفضة، ضع كتابًا/إسفنجًا تحت الطرف المنخفض حتى يصبح أعلى الجسم أفقيًا.</li>
+    </ol>
+    تحقق سهل: ضع هاتفك (تطبيق ميزان/قياس) على <strong>أعلى الجسم</strong> (أمام-خلف) وعلى <strong>جذر الجناح</strong> (يسار-يمين). يجب أن يقرأ كلاهما نحو 0°. فرق درجة أو درجتين لا بأس به.</div>
+  <div class="expect">يجب أن ترى: في شاشة الطيران، يعرض الأفق الاصطناعي وضعًا <strong>مستويًا</strong> عندما تكون الطائرة مستوية. ملاحظة <bdi>ArduPilot</bdi>: <bdi>Level</bdi> لا يصحّح إلا حتى ~10°، لذا يجب أن تكون اللوحة مركّبة مسطحة مسبقًا.</div>
+  <p><em>مسار طاولة العمل (الوضع 3): أعد هذه الخطوة بعد تركيب اللوحة في الطائرة.</em></p>
+  <div class="box ok"><strong>✅ <bdi>Level Horizon</bdi>: <bdi>"Successfully completed"</bdi> (03:28).</strong> التالي: <bdi>Reboot Vehicle</bdi> ← 30 ثانية دون حركة ← الجزء F.</div>
+</div></div>
+
+<div class="box info"><strong>للجزأين C وD: "إعادة التشغيل" لا تعني إعادة تشغيل التطبيق.</strong> يبقى <bdi>QGroundControl</bdi> مفتوحًا. تعيد تشغيل الـ <strong><bdi>Pixhawk</bdi></strong> فقط: اضغط زر <strong><bdi>Reboot Vehicle</bdi></strong> الذي يعرضه <bdi>QGC</bdi> بعد المعايرة، <em>أو</em> افصل/أعد توصيل كابل <bdi>USB</bdi> الخاص بالـ <bdi>Pixhawk</bdi>. انتظر 30 ثانية دون تحريك الطائرة.</div>
+
+<h2>الجزء E: البوصلة. لاحقًا، في الخارج</h2>
+<div class="box warn">
+  <strong>لا تنفّذ هذه على مكتبك.</strong> <bdi>ArduPilot</bdi>: <em><bdi>"Do not calibrate the compasses near any metallic or magnetic field producing object"</bdi></em>، واحصل على <strong>تثبيت <bdi>GPS</bdi> ثلاثي الأبعاد جيد أولًا، ويُفضَّل في الخارج</strong>. ويجب أيضًا تنفيذها واللوحة والـ <bdi>GPS</bdi> <strong>في موضعهما النهائي في الطائرة</strong>.
+</div>
+<p>عندما تكون جاهزًا (الطائرة مُجمّعة، في الخارج، تثبيت <bdi>GPS</bdi>، <bdi>USB</bdi> إلى حاسوب محمول):</p>
+<ol>
+  <li><strong><bdi>Sensors → Compass</bdi></strong> ← <bdi>OK</bdi>. <bdi>QGC</bdi>: <em><bdi>"Rotate the vehicle randomly around all axes until the progress bar fills all the way to the right."</bdi></em></li>
+  <li>أمسك الطائرة في الهواء ووجّه <strong>كل جانب نحو الأرض</strong> بالتناوب (المقدمة، الذيل، اليسار، اليمين، الأعلى، الأسفل)، بضع ثوانٍ لكل جانب، مع تدوير بطيء.</li>
+  <li>النجاح: الأشرطة ممتلئة، <bdi>"Successfully completed"</bdi> (يُصدر الطنّان نغمات متصاعدة). ثم <strong><a href="#reboot">أعد تشغيل</a></strong> الـ <bdi>Pixhawk</bdi>.</li>
+  <li>فشلت بعد عدة محاولات؟ لا تُجبرها. أرسل لي لقطة شاشة (يقترح <bdi>ArduPilot</bdi> تخفيف <bdi>"fitness"</bdi> أو <bdi>COMPASS_OFFS_MAX</bdi>، لكن فقط عند الحاجة).</li>
+</ol>
+<div class="box ok"><strong>جوابك (03:21):</strong> الاتجاه يطابق اتجاه بوصلة هاتفك. هذه علامة جيدة على أن البوصلة واتجاهها صحيحان ✅. أما هل يعتبرها <bdi>ArduPilot</bdi> <em>مُعايَرة</em> فسأتحقق من ذلك في ملف الخطوة F والرسائل. إن بقيت <em><bdi>"Compass not calibrated"</bdi></em>، فالجزء E لا يزال مطلوبًا (في الخارج).</div>
+<div class="box warn"><strong>بخصوص "compass works perfect I guess" (جوابك، 03:16):</strong> "تعمل" (يتحرك الاتجاه عندما تدير الطائرة) و"<strong>مُعايَرة</strong>" أمران مختلفان. لا تزال اللوحة تُبلغ <code>PreArm: Compass not calibrated</code> في 03:07. <strong>تحقق سريع:</strong> افتح <strong><bdi>Vehicle Messages</bdi></strong> (اضغط <bdi>"Not Ready"</bdi> أعلى اليسار) وانظر إلى أحدث أسطر <bdi>PreArm</bdi>. إن بقيت <em><bdi>"Compass not calibrated"</bdi></em>، فالمعايرة لا تزال مطلوبة (في الخارج، الجزء E). إن اختفت، أخبرني متى/كيف عايرتها.</div>
+<p>إعدادك يستخدم فقط <strong>البوصلة الخارجية <bdi>M8N</bdi></strong> (<code>COMPASS_USE2 = 0</code>، الداخلية متوقفة). هذا جيد، لأن الخارجية بعيدة عن الإلكترونيات.</p>
+
+<h2>الجزء F: احفظ المعاملات لأتحقق من كل شيء بنفسي</h2>
+<div class="step"><div class="num">F</div><div>
+  <h3>ملف واحد بدلًا من أسئلة كثيرة</h3>
+  <p>لا أستطيع رؤية الـ <bdi>Pixhawk</bdi> مباشرة؛ <bdi>QGC</bdi> على ماكك هو الذي يمسك الاتصال. لكن ملف المعاملات يُظهر لي <strong>كل شيء</strong>: قيمة الاتجاه، وهل حُفظت معايرة مقياس التسارع والاستواء، وهل للبوصلة قيم معايرة.</p>
+  <ol>
+    <li>بعد C وD (وإعادات تشغيلهما): <strong><bdi>Vehicle Configuration → Parameters → Tools</bdi> (أعلى اليمين) ← <bdi>Save to file…</bdi></strong></li>
+    <li>احفظه باسم <code>params_after-guide03.params</code> في <code>dronev2/backups/</code>.</li>
+    <li>انسخ والصق أيضًا <strong><bdi>Vehicle Messages</bdi></strong> (اضغط <bdi>"Not Ready"</bdi> أعلى اليسار) كما في السابق.</li>
+  </ol>
+  <p>من هذين سأتحقق من <code>AHRS_ORIENTATION</code>، وقيم مقياس التسارع الجديدة (<code>INS_ACC*</code>)، وتعديل الاستواء (<code>AHRS_TRIM_*</code>)، وقيم البوصلة (<code>COMPASS_OFS*</code>)، وهل اختفت <bdi>"Compass not calibrated"</bdi>.</p>
+</div></div>
+
+<h2>استكشاف الأخطاء وإصلاحها</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>المشكلة</th><th>جرّب هذا</th></tr>
+  <tr><td><bdi>"Accelerometer must be calibrated prior to Level Horizon / Compass"</bdi></td><td>نفّذ الجزء C أولًا، ثم أعد التشغيل.</td></tr>
+  <tr><td>معايرة مقياس التسارع تفشل / تبدأ من جديد</td><td>تحرّك شيء أثناء القياس. أسند الطائرة إلى حافة طاولة/جدار؛ وأعدها.</td></tr>
+  <tr><td>الأفق يميل في الاتجاه الخاطئ (المقدمة للأسفل تظهر كدحرجة)</td><td>الدوران خاطئ. توقف، وأخبرني إلى أين يشير السهم.</td></tr>
+  <tr><td>ينقطع <bdi>USB</bdi> أثناء قلب الطائرة</td><td>انشدّ الكابل. استخدم كابلًا أطول / مساعدًا؛ وأعد تلك المعايرة من البداية.</td></tr>
+</table>
+</div>
+
+<h2>أرسل تقريرك</h2>
+<div class="box ok">
+  <strong>أرسل لي هذه، ثم سأكتب الدليل 04 (خطة التوصيلات الكاملة):</strong>
+  <ul class="check">
+    <li>الجزء A: أي وضع (1 أو 2 أو 3)؟ إلى أين يشير السهم؟</li>
+    <li>الجزء B: قيمة <code>AHRS_ORIENTATION</code> + اختبار الأفق (هل المقدمة للأسفل تظهر مقدمة للأسفل؟)</li>
+    <li>الجزء C: لقطة شاشة لنتيجة مقياس التسارع</li>
+    <li>الجزء D: هل تم <bdi>Level</bdi>؟ هل يُظهر الأفق وضعًا مستويًا؟</li>
+    <li><bdi>Vehicle Messages</bdi> بعد إعادة التشغيل الأخيرة (نسخ ولصق)</li>
+    <li>الجزء E: البوصلة، فقط إن استطعت تنفيذها في الخارج (وإلا فلاحقًا)</li>
+  </ul>
+</div>
+
+<h2>المصادر</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/common-accelerometer-calibration.html"><bdi>ArduPilot</bdi>: <bdi>Accelerometer Calibration</bdi></a> (المعايرة واللوحة مركّبة إن أمكن؛ 6 أوضاع؛ وضعية مستوية؛ اضبط <bdi>AHRS_ORIENTATION</bdi> أولًا؛ <bdi>Simple Accel Cal</bdi> حل وسط)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-compass-calibration-in-mission-planner.html"><bdi>ArduPilot</bdi>: <bdi>Compass Calibration</bdi></a> (بعيدًا عن المعادن، تثبيت <bdi>GPS</bdi> في الخارج، كل جانب نحو الأسفل، إعادة التشغيل بعدها)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/AutoPilotPlugins/APM/APMSensorsComponent.qml"><bdi>QGroundControl v5.1.5</bdi>: <bdi>APMSensorsComponent.qml</bdi></a> (أسماء الأزرار، <bdi>"Autopilot Rotation"</bdi>، <bdi>"Hold still… press Next"</bdi>، إعادة التشغيل بعد كل معايرة)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/AutoPilotPlugins/APM/APMSensorsComponentController.cc"><bdi>QGroundControl v5.1.5</bdi>: <bdi>APMSensorsComponentController.cc</bdi></a> (البوصلة: <bdi>"rotate randomly around all axes"</bdi>)</li>
+</ul>
+
+<footer>مشروع <bdi>VTOL Y3</bdi> · الدليل 03 · أُنشئ 2026-10-17 03:09 · المراجعة 3 03:21 · السابق: <a href="guide-02_2026-10-17_0220_update-arduplane-4-7-2.html">الدليل 02</a> · التالي: الدليل 04، خطة التوصيلات الكاملة · <bdi>© 2026 bellocloud.com</bdi></footer>
+</main>
+</body>
+</html>

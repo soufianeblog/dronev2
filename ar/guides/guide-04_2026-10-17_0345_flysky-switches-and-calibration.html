@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدليل 04 — إعداد FlySky</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html" hreflang="en">English</a> · <a href="../../fr/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html" hreflang="fr">Français</a> · <strong>العربية</strong></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">الدليل 04 / ~10</span>
+    <span class="pill">أُنشئ 2026-10-17 · 03:45</span>
+    <span class="pill">المراجعة 3 · 20:39 (الحالة، الرسومات)</span>
+    <span class="pill">⏱ ~45 دقيقة</span>
+    <span class="pill">✅ اكتمل 20:34</span>
+  </div>
+  <h1>FlySky i6X: اختبره، واضبط مفاتيحك، ثم قم بالمعايرة</h1>
+  <p class="lead">الهدف: أن تعمل خطة المفاتيح والعصي الخاصة بك في ArduPlane. <strong>SWA</strong> = تشغيل/إيقاف المحركات، <strong>SWC</strong> = خمول / وضع الدرون / وضع الطائرة، <strong>العصا اليسرى</strong> = الخانق، <strong>العصا اليمنى</strong> = الانحدار + الانعطاف. ثم معايرة الراديو في QGC واختبار كل مفتاح، <strong>بدون بطارية وبدون مراوح</strong>.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>الحالة الآن (20:39): ✅ مكتمل.</strong> مسار الراديو: i6X ← iA10B (<bdi>Output mode</bdi> <strong>PWM</strong>) ← مُرمِّز PPM ← RC IN. تمت المعايرة في <bdi>Mode 2</bdi>. ‏SWC على CH6: أعلى QLAND · وسط QHOVER · أسفل FBWA. ‏SWA: أسفل = تسليح، أعلى = إيقاف. أُزيلت وظائف المفاتيح المتبقية، وأُوقف التسليح بالعصا، وفُعِّل GPS. النسخة الاحتياطية: <code>backups/params_after-guide04.params</code>. يُحتفظ بالتاريخ خطوة بخطوة أدناه كسجل. المربعات المعلَّمة بـ<em>مُلغى</em> كانت أفكارًا مبكرة تبيَّن أنها خاطئة. <a href="#final-summary">انتقل إلى الملخص النهائي</a>.</div>
+
+
+<div class="box danger">
+  <strong>السلامة في هذا الدليل</strong>
+  <ul>
+    <li><strong>USB فقط. بدون بطارية LiPo. المراوح مفكوكة.</strong> يحصل جهاز الاستقبال على الطاقة من منفذ RC IN في Pixhawk عبر USB، لذا يعمل الراديو بدون بطارية.</li>
+    <li>المحركات <strong>لا يمكن أن تدور</strong> في هذا الدليل (لا توجد بطارية، والتسليح لا يزال محظورًا بفحوصات PreArm). نحن نتحقق فقط من أن Pixhawk <em>يرى</em> الإشارات الصحيحة.</li>
+  </ul>
+</div>
+
+<div class="box warn"><strong>أنت من يُجري كل تغيير بنفسك.</strong> أنا لا أتصل بـPixhawk ولا أغيّره. كل جزء أدناه يحدد بالضبط ما يجب النقر عليه في QGC أو على i6X. نفّذها بالترتيب: <strong>0 ← B ← C ← D ← E ← F ← G ← H</strong>.</div>
+
+<h2 id="pictures">خطتنا بالصور (المراجعة 2، 03:53)</h2>
+
+<div class="fig">
+<svg viewBox="0 0 770 400" role="img" aria-label="جهاز التحكم FlySky i6X مع التعيينات المتفق عليها">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>
+  <text x="360" y="22" text-anchor="middle" class="t">FlySky i6X: وظيفة كل أداة تحكم</text>
+  <rect x="150" y="60" width="420" height="250" rx="40" class="body"/>
+  <!-- top switches -->
+  <rect x="185" y="40" width="14" height="34" rx="4" class="sw"/><text x="192" y="34" text-anchor="middle" class="t">SWA</text>
+  <rect x="235" y="40" width="14" height="34" rx="4" class="unused"/><text x="242" y="34" text-anchor="middle" class="m">SWB</text>
+  <rect x="471" y="40" width="14" height="34" rx="4" class="sw"/><text x="478" y="34" text-anchor="middle" class="t">SWC</text>
+  <rect x="521" y="40" width="14" height="34" rx="4" class="unused"/><text x="528" y="34" text-anchor="middle" class="m">SWD</text>
+  <circle cx="300" cy="95" r="12" class="unused"/><text x="300" y="122" text-anchor="middle" class="m">VrA</text>
+  <circle cx="420" cy="95" r="12" class="unused"/><text x="420" y="122" text-anchor="middle" class="m">VrB</text>
+  <rect x="320" y="140" width="80" height="50" rx="6" fill="var(--bg)" stroke="var(--muted)"/><text x="360" y="170" text-anchor="middle" class="m">الشاشة</text>
+  <!-- sticks -->
+  <circle cx="245" cy="225" r="48" class="stick"/><circle cx="245" cy="225" r="10" fill="var(--text)"/>
+  <circle cx="475" cy="225" r="48" class="stick"/><circle cx="475" cy="225" r="10" fill="var(--text)"/>
+  <path class="arr" d="M245 205 L245 185"/><path class="arr" d="M245 245 L245 265"/>
+  <path class="arr" d="M225 225 L205 225"/><path class="arr" d="M265 225 L285 225"/>
+  <path class="arr" d="M475 205 L475 185"/><path class="arr" d="M475 245 L475 265"/>
+  <path class="arr" d="M455 225 L435 225"/><path class="arr" d="M495 225 L515 225"/>
+  <!-- labels left -->
+  <text x="20" y="60" class="t">SWA (CH5)</text><text x="20" y="76">تسليح / فك التسليح</text><text x="20" y="92" class="m">أسفل = تشغيل · أعلى = إيقاف</text>
+  <path class="ln" d="M120 70 L185 56"/>
+  <text x="20" y="190" class="t">العصا اليسرى</text>
+  <text x="20" y="208">↑↓ الخانق (CH3)</text>
+  <text x="20" y="226">←→ الانعراج (CH4)، انعطاف</text>
+  <text x="20" y="244" class="m">الخانق للأسفل للتسليح</text>
+  <path class="ln" d="M150 220 L195 225"/>
+  <!-- labels right -->
+  <text x="590" y="52" class="t">SWC (CH6) ثلاثي المواضع</text>
+  <text x="590" y="70">أعلى: QLAND (خمول)</text>
+  <text x="590" y="86">وسط: QHOVER (درون)</text>
+  <text x="590" y="102">أسفل: FBWA (طائرة)</text>
+  <path class="ln" d="M588 66 L485 56"/>
+  <text x="590" y="190" class="t">العصا اليمنى</text>
+  <text x="590" y="208">↑↓ الانحدار (CH2)</text>
+  <text x="590" y="226">←→ الدحرجة (CH1)</text>
+  <path class="ln" d="M588 220 L525 225"/>
+  <text x="360" y="340" text-anchor="middle" class="m">الرمادي = غير مستخدم: SWB، SWD، VrA، VrB (متاحة لاحقًا)</text>
+  <text x="360" y="360" text-anchor="middle" class="m">‏"Mode 2" القياسي. تبقى الدحرجة على العصا اليمنى (متفق عليه، المراجعة 2)</text>
+</svg>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="وضع الدرون: ثلاثة محركات ترفع، والأسطح شبه ساكنة">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">المقدمة</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="quiet"/><rect x="275" y="133" width="80" height="9" class="quiet"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="quiet"/><rect x="210" y="287" width="54" height="9" class="quiet"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="110" cy="80" r="18" class="on"/>
+  <text x="110" y="84" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <circle cx="290" cy="80" r="18" class="on"/>
+  <text x="290" y="84" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <circle cx="200" cy="236" r="15" class="on"/><text x="200" y="240" text-anchor="middle" fill="var(--bg)" font-weight="700">↑</text>
+  <text x="110" y="52" text-anchor="middle">M2 الأمامي الأيسر</text><text x="290" y="52" text-anchor="middle">M1 الأمامي الأيمن</text><text x="222" y="240">M4 الذيل</text>
+  <text x="360" y="22" text-anchor="middle" class="t">وضع الدرون: SWC في الوسط = QHOVER (وكذلك QLAND)</text>
+  <text x="400" y="80" class="t">ما الذي يعمل</text>
+  <text x="400" y="102"><tspan class="on" style="font-weight:700">● تشغيل</tspan> المحركات الثلاثة كلها، موجهة لأعلى (رفع)</text>
+  <text x="400" y="122">سيرفوهات الإمالة: تُبقي المحركين الأماميين عموديين</text>
+  <text x="400" y="150" class="t">من يوجّه</text>
+  <text x="400" y="172">الدحرجة: المحرك الأمامي الأيسر مقابل الأيمن</text>
+  <text x="400" y="190">الانحدار: المحركان الأماميان مقابل محرك الذيل</text>
+  <text x="400" y="208">الانعراج: سيرفوهات الإمالة تميل المحركين بعكس بعضهما</text>
+  <text x="400" y="236" class="t">سيرفوهات الجناح + الذيل على شكل V</text>
+  <text x="400" y="256"><tspan class="m" style="font-weight:700">● شبه ساكنة</tspan> يُقلّص ArduPlane</text>
+  <text x="400" y="274">حركتها إلى ~0 عند سرعة التحويم (تلقائيًا).</text>
+  <text x="400" y="292" class="m">لذلك لا حاجة لمفتاح SWD.</text>
+</svg>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 720 330" role="img" aria-label="وضع الطائرة: المحركان الأماميان للأمام، محرك الذيل متوقف، الأسطح نشطة">
+  <rect x="192" y="62" width="16" height="240" rx="8" class="body"/>
+  <polygon points="200,40 191,56 209,56" fill="var(--text)"/><text x="215" y="52" class="m">المقدمة</text>
+  <rect x="30" y="110" width="340" height="32" rx="6" class="wing"/>
+  <rect x="45" y="133" width="80" height="9" class="act"/><rect x="275" y="133" width="80" height="9" class="act"/>
+  <polygon points="192,262 128,280 128,296 192,296" class="wing"/><polygon points="208,262 272,280 272,296 208,296" class="wing"/>
+  <rect x="136" y="287" width="54" height="9" class="act"/><rect x="210" y="287" width="54" height="9" class="act"/>
+  <line x1="110" y1="112" x2="110" y2="92" class="ln" stroke-width="3"/>
+  <rect x="103" y="98" width="14" height="10" rx="2" class="sw"/>
+  <ellipse cx="110" cy="76" rx="24" ry="6" class="on"/><text x="110" y="66" text-anchor="middle" font-weight="700">▲ دفع</text>
+  <line x1="290" y1="112" x2="290" y2="92" class="ln" stroke-width="3"/>
+  <rect x="283" y="98" width="14" height="10" rx="2" class="sw"/>
+  <ellipse cx="290" cy="76" rx="24" ry="6" class="on"/><text x="290" y="66" text-anchor="middle" font-weight="700">▲ دفع</text>
+  <circle cx="200" cy="236" r="15" class="off"/><text x="200" y="240" text-anchor="middle" font-weight="700">✕</text>
+  <text x="85" y="160" text-anchor="middle">جنيح</text><text x="315" y="160" text-anchor="middle">جنيح</text><text x="222" y="240" class="m">M4 الذيل: متوقف</text><text x="200" y="320" text-anchor="middle" class="m">أسطح الذيل على شكل V</text>
+  <text x="360" y="22" text-anchor="middle" class="t">وضع الطائرة: SWC للأسفل = FBWA</text>
+  <text x="400" y="80" class="t">ما الذي يعمل</text>
+  <text x="400" y="102"><tspan class="on" style="font-weight:700">● تشغيل</tspan> المحركان الأماميان، مائلان للأمام (دفع)</text>
+  <text x="400" y="122"><tspan class="m" style="font-weight:700">✕ إيقاف</tspan> محرك الذيل (يتوقف بعد الانتقال)</text>
+  <text x="400" y="150" class="t">من يوجّه <tspan class="act">(البرتقالي = نشط)</tspan></text>
+  <text x="400" y="172">الدحرجة: <tspan font-weight="700">الجنيحات</tspan> (MAIN 1–2)</text>
+  <text x="400" y="190">الانحدار: <tspan font-weight="700">الذيل V</tspan>، السطحان في الاتجاه نفسه</text>
+  <text x="400" y="208">الانعراج: <tspan font-weight="700">الذيل V</tspan>، السطحان متعاكسان (MAIN 3–4)</text>
+  <text x="400" y="236" class="t">التبديل</text>
+  <text x="400" y="256">من الوسط ← للأسفل: تميل المحركات للأمام ببطء</text>
+  <text x="400" y="274">(25°/s)؛ ويدير ArduPlane الانتقال.</text>
+  <text x="400" y="292">من الأسفل ← للوسط: تعود المحركات لأعلى (80°/s).</text>
+</svg>
+</div>
+
+<div class="box ok" id="surfaces"><strong>كيف تحرّك العصي الأسطح (وصفك، 19:48، وضع الطائرة):</strong>
+  <div class="table-wrap"><table>
+    <tr><th>العصا</th><th>الأسطح</th><th>الحركة</th><th>مخرج Pixhawk</th></tr>
+    <tr><td>العصا اليمنى ←→ (الدحرجة، CH1)</td><td>سيرفوهان في الجناح الرئيسي (الجنيحات)</td><td><strong>متعاكسة</strong>: واحد لأعلى وواحد لأسفل</td><td>MAIN 1–2 <code>Aileron</code></td></tr>
+    <tr><td>العصا اليمنى ↑↓ (الانحدار، CH2)</td><td>سيرفوهان في جناح الذيل</td><td><strong>معًا</strong>: كلاهما لأعلى / كلاهما لأسفل</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>العصا اليسرى ←→ (الانعراج، CH4)</td><td>سيرفوهان في جناح الذيل</td><td><strong>متعاكسة</strong>: واحد لأعلى وواحد لأسفل</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>العصا اليسرى ↑↓ (الخانق، CH3)</td><td>المحركات</td><td>قدرة أكثر / أقل</td><td>MAIN 5, 6, 8</td></tr>
+    <tr><td><em>تلقائي</em></td><td>سيرفوهان أماميان للإمالة</td><td>المحركات لأعلى (درون) ↔ للأمام (طائرة)، بالإضافة إلى الانعراج في وضع الدرون</td><td>AUX 1–2 <code>TiltMotorFront…</code></td></tr>
+  </table></div>
+  كل عمليات المزج يقوم بها <strong>Pixhawk</strong> (ولهذا يكون مزج <bdi>V-Tail/Elevon</bdi> في i6X على <bdi>Off</bdi>). الانحدار + الانعراج معًا: يجمع مازج الذيل V الاثنين. تُفحص اتجاهات السيرفوهات واحدًا تلو الآخر في الدليل 08، بعد توصيل السيرفوهات.</div>
+
+<div class="box info"><strong>بخصوص "تعطيل الأسطح خارج وضع الطائرة":</strong> ArduPlane 4.7.2 يقوم بذلك نيابةً عنك بالفعل. في أوضاع VTOL فإنه <em>"limit[s] surface movement at low speed to prevent instability"</em> (يحدّ من حركة الأسطح عند السرعة المنخفضة لمنع عدم الاستقرار): يُقلَّص الانحراف خطيًا إلى ما يقارب الصفر كلما اقتربت السرعة من سرعة التحويم (المصدر: <code>ArduPlane/Attitude.cpp</code>، 4.7.2). في وضع الطائرة تعمل الأسطح بالكامل. لا حاجة لمفتاح SWD منفصل، بل سيكون ذلك خطرًا: إيقاف الذيل V في وضع الطائرة يعني فقدان التحكم في الانحدار والانعراج. <em>ملاحظة: بدون تثبيت GPS (داخل المبنى) لا يستطيع ArduPlane تقدير السرعة، لذا قد تتحرك الأسطح على المكتب أثناء الاختبار. هذا طبيعي.</em></div>
+
+<h2>كيف يرى Pixhawk جهاز الراديو الخاص بك</h2>
+<div class="box info">
+  <ul>
+    <li>FlySky i6X ← (2.4 GHz) ← <strong>جهاز الاستقبال iA10B</strong> (<bdi>Output mode</bdi> <strong>PWM</strong>: سلك واحد لكل قناة) ← <strong>لوحة مُرمِّز PPM</strong> (تجمعها في إشارة PPM واحدة) ← <strong>RC IN</strong> في Pixhawk. يعمل منذ 19:48 (C5).</li>
+    <li>كل عصا/مفتاح/مقبض = <strong>قناة</strong> واحدة (CH1، CH2، …). ArduPlane هو من يقرر وظيفة كل قناة.</li>
+    <li>إعدادات ArduPlane الحالية (من نسختك الاحتياطية): CH1 الدحرجة · CH2 الانحدار · CH3 الخانق · CH4 الانعراج · <strong>CH5 = تسليح/فك التسليح</strong> (<code>RC5_OPTION=153</code>، مضبوط مسبقًا!) · CH6 = RTL (متبقٍّ) · أوضاع الطيران على <strong>CH8</strong>.</li>
+  </ul>
+</div>
+
+<h2>الجزء 0: احفظ نسخة احتياطية أولًا (ويُكمل أيضًا الدليل 03)</h2>
+<div class="step"><div class="num">0</div><div>
+  <h3>احفظ المعلمات قبل أن نغيّر أي شيء</h3>
+  <p><strong><bdi>Vehicle Configuration → Parameters → Tools</bdi></strong> (أعلى اليمين) ← <strong><bdi>Save to file…</bdi></strong> ← <code>backups/params_after-guide03.params</code>.</p>
+  <p>هذه هي الخطوة F من الدليل 03. سأستخدمها لتأكيد الاتجاه والمعايرات لديك، وكنقطة "تراجع" لهذا الدليل.</p>
+</div></div>
+
+<h2>الجزء A: خطتك ← ArduPlane</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>ما تريده</th><th>ميزة ArduPlane</th><th>كيف تتصرف</th><th>الحكم</th></tr>
+  <tr><td><strong>SWA</strong>: تشغيل/إيقاف كل المحركات</td><td><strong>مفتاح التسليح/فك التسليح</strong> (<code>RC5_OPTION = 153</code>)</td><td>المفتاح <strong>للأسفل</strong> (إشارة مرتفعة) ← <strong>يُسلّح</strong> (فقط إذا نجحت كل فحوصات السلامة). المفتاح <strong>للأعلى</strong> (إشارة منخفضة) ← <strong>يفك التسليح دون أي شرط</strong>: تتوقف المحركات فورًا. (اختُبر 20:32.)</td><td>✅ جيد. <strong>⚠️ في الجو، إيقاف SWA = توقف المحركات = سقوط الطائرة.</strong> تعامل مع SWA كـ<em>مفتاح قطع طوارئ</em>، لا يُقلب إلا على الأرض (أو في حالة طوارئ حقيقية).</td></tr>
+  <tr><td><strong>SWC للأعلى</strong>: خمول، "يوقف المحركات تدريجيًا وبأمان"</td><td>وضع الطيران <strong>QLAND</strong></td><td>في الجو: <strong>يهبط ببطء، ويهبط عموديًا، ويوقف المحركات ويفك التسليح من تلقاء نفسه</strong>. على الأرض: <strong>ترفض اللوحة التسليح</strong> في QLAND (<bdi>"QLand mode not armable"</bdi>)، فتبقى المحركات متوقفة.</td><td>✅ هذا بالضبط "الخمول الآمن" الذي وصفته</td></tr>
+  <tr><td><strong>SWC في الوسط</strong>: وضع الدرون، 3 محركات</td><td>وضع الطيران <strong>QHOVER</strong></td><td>VTOL بالمحركات الثلاثة كلها، والمحركان الأماميان موجهان لأعلى. يحافظ على ارتفاعه عندما تكون عصا الخانق في المنتصف.</td><td>✅ موصى به لأول عمليات التحويم (البديل: QSTABILIZE، حيث يحدد الخانق قدرة المحركات مباشرة؛ أصعب)</td></tr>
+  <tr><td><strong>SWC للأسفل</strong>: وضع الطائرة، المحركان الأماميان فقط</td><td>وضع الطيران <strong>FBWA</strong></td><td>يميل المحركان الأماميان للأمام (تدريجيًا، <code>Q_TILT_RATE_DN</code> = 25°/s)، ويتوقف <strong>محرك الذيل</strong> بمجرد بلوغ سرعة الطيران، ويتولى الجناحان + الذيل V المهمة. يقوم ArduPlane بهذا الانتقال من تلقاء نفسه.</td><td>✅ هذا بالضبط وضع الطائرة الذي تريده</td></tr>
+  <tr><td><strong>العصا اليسرى أعلى/أسفل</strong>: السرعة</td><td>الخانق (CH3)</td><td>QHOVER: أعلى = صعود، المنتصف = تثبيت الارتفاع، أسفل = نزول. FBWA: الدفع الأمامي للمحركين الأماميين. QLAND: يُتجاهل. <strong>يجب أن تكون للأسفل بالكامل للتسليح.</strong></td><td>✅</td></tr>
+  <tr><td><strong>العصا اليمنى أعلى/أسفل</strong>: الانحدار</td><td>الانحدار (CH2)</td><td>المقدمة لأعلى/لأسفل</td><td>✅ قياسي</td></tr>
+  <tr><td><strong>العصا اليمنى يسار/يمين</strong>: الانعراج</td><td>عادةً <strong>الدحرجة</strong></td><td colspan="2" rowspan="2">⚠️ <strong>انظر التوصية أدناه</strong></td></tr>
+  <tr><td><strong>مقبض VrB</strong>: الدحرجة</td><td>مقبض كأداة تحكم في الدحرجة</td></tr>
+</table>
+</div>
+
+<div class="box danger">
+  <strong>⚠️ توصيتي القوية: لا تضع الدحرجة على مقبض VrB.</strong>
+  <ul>
+    <li><strong>العصا ترتد إلى المنتصف عندما تتركها. أما المقبض فيبقى حيث تركته.</strong> الدحرجة على مقبض تعني: أدِره قليلًا فتظل الطائرة <strong>مائلة جانبيًا</strong> (أو في التحويم تظل <strong>مائلة وتنزلق جانبيًا</strong>) حتى تجد المنتصف الدقيق مرة أخرى بالإحساس.</li>
+    <li>الدحرجة هي المحور الذي تصحّحه <strong>أكثر من غيره وبأسرع ما يمكن</strong>، في التحويم <em>وفي</em> طيران الطائرة. المقبض بطيء جدًا لذلك. في هبّة ريح أو بعد الانتقال، هذا وحده قد يُسقط Y3.</li>
+    <li>ArduPlane وتثبيت الطيار الآلي وكل وثائقه تفترض التوزيع القياسي. وكذلك المدربون والمحاكيات وكل الدروس التعليمية.</li>
+  </ul>
+  <p><strong>الموصى به = <bdi>"Mode 2"</bdi> القياسي</strong> (ما يفعله i6X لديك افتراضيًا بالفعل):</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>أعلى / أسفل</th><th>يسار / يمين</th></tr>
+    <tr><td><strong>العصا اليسرى</strong></td><td>الخانق (CH3) ✅ <em>كما أردت</em></td><td><strong>الانعراج</strong> (CH4): الانعطاف يسارًا/يمينًا</td></tr>
+    <tr><td><strong>العصا اليمنى</strong></td><td>الانحدار (CH2) ✅ <em>كما أردت</em></td><td><strong>الدحرجة</strong> (CH1): الميل يسارًا/يمينًا</td></tr>
+  </table>
+  </div>
+  <p>إذن الفرق الوحيد عن خطتك: <strong>ينتقل الانعراج إلى العصا اليسرى (يسار/يمين)، وتذهب الدحرجة إلى العصا اليمنى (يسار/يمين)</strong>، ويبقى مقبض VrB متاحًا.</p>
+  <p class="box ok" style="display:block"><strong>✅ تقرّر (03:53): التوزيع القياسي. تبقى الدحرجة على العصا اليمنى، وVrB غير مستخدم.</strong></p>
+</div>
+
+<h2>الجزء A2: نقاطك الإضافية (03:46)</h2>
+<div class="box info">
+  <strong>1. "سيرفوهات الجناح والذيل تتحكم في الدحرجة معًا."</strong> قريب، لكن في ArduPlane لكل سطح وظيفته الخاصة، و<strong>يمزجها ArduPlane تلقائيًا</strong>. لن تقوم أبدًا بتوصيل أو مزج ذلك بنفسك:
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>وضع الدرون (QHOVER/QLAND)</th><th>وضع الطائرة (FBWA)</th></tr>
+    <tr><td><strong>الدحرجة</strong></td><td>سرعة <strong>المحرك الأمامي</strong> الأيسر مقابل الأيمن (دفع أكبر على جانب واحد)</td><td><strong>الجنيحات</strong> (سيرفوهات الجناح، MAIN 1–2)</td></tr>
+    <tr><td><strong>الانحدار</strong></td><td>المحركان الأماميان مقابل <strong>محرك الذيل</strong></td><td><strong>الذيل V</strong> السطحان في الاتجاه نفسه (MAIN 3–4)</td></tr>
+    <tr><td><strong>الانعراج</strong></td><td><strong>سيرفوهَا الإمالة</strong> يميلان في اتجاهين متعاكسين (VectoredYaw)</td><td>سطحا <strong>الذيل V</strong> في اتجاهين متعاكسين</td></tr>
+  </table>
+  </div>
+  إذن <strong>الذيل V يقوم بالانحدار + الانعراج، وليس الدحرجة</strong>. وفي كل الأحوال، فإن <em>مُدخَلك</em> للدحرجة (عصا أم مقبض) مسألة منفصلة، وتوصيتي تبقى: <strong>الدحرجة على العصا اليمنى</strong>.
+</div>
+<div class="box ok">
+  <strong>2. ✅ تقرّر (03:53): سيرفوهات الجناح + الذيل V تعمل فقط في وضع الطائرة، ويُعالَج ذلك تلقائيًا.</strong> لقد أكّدت: الانحدار والانعراج من الأسطح فقط في وضع الطائرة. يُقلّص ArduPlane الأسطح بالفعل إلى ما يقارب الصفر في التحويم (انظر <a href="#pictures">الصور</a>)، لذا <strong>لا حاجة لمفتاح SWD</strong>. تبقى SWB وSWD وVrA وVrB غير مستخدمة.
+</div>
+
+<h2>الجزء B: الإعدادات على جهاز الإرسال FlySky i6X</h2>
+<div class="box ok"><strong>➡️ إعداد جهاز الإرسال الكامل أصبح له دليله الخاص (14:21):</strong> <a href="guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html">الدليل 05: إعداد جهاز الإرسال FlySky i6X</a>، مبني على دليل FS-i6X الرسمي (نوع النموذج، <bdi>Mode 2</bdi>، إيقاف المزج في جهاز الإرسال بما في ذلك <bdi>V Tail</bdi>، مفاتيح <bdi>Aux</bdi>، SwA←CH5، SwC←CH6، PPM، الاختبار على شاشة <bdi>Display</bdi> في i6X). نفّذ الدليل 05، ثم عد إلى هنا لـ C5 ← D ← G.</div>
+<p>أساسيات i6X: <strong>الضغط المطوّل على OK</strong> = فتح القائمة · <strong>UP/DOWN</strong> = التنقل · <strong>OK</strong> = الاختيار · <strong>الضغط المطوّل على CANCEL</strong> = <strong>الحفظ</strong> والرجوع. (أسماء القوائم أدناه مأخوذة من أدلة FlySky i6X؛ قد يصوغها البرنامج الثابت لديك بشكل مختلف قليلًا. إذا لم تجد إحداها، أرسل صورة للشاشة.)</p>
+
+<div class="step"><div class="num">B1</div><div>
+  <h3>عيّن المفاتيح إلى القنوات</h3>
+  <ol>
+    <li>شغّل i6X. <strong>إذا أصدر صفيرًا وعرض تحذيرًا:</strong> ادفع <strong>المفاتيح الأربعة كلها (SWA، SWB، SWC، SWD) للأعلى</strong> (بعيدًا عنك) و<strong>العصا اليسرى للأسفل بالكامل</strong>. يتوقف الصفير وتظهر الشاشة الرئيسية. هذا فحص السلامة في FlySky: لن يبدأ والخانق مرفوع أو أحد المفاتيح مُفعّل. (ما زال يصفر بعد ذلك؟ قد تكون البطاريات ضعيفة. تحقق من أيقونة البطارية على الشاشة.) <em>(أُضيف 03:56)</em></li>
+    <li><strong>اضغط مطوّلًا على OK</strong> ← <strong><bdi>Functions setup</bdi></strong> (أيقونة المفتاح) ← <strong><bdi>Aux. channels</bdi></strong>.</li>
+    <li>اضبط <strong><bdi>Channel 5 → SwA</bdi></strong>.</li>
+    <li>اضبط <strong><bdi>Channel 6 → SwC</bdi></strong>.</li>
+    <li><strong>اضغط مطوّلًا على CANCEL</strong> للحفظ.</li>
+  </ol>
+  <p>نستخدم <strong>CH6 لـ SWC</strong> (بدلًا من CH8 القديمة). هذا يعمل مع القنوات الست القياسية في i6X، فلا يوجد ما يحتاج إلى فتح إضافي.</p>
+</div></div>
+
+<div class="step"><div class="num">B2</div><div>
+  <h3>تحقق من هذه الأمور الثلاثة (عادةً تكون سليمة مسبقًا)</h3>
+  <ul>
+    <li><strong>التريمات على الصفر</strong>: أزرار التريم الصغيرة بجانب العصي. يجب أن تكون علامات التريم على الشاشة في المنتصف. يطلب QGC ذلك: <em><bdi>"Before calibrating you should zero all your trims and subtrims."</bdi></em> (أيضًا: <strong><bdi>Functions setup → Subtrim</bdi></strong>: كلها 0.)</li>
+    <li><strong>نقاط النهاية 100%</strong>: <strong><bdi>Functions setup → End points</bdi></strong>: كل القنوات 100%.</li>
+    <li><s><strong>مخرج جهاز الاستقبال = PPM</strong></s> ⚠️ <em>مُلغى: مع مُرمِّز PPM لديك يجب أن يكون <strong>PWM</strong> (C5).</em> <strong><bdi>System setup → RX setup → Output mode</bdi></strong> ← PPM. إنه يعمل بالفعل كـPPM (رسالة الإقلاع)، لذا <strong>لا تغيّره</strong> إذا كان يُظهر PPM.</li>
+  </ul>
+</div></div>
+
+<h2>الجزء C: شاهد جهاز الراديو في QGC</h2>
+<div class="step"><div class="num">C</div><div>
+  <h3>صفحة Radio: هل كل أداة تحكم تحرّك الشريط الصحيح؟</h3>
+  <ol>
+    <li>في QGC: <strong><bdi>Vehicle Configuration → Radio</bdi></strong>.</li>
+    <li>جهاز الإرسال <strong>مُشغَّل</strong>. سترى أشرطة القنوات. حرّك كل أداة تحكم <strong>واحدة تلو الأخرى</strong>:</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>التحريك</th><th>الشريط الذي يجب أن يتحرك</th></tr>
+    <tr><td>العصا اليمنى يسار/يمين</td><td><bdi>Channel 1 (Roll)</bdi></td></tr>
+    <tr><td>العصا اليمنى أعلى/أسفل</td><td><bdi>Channel 2 (Pitch)</bdi></td></tr>
+    <tr><td>العصا اليسرى أعلى/أسفل</td><td><bdi>Channel 3 (Throttle)</bdi></td></tr>
+    <tr><td>العصا اليسرى يسار/يمين</td><td><bdi>Channel 4 (Yaw)</bdi></td></tr>
+    <tr><td>SWA</td><td><bdi>Channel 5</bdi>: يقفز بين ~1000 و~2000</td></tr>
+    <tr><td>SWC (3 مواضع)</td><td><bdi>Channel 6</bdi>: ~1000 / ~1500 / ~2000</td></tr>
+  </table>
+  </div>
+  <p>📸 لقطة شاشة وSWC في الوسط. لا شيء يتحرك؟ راجع الجزء B، وتأكد أن مؤشر LED في جهاز الاستقبال <strong>ثابت</strong> (الوميض = غير مقترن بجهاز الإرسال؛ أعد الاقتران كما في الفيديو الخاص بك).</p>
+</div></div>
+
+<div class="step"><div class="num">C2</div><div>
+  <h3>الأشرطة لا تتحرك؟ حدّد أين تتوقف الإشارة (04:03)</h3>
+  <p><strong>نتيجتك (04:03):</strong> مؤشر LED في جهاز الاستقبال <strong>أحمر ثابت</strong>، لكن أشرطة صفحة Radio <strong>لا تستجيب</strong>، وفي الخطوة 2 من <bdi>Calibrate</bdi> يبقى <strong><bdi>Next</bdi> رماديًا</strong>.</p>
+  <ul>
+    <li><strong>مؤشر LED ثابت في iA10B</strong> يعني عادةً أنه <strong>مقترن ويستقبل من جهاز الإرسال</strong> (الوميض = لا يوجد اتصال). إذن اتصال الراديو نفسه يبدو سليمًا ✅.</li>
+    <li><strong><bdi>Next</bdi> الرمادي مقصود في التصميم:</strong> في تلك الخطوة ينتظر QGC حتى <em>يرى</em> أنك حرّكت العصا، ثم يتابع من تلقاء نفسه (مصدر QGC 5.1.5: "stick detect"). وبما أنه لا يرى شيئًا، فلن يتابع أبدًا.</li>
+    <li>إذن المشكلة بين <strong>جهاز الاستقبال</strong> و<strong>Pixhawk</strong>: الإشارة الصحيحة لا تصل إلى RC IN.</li>
+  </ul>
+  <div class="box ok"><strong>تحديث (04:03): البيانات تصل فعلًا ✅.</strong> تُظهر لقطة الشاشة لديك في <strong><bdi>Raw Channel Monitor</bdi></strong> <strong>القنوات 1–8 بقيم حقيقية</strong>: 1 و2 و4 ≈ المنتصف (العصي في المنتصف)، <strong>3 منخفضة</strong> (الخانق للأسفل)، 5–8 ≈ الوسط. القنوات 9–18 فارغة، وهذا طبيعي في PPM (8 قنوات). إذن الاتصال من جهاز الاستقبال إلى Pixhawk يعمل.<br>
+  <img src="../../guides/guide4_screenshots/radio-calibrate-step2_2026-10-17_0403.png" alt="خطوة معايرة الراديو: Mode 1 محدد، ويُظهر Raw Channel Monitor القنوات 1-8 بقيم" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><br>
+  <strong>سببان حقيقيان للتوقف:</strong>
+  <ol style="margin:4px 0">
+    <li>مربع الوضع يُظهر <strong><bdi>"Mode 1"</bdi></strong>. في <bdi>Mode 1</bdi> يكون <em>الخانق على العصا اليمنى</em> (انظر النقطة الزرقاء أعلى الدائرة اليمنى). جهاز i6X لديك على <strong><bdi>Mode 2</bdi></strong> (الخانق على اليسار).</li>
+    <li>ظهور <bdi>"Not Mapped"</bdi> أثناء المعايرة طبيعي: QGC <em>يتعلّم</em> كل عصا عندما تحركها. عند <bdi>"Move the Throttle stick all the way up"</bdi> يبقى <strong><bdi>Next</bdi> رماديًا عن قصد</strong>. ويتابع <strong>من تلقاء نفسه</strong> بمجرد أن يرى العصا ترتفع وتبقى هناك لحظة.</li>
+  </ol>
+  <strong>الحل:</strong> <strong><bdi>Cancel</bdi></strong> ← اضبط المربع (أعلى اليمين، بجانب <bdi>"Centered Throttle"</bdi>) على <strong><bdi>Mode 2</bdi></strong>، واترك <bdi>"Centered Throttle"</bdi> <strong>غير محدد</strong> ← <strong><bdi>Calibrate</bdi></strong> ← <bdi>OK</bdi>، <bdi>OK</bdi> ← عند <bdi>"Move the Throttle stick all the way up"</bdi>: ادفع <strong>العصا اليسرى للأعلى بالكامل وأمسكها</strong> ~2 ثانية حتى يتغير النص. ثم اتبع كل تعليمة بالطريقة نفسها.<br>
+  <em>أولًا اختبار سريع بدون معايرة:</em> حرّك كل عصا وراقب نقاط <strong><bdi>Raw Channel Monitor</bdi></strong>. العصا اليمنى ← تتحرك النقطتان 1 و2؛ العصا اليسرى ← النقطتان 3 و4. إذا تحركت نقطة، فكل شيء سليم. الفحوصات أدناه مطلوبة فقط إذا <strong>لم</strong> تتحرك أي نقطة.</div>
+  <p><strong>فقط إذا لم تتحرك أي نقطة في <bdi>Raw Channel Monitor</bdi> عند تحريك العصي، نفّذ هذه الفحوصات الأربعة:</strong></p>
+  <ol>
+    <li>في شاشة <bdi>Calibrate</bdi> انقر <strong><bdi>Cancel</bdi></strong>.</li>
+    <li><strong>ماذا يستقبل Pixhawk؟</strong> أيقونة Q البنفسجية ← <strong><bdi>Analyze Tools</bdi></strong> ← <strong><bdi>MAVLink Inspector</bdi></strong> ← في القائمة انقر <strong>RC_CHANNELS</strong>. دوّن <code>chancount</code> و<code>chan1_raw</code>…<code>chan6_raw</code> و<code>rssi</code>. حرّك العصا اليمنى: هل يتغير <code>chan1_raw</code>؟ 📸 لقطة شاشة.</li>
+    <li><strong>وضع مخرج جهاز الإرسال:</strong> على i6X، اضغط مطوّلًا على <strong>OK</strong> ← <strong><bdi>System setup</bdi></strong> ← <strong><bdi>RX setup</bdi></strong> ← <strong><bdi>Output mode</bdi></strong>. صوّر الشاشة (تُظهر <em>PWM</em> أو <em>PPM</em>، و<em>i-BUS</em> أو <em>S.BUS</em>). اضغط <strong>CANCEL</strong> (ضغطة قصيرة) للخروج دون تغيير.</li>
+    <li><strong>صورة لجهاز الاستقبال</strong>: طرف iA10B الذي فيه مقابس الكابلات، لأرى <strong>من أي مقبس</strong> يأتي الكابل المتجه إلى Pixhawk، وهل تذهب كابلات أخرى إلى <strong>اللوحة السوداء الصغيرة</strong> من صورتك السابقة.</li>
+  </ol>
+  <p>بهذه المعلومات أستطيع أن أحدد بالضبط ما يجب تغييره: عادةً إما وضع المخرج (PWM ↔ PPM) أو المقبس الذي وُضع فيه الكابل في جهاز الاستقبال.</p>
+</div></div>
+
+<div class="box warn"><strong>⚠️ مُلغى (20:39):</strong> افترضت C3 وجود كابل PPM مباشر. إعدادك يحتوي على مُرمِّز PPM، لذا كان الحل الحقيقي هو الخيار B في C5 (<bdi>Output mode</bdi> <strong>PWM</strong>). يُحتفظ بـ C3 كتاريخ فقط.</div>
+<div class="step"><div class="num">C3</div><div>
+  <h3>النقاط لا تتحرك: أصلح الإشارة من جهاز الاستقبال إلى Pixhawk (04:07)</h3>
+  <p><strong>نتيجتك (04:07):</strong> النقاط لا تتحرك في أي وضع (1–4). يستقبل Pixhawk إشارة PPM (8 قنوات)، لكن <strong>بقيم مجمّدة</strong>: العصي في المنتصف، الخانق منخفض، والباقي في الوسط. هذا هو النمط المعتاد لـ"القيم الافتراضية / عدم وجود مُدخَل". إشارة PPM موجودة، لكنها <strong>لا تحمل حركة عصيّك</strong>. الأسباب الأرجح:</p>
+  <ul>
+    <li>يرسل i6X <strong>PWM</strong> (قناة واحدة لكل مقبس) بينما يحتاج Pixhawk إلى <strong>PPM</strong> (كل القنوات على سلك واحد)، <em>أو</em></li>
+    <li>تمر الإشارة عبر <strong>اللوحة السوداء الصغيرة</strong> (على الأرجح مُرمِّز PPM) الظاهرة في صورتك، والتي تُخرج هذه القيم الافتراضية عندما لا تصلها مُدخلاتها.</li>
+  </ul>
+  <p><strong>الحل (الأبسط، والإعداد العامل الأكثر شيوعًا):</strong> يُنتج iA10B إشارة PPM <strong>بنفسه</strong>، على مقبسه <strong>PPM/CH1</strong>. كابل واحد مباشرة إلى Pixhawk، بدون لوحة إضافية.</p>
+  <ol>
+    <li><strong>تحقق من الاتصال أولًا:</strong> جهاز الإرسال <strong>مُطفأ</strong> ← يجب أن <strong>يومض</strong> مؤشر LED في iA10B. جهاز الإرسال <strong>مُشغَّل</strong> ← LED <strong>ثابت</strong>. (ثابت حتى وجهاز الإرسال مُطفأ، أو يومض وهو مُشغَّل؟ أخبرني؛ عندها تكون مشكلة اقتران.)</li>
+    <li>📸 <strong>قبل فصل أي شيء، صوّر</strong> طرف جهاز الاستقبال وطرف RC IN في Pixhawk (للسجل).</li>
+    <li><strong>i6X ← PPM:</strong> اضغط مطوّلًا على <strong>OK</strong> ← <strong><bdi>System setup</bdi></strong> ← <strong><bdi>RX setup</bdi></strong> ← <strong><bdi>Output mode</bdi></strong> ← اختر <strong>PPM</strong> (اترك سطر <bdi>Serial</bdi> كما هو) ← <strong>اضغط مطوّلًا على CANCEL</strong> للحفظ. يجب أن يكون جهاز الإرسال <strong>مُشغَّلًا ومتصلًا بجهاز الاستقبال</strong> أثناء ذلك، لأن الإعداد يُرسَل إلى جهاز الاستقبال.</li>
+    <li><strong>الكابل:</strong> افصل USB (Pixhawk مُطفأ). كابل سيرفو واحد بثلاثة أسلاك من مقبس iA10B المكتوب عليه <strong>PPM/CH1</strong> (أو <strong>CH1</strong>) مباشرة إلى <strong>RC IN</strong> في Pixhawk. إذا كان يمر حاليًا عبر اللوحة السوداء الصغيرة، فأخرج تلك اللوحة من المسار (واحتفظ بها). طابِق الأسلاك مع العلامات المطبوعة على الطرفين: <strong>− = أسود/بني</strong>، <strong>+ = أحمر</strong>، <strong>S (الإشارة) = أبيض/أصفر/برتقالي</strong>. القابس المعكوس لن يعمل وقد يُتلف الأجهزة، لذا تحقق من العلامات.</li>
+    <li><strong>أعد تشغيل Pixhawk:</strong> أعد توصيل USB، وانتظر 30 ثانية. (يكتشف Pixhawk بروتوكول RC عند بدء التشغيل.)</li>
+    <li><strong>الاختبار:</strong> <bdi>Vehicle Configuration</bdi> ← <strong><bdi>Radio</bdi></strong> ← حرّك العصي ← يجب أن تتحرك نقاط <strong><bdi>Raw Channel Monitor</bdi></strong> من 1 إلى 4.</li>
+  </ol>
+  <p>ما زالت مجمّدة؟ أرسل لي الصورتين + صورة لشاشة <em><bdi>Output mode</bdi></em> في i6X.</p>
+  <div class="box info"><strong>تفصيل: التحقق من <bdi>Output mode</bdi> على i6X (04:10)</strong>
+    <ol style="margin:4px 0">
+      <li>Pixhawk موصول عبر USB (وهذا يغذي جهاز الاستقبال بالطاقة)، جهاز الإرسال <strong>مُشغَّل</strong>، مؤشر LED في جهاز الاستقبال <strong>ثابت</strong>.</li>
+      <li><strong>اضغط مطوّلًا على OK</strong> نحو ثانيتين ← تُظهر القائمة الرئيسية أيقونتين: <strong><bdi>System setup</bdi></strong> (يسار) و<strong><bdi>Functions setup</bdi></strong> (يمين، المفتاح).</li>
+      <li>اختر <strong><bdi>System setup</bdi></strong> (UP/DOWN للتنقل، <strong>ضغطة قصيرة على OK</strong> للفتح).</li>
+      <li>انزل بـ DOWN إلى <strong><bdi>RX setup</bdi></strong> ← ضغطة قصيرة على <strong>OK</strong>.</li>
+      <li>انزل إلى <strong><bdi>Output mode</bdi></strong> ← ضغطة قصيرة على <strong>OK</strong>. سترى سطرين: <strong>PWM / PPM</strong> (في الأعلى) و<strong><bdi>Serial: i-BUS / S.BUS</bdi></strong> (في الأسفل). الكلمة المحددة تكون مُظلَّلة. 📸 <strong>صوّر هذه الشاشة.</strong></li>
+      <li>في السطر العلوي اختر <strong>PPM</strong> (UP/DOWN إلى السطر، ضغطة قصيرة على OK للتبديل). اترك السطر السفلي على <strong>i-BUS</strong> (الافتراضي). فهو يؤثر فقط على مقبس i-BUS/التسلسلي المنفصل في جهاز الاستقبال، والذي لا نستخدمه، فلا تأثير له على PPM. <em>(04:16)</em></li>
+      <li><strong>اضغط مطوّلًا على CANCEL</strong> نحو ثانيتين لـ<strong>الحفظ</strong>. (ضغطة قصيرة على CANCEL = رجوع دون حفظ.) ثم اضغط CANCEL ضغطات قصيرة حتى تعود إلى الشاشة الرئيسية.</li>
+    </ol>
+    <strong>أيهما؟</strong> <strong>PPM</strong> لإعدادنا (كابل واحد من مقبس <strong>PPM/CH1</strong> في iA10B إلى RC IN). سيكون PWM صحيحًا فقط إذا كانت عدة كابلات من جهاز الاستقبال تغذي لوحة المُرمِّز السوداء الصغيرة، ونحن نُخرجها من المسار.<br>
+    <strong>اختبار LED:</strong> عندما يكون جهاز الإرسال <strong>مُطفأ</strong>، يجب أن يبدأ مؤشر LED في iA10B <strong>بالوميض</strong> خلال ثانية أو ثانيتين. إذا بقي ثابتًا وجهاز الإرسال مُطفأ، أخبرني.
+  </div>
+</div></div>
+
+<div class="box danger"><strong>⚠️ عالق عند <bdi>"Move the Yaw stick all the way to the right"</bdi> (04:21): أوقف المعايرة.</strong><br>
+<img src="../../guides/guide4_screenshots/radio-calibrate-yaw-stuck_2026-10-17_0421.png" alt="المعايرة عالقة عند خطوة الانعراج؛ القناة الخام 4 لا تزال في المنتصف" style="width:100%;max-width:560px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><br>
+بينما تمسك العصا اليسرى إلى اليمين، <strong>تبقى القناة الخام 4 في المنتصف</strong>، والقناة 3 (الخانق) لا تزال منخفضة. إذن <strong>العصي لا تزال لا تصل إلى Pixhawk</strong>. و"الخانق" الذي عيّنه QGC في الخطوة السابقة <strong>ليس حقيقيًا</strong>: لقد التقط قناة كانت ترتجف فقط (شريطها عند نحو 58% بينما القناة 3 منخفضة). <strong>انقر <bdi>Cancel</bdi></strong>، وهذا لا يحفظ شيئًا. لا تُكمل معايرة بقيم مجمّدة.<br>
+المعايرة لها معنى فقط عندما <strong>تتبع نقاط <bdi>Raw Channel Monitor</bdi> العصي</strong>. أكمل أولًا <strong>C3</strong> (PPM + محفوظ بـ<em>الضغط المطوّل</em> على CANCEL، كابل مباشر من <strong>PPM/CH1</strong>، إعادة توصيل USB).</div>
+
+<div class="step"><div class="num">C4</div><div>
+  <h3><s>هل جهاز الاستقبال يتواصل فعلًا مع جهاز الإرسال هذا؟</s> غير مطلوب: LED يومض وجهاز الإرسال مُطفأ = مقترن (04:28). تحقّق، ثم أعد الاقتران (04:26)</h3>
+  <p><strong>إجاباتك (04:26):</strong> PPM محفوظ ✅ · الكابل مباشر من PPM/CH1 ✅ · أُعيد توصيل USB ✅ · LED <strong>ثابت حتى وجهاز الإرسال مُطفأ</strong> ⚠️ · في QGC تتحرك "الدحرجة" فقط، بشكل عشوائي.</p>
+  <p>جهاز الاستقبال المتصل فعلًا يجب أن يستجيب عند إطفاء جهاز الإرسال: يتغير LED وتنتقل المخرجات إلى وضع الأمان (failsafe). الثبات وجهاز الإرسال مُطفأ + القيم المجمّدة + الارتجاف العشوائي كلها تشير إلى <strong>عدم وجود اتصال راديو حقيقي</strong> (غير مقترن بهذا الـi6X / بذاكرة النموذج هذه)، رغم أن LED مُضاء.</p>
+  <p><strong>الفحص 1: هل يرى i6X جهاز الاستقبال؟</strong> على <strong>الشاشة الرئيسية</strong> لـi6X (جهاز الإرسال مُشغَّل، Pixhawk على USB): جهاز iA10B المقترن يُرسل جهده، لذا يجب أن ترى قرب الأعلى <strong>قيمة بطارية RX (نحو 5 V)</strong> و/أو أشرطة الإشارة. 📸 صوّر الشاشة الرئيسية. لا توجد قيمة RX / "--" = <strong>غير متصل</strong>، فنفّذ الفحص 2.</p>
+  <p><strong>الفحص 2: أعد الاقتران (إجراء FlySky القياسي):</strong></p>
+  <ol>
+    <li>جهاز الإرسال <strong>مُطفأ</strong>. USB الخاص بـPixhawk <strong>مفصول</strong> (جهاز الاستقبال بلا طاقة).</li>
+    <li>ضع <strong>قابس الاقتران</strong> (كابل وصل صغير من علبة FlySky) في مقبس iA10B المكتوب عليه <strong>B/VCC</strong>. اترك كابل PPM/CH1 ← RC IN في مكانه.</li>
+    <li>وصّل USB الخاص بـPixhawk (وهذا يغذي جهاز الاستقبال بالطاقة). يجب أن <strong>يومض بسرعة</strong> مؤشر LED في جهاز الاستقبال = وضع الاقتران.</li>
+    <li>على i6X: <strong>اضغط مطوّلًا على زر BIND</strong> (على جهاز الإرسال) <strong>أثناء تشغيله</strong>. (بديل: اضغط مطوّلًا على OK ← <bdi>System setup</bdi> ← <bdi>RX setup</bdi> ← <strong><bdi>Bind with a receiver</bdi></strong>.) تُظهر الشاشة الاقتران؛ ويصبح مؤشر LED في جهاز الاستقبال <strong>ثابتًا</strong>.</li>
+    <li>جهاز الإرسال مُطفأ ← افصل USB ← <strong>أزل قابس الاقتران</strong> من B/VCC.</li>
+    <li>أعد توصيل USB، وشغّل جهاز الإرسال. LED ثابت. الآن أطفئ <strong>جهاز الإرسال</strong>: يجب أن <strong>يتغير</strong> LED (يومض). شغّله مجددًا.</li>
+    <li>تحقق مرة أخرى من أن <strong><bdi>Output mode</bdi> = PPM</strong> (<bdi>System setup → RX setup → Output mode</bdi> ← اضغط مطوّلًا على CANCEL). الاقتران الجديد قد يعيد ضبطه.</li>
+    <li><strong>افصل USB وأعد توصيله</strong>، وانتظر 30 ثانية ← صفحة <strong><bdi>Radio</bdi></strong> ← حرّك العصي ← هل تتبعها نقاط <bdi>Raw Channel Monitor</bdi> من 1 إلى 4؟</li>
+  </ol>
+  <p>تحقق أيضًا: أن نموذج i6X الظاهر على الشاشة الرئيسية هو النموذج نفسه الذي قمت بالاقتران عليه (ذاكرة نموذج واحدة = اقتران واحد).</p>
+</div></div>
+
+<div class="step"><div class="num">C5</div><div>
+  <h3>اتصال الراديو سليم. المشكلة في اللوحة السوداء الصغيرة (04:28)</h3>
+  <p><strong>تصحيح (04:28):</strong> عندما يكون جهاز الإرسال <strong>مُطفأ</strong> فإن LED <strong>يومض</strong>، إذن جهاز الاستقبال <strong>مقترن</strong> ✅. <strong>تخطَّ C4 (إعادة الاقتران).</strong></p>
+  <p><strong>ما يفسّر كل ما تراه:</strong> تمر الإشارة عبر <strong>اللوحة السوداء الصغيرة</strong> (<strong>مُرمِّز PPM</strong>) الظاهرة في صورتك السابقة. فهي تأخذ قنوات PWM <em>منفصلة</em> من جهاز الاستقبال وتبني إشارة PPM لـPixhawk.</p>
+  <ul>
+    <li>جهاز الاستقبال يُخرج الآن <strong>PPM</strong> على مقبسه PPM/CH1 ولا شيء قابلًا للاستخدام على المقابس الأخرى. لا يحصل المُرمِّز على مُدخلات صحيحة فيُرسل <strong>قيمه الافتراضية</strong>: الخانق منخفض، وكل ما عداه في المنتصف. هذا هو <strong>بالضبط نمط القيم المجمّدة لديك</strong>.</li>
+    <li>يستقبل المُدخَل 1 في المُرمِّز سلسلة نبضات PPM من جهاز الاستقبال، ولا يستطيع قراءتها كقناة واحدة. وهذا ما يجعل <strong>"الدحرجة" (القناة 1) تقفز عشوائيًا</strong>. ✔ متطابق.</li>
+  </ul>
+  <p>إذن الكابل الموصول بـ RC IN يأتي على الأرجح <strong>من المُرمِّز</strong>، وليس مباشرة من جهاز الاستقبال (من السهل ألا تلاحظ ذلك: فالمُرمِّز موضوع على الخط نفسه). 📸 أرسل من فضلك صورة لجهاز الاستقبال + اللوحة الصغيرة + كابل RC IN للتأكيد.</p>
+  <p><strong>الحل، الخيار A (موصى به، الأبسط): أزل المُرمِّز</strong></p>
+  <ol>
+    <li>USB مفصول.</li>
+    <li>افصل المُرمِّز عن RC IN في Pixhawk وعن جهاز الاستقبال (احتفظ به في علبة).</li>
+    <li>استخدم <strong>كابل تمديد سيرفو بثلاثة أسلاك</strong> (أنثى ↔ أنثى، أسود/أحمر/أبيض؛ غالبًا يكون في علبة FlySky أو Pixhawk): مقبس <strong>PPM/CH1</strong> في iA10B ← <strong>RC IN</strong> في Pixhawk. طابِق <strong>− أسود</strong> / <strong>+ أحمر</strong> / <strong>S أبيض</strong> مع العلامات على الطرفين.</li>
+    <li>يبقى <bdi>Output mode</bdi> في i6X على <strong>PPM</strong>.</li>
+    <li>وصّل USB، وانتظر 30 ثانية ← صفحة <bdi>Radio</bdi> ← يجب أن تتبع النقاط 1–4 العصي.</li>
+  </ol>
+  <p><strong>الخيار B (الإبقاء على المُرمِّز):</strong> أعد <bdi>Output mode</bdi> في i6X إلى <strong>PWM</strong>، وتذهب أسلاك مُدخلات المُرمِّز إلى مقابس جهاز الاستقبال <strong>CH1…CH8 بالترتيب</strong>. أسلاك أكثر ونقاط فشل أكثر، ولهذا أوصي بالخيار A.</p>
+</div></div>
+
+<div class="box warn"><strong>إعادة التحقق بعد الدليل 05 (19:26):</strong> جهاز الإرسال مُعدّ بالكامل ومُثبَت على شاشة <bdi>Display</bdi> في i6X (القنوات الست كلها صحيحة، <bdi>Output mode</bdi> على PPM). أُعيد توصيل Pixhawk، وجهاز الاستقبال على RC IN، وانتظرنا 30 ثانية، صفحة <bdi>Radio</bdi>: <bdi>Raw Channel Monitor</bdi> <strong>لا يزال لا يتحرك</strong>. إذن جهاز الإرسال وجهاز الاستقبال سليمان والمشكلة في الكابل من جهاز الاستقبال إلى Pixhawk (المُرمِّز). <strong>نفّذ الخيار A في C5 الآن.</strong></div>
+
+<div class="box info"><strong>نتيجة تتبّع C5.1 (19:28): (b) المُرمِّز موضوع على الخط، وتأكد ذلك بالصورة.</strong><br>
+<img src="../../guides/guide4_screenshots/rcin-to-ppm-encoder_1927.jpeg" alt="كابل RC IN يذهب إلى مُرمِّز PPM" style="max-width:300px;width:100%;border-radius:8px;margin:.5em 0"><br>
+<strong>RC IN</strong> في Pixhawk ← كابل أسود/أحمر/أبيض ← <strong>لوحة مُرمِّز PPM الصغيرة</strong> (LED أزرق) ← أسلاك متعددة الألوان ← جهاز الاستقبال. جهاز الاستقبال يُرسل PPM، لكن المُرمِّز يتوقع قنوات PWM منفصلة ← قيم مجمّدة.<br>
+<strong>حلّان:</strong> <strong>B (اختبر الآن، دون إعادة توصيل):</strong> <bdi>Output mode</bdi> في i6X ← <strong>PWM</strong>، فيحصل المُرمِّز على ما يتوقعه. <strong>A (نهائي، أنظف):</strong> أزل المُرمِّز، واستخدم كابل سيرفو مباشرًا أنثى–أنثى من PPM/CH1 في جهاز الاستقبال ← RC IN، و<bdi>Output mode</bdi> على PPM.</div>
+
+<div class="box ok"><strong>✅ حُلّت C5 (19:32)، الخيار B:</strong> في i6X <strong><bdi>System setup → RX setup → Output mode → PWM</bdi></strong> (اضغط مطوّلًا على CANCEL). يحصل المُرمِّز الآن على قنوات منفصلة من جهاز الاستقبال ويبني إشارة PPM لـ RC IN. في QGC يتبع <strong><bdi>Radio → Raw Channel Monitor</bdi></strong> العصي والمفاتيح ✅. يبقى المُرمِّز حاليًا. الخيار A (إزالته، كابل مباشر، إعادة <bdi>Output mode</bdi> إلى PPM) اختياري لاحقًا. <strong>التالي: الجزء D.</strong></div>
+
+<h2>الجزء D: معايرة الراديو في QGC (مراجعة 19:48، تسلسل QGC 5.1.5 الدقيق)</h2>
+<div class="step"><div class="num">D</div><div>
+  <h3>علّم Pixhawk الحد الأدنى / المنتصف / الحد الأقصى لكل عصا</h3>
+  <p><strong>قبل البدء:</strong> USB فقط، بدون LiPo، بدون مراوح. i6X مُشغَّل، كل المفاتيح <strong>للأعلى</strong>، الخانق <strong>للأسفل بالكامل</strong>، التريمات في المنتصف.</p>
+  <ol>
+    <li>QGC ← <strong>أيقونة Q البنفسجية</strong> ← <strong><bdi>Vehicle Configuration</bdi></strong> ← <strong><bdi>Radio</bdi></strong>.</li>
+    <li>فوق رسمَي العصوين: القائمة المنسدلة = <strong><bdi>Mode 2</bdi></strong>. خانة الاختيار <strong><bdi>"Centered Throttle"</bdi></strong> = <strong>غير محددة</strong>.</li>
+    <li>في الأسفل: انقر <strong><bdi>Calibrate</bdi></strong> ← نافذة منبثقة <em><bdi>"Zero Trims … Please ensure all motor power is disconnected AND all props are removed"</bdi></em> ← <strong><bdi>OK</bdi></strong>.</li>
+    <li><em><bdi>"Lower the Throttle stick all the way down… Click Next"</bdi></em>: الخانق للأسفل، والعصي الأخرى في المنتصف ← <strong><bdi>Next</bdi></strong>.</li>
+    <li>بعد ذلك يطلب QGC حركة واحدة في كل مرة و<strong>يتابع من تلقاء نفسه</strong> عندما يرى العصا ممسوكة عند نهايتها (دون نقر):
+      <ol>
+        <li>الخانق (العصا اليسرى) <strong>للأعلى</strong> وأمسكها ← ثم <strong>للأسفل</strong> واتركها.</li>
+        <li>الانعراج (العصا اليسرى) <strong>لليمين</strong> وأمسكها ← ثم <strong>لليسار</strong>.</li>
+        <li>الدحرجة (العصا اليمنى) <strong>لليمين</strong> وأمسكها ← ثم <strong>لليسار</strong>.</li>
+        <li>الانحدار (العصا اليمنى) <strong>للأعلى</strong> (ادفعها بعيدًا عنك) وأمسكها ← ثم <strong>للأسفل</strong>.</li>
+      </ol></li>
+    <li><em><bdi>"Move all the transmitter switches and/or dials back and forth to their extreme positions"</bdi></em>: SWA أسفل/أعلى، SWB، SWC أعلى/وسط/أسفل، SWD، وVrA وVrB إلى أقصى الاتجاهين ← <strong><bdi>Next</bdi></strong>.</li>
+    <li><em><bdi>"All settings have been captured. Click Next to write the new parameters to your board."</bdi></em> ← <strong><bdi>Next</bdi></strong>. انتهى.</li>
+    <li>أعد كل المفاتيح <strong>للأعلى</strong>، والخانق للأسفل.</li>
+  </ol>
+  <p>إذا ظهرت <em><bdi>"Throttle channel reversed"</bdi></em>: في i6X <bdi>Functions setup</bdi> ← <bdi>Reverse</bdi> ← <bdi>Ch3</bdi> ← <bdi>Rev</bdi>، اضغط مطوّلًا على CANCEL، وأعد المحاولة. إذا توقفت خطوة: <strong><bdi>Cancel</bdi></strong> (لا يُحفظ شيء) وأخبرني أي خطوة.</p>
+  <div class="expect">بعد ذلك: في صفحة <bdi>Radio</bdi>، تتبع أشرطة <strong><bdi>Roll / Pitch / Yaw / Throttle</bdi></strong> العصي في الاتجاه الصحيح (العصا اليمنى لليمين ← <bdi>Roll</bdi> لليمين؛ العصا اليسرى للأعلى ← <bdi>Throttle</bdi> للأعلى). 📸 لقطة شاشة إلى <code>guides/guide4_screenshots/</code>. في <bdi>Vehicle Messages</bdi>: يجب أن تختفي <code>PreArm: Radio failsafe on</code> عندما يكون i6X مُشغَّلًا.</div>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتمل الجزء D (19:56):</strong> انتهت المعايرة وكُتبت إلى اللوحة. أشرطة <bdi>Roll / Pitch / Yaw / Throttle</bdi> كلها تتبع العصي في الاتجاه الصحيح.<br>
+<img src="../../guides/guide4_screenshots/radio-after-calibration_1955.png" alt="صفحة Radio بعد المعايرة" style="max-width:520px;width:100%;border-radius:8px;margin:.5em 0"><br>
+<bdi>Raw Channel Monitor</bdi> وكل المفاتيح للأعلى: 1 و2 و4 في المنتصف · 3 منخفضة (الخانق للأسفل) · <strong>5 منخفضة = SWA للأعلى</strong> · <strong>6 منخفضة = SWC للأعلى</strong> · 7 و8 في الوسط (غير مستخدمتين) · 9–18 لا شيء (المُرمِّز يرسل 8 قنوات).<br>
+<strong>ماذا يعني هذا:</strong> SWA للأعلى = منخفض = <strong>فك التسليح</strong> (<bdi>ArmDisarm</bdi>: المنخفض يفك التسليح)، إذن <em>الأعلى = آمن</em> ✅. SWC للأعلى = منخفض ← خانة <bdi>Flight Mode 1</bdi> = <strong>QLand</strong>، إذن <em>الأعلى = خمول/هبوط</em>، كما خُطط ✅. لا حاجة لعكس أي قناة في جهاز الإرسال.</div>
+
+<div class="box warn"><strong>فحص النسخة الاحتياطية (19:59): <code>backups/params_after-radio-cal.params</code></strong>
+  <div class="table-wrap"><table>
+    <tr><th>الفحص</th><th>القيمة</th><th>المعنى</th></tr>
+    <tr><td>اتجاه اللوحة</td><td><code>AHRS_ORIENTATION=0</code></td><td>✅ تغييرك في الدليل 03 محفوظ (السهم = المقدمة)</td></tr>
+    <tr><td>معايرة مقياس التسارع</td><td><code>INS_ACCOFFS/SCAL</code> مضبوطة</td><td>✅ تمت (الدليل 03)</td></tr>
+    <tr><td>الأفق المستوي</td><td><code>AHRS_TRIM_X/Y</code> ≈ −0.016 / −0.006</td><td>✅ تمت (الدليل 03)</td></tr>
+    <tr><td>معايرة الراديو</td><td>RC1–8: نحو 1000–2000، المنتصف ~1500، الحد الأدنى للخانق 1000</td><td>✅ تمت الآن (الجزء D)</td></tr>
+    <tr><td>البوصلة</td><td>M8N خارجية، الإزاحات −76 / 25 / 267</td><td>الإزاحات من معايرة أقدم (لم تتغير منذ الدليل 02). مقبولة حاليًا؛ ويلزم إجراء معايرة جديدة في الهواء الطلق قبل الطيران.</td></tr>
+    <tr><td>⚠️ قائمة المعلمات</td><td><strong>1,276</strong> معلمة (النسخ الاحتياطية السابقة بـ 4.7.2: 1,430)</td><td>تنقص 144 معلمة من <code>Q_A_/Q_P_/Q_M_/Q_WP_/Q_LOIT_/Q_WVANE_</code> (ضبط VTOL) + 10 من <code>GPS1_*</code>، و<code>GPS1_TYPE</code>=0، و<code>SERVO7_FUNCTION</code>=0. الأرجح أن QGC نزّل القائمة قبل أن يُكمل Pixhawk بدء التشغيل (تظهر تلك المجموعات بمجرد بدء QuadPlane/GPS). <strong>تحقّق: <bdi>Parameters → Tools → Refresh</bdi>، ثم احفظ مرة أخرى.</strong> لا تغيّر المعلمات حتى يتضح هذا الأمر.</td></tr>
+  </table></div></div>
+
+<div class="step"><div class="num">D2</div><div>
+  <h3>أعد تشغيل GPS (GPS1_TYPE = 1 <bdi>"Auto"</bdi>) (20:03)</h3>
+  <ol>
+    <li>QGC ← أيقونة Q ← <strong><bdi>Vehicle Configuration → Parameters</bdi></strong>.</li>
+    <li>مربع البحث (في الأعلى): اكتب <code>GPS1_TYPE</code>. انقر على الصف ← يُفتح مربع ← القائمة المنسدلة <strong><bdi>Auto</bdi></strong> (= 1) ← <strong><bdi>Save</bdi></strong>.</li>
+    <li><strong><bdi>Tools</bdi></strong> (أعلى اليمين) ← <strong><bdi>Reboot Vehicle</bdi></strong> ← <bdi>OK</bdi>. نوع GPS يُقرأ فقط عند بدء التشغيل.</li>
+    <li>انتظر ~60 ثانية حتى يعيد QGC الاتصال ويُكمل تحميل المعلمات.</li>
+    <li>ثم: <bdi>Tools → Refresh → Save to file</bdi> ← <code>backups/params_after-radio-cal_refresh.params</code>.</li>
+  </ol>
+  <div class="box ok"><strong>✅ (20:03):</strong> ضُبط GPS1_TYPE على <strong><bdi>Auto</bdi></strong> (كان 0). التالي: إعادة التشغيل.</div>
+  <p class="m">المعنى: يخبر GPS1_TYPE نظام ArduPilot بنوع GPS الموجود على المنفذ 1. ‏0 = لا شيء (GPS متوقف)، 1 = <bdi>Auto</bdi> (يكتشف u-blox M8N لديك).</p>
+</div></div>
+
+<div class="box warn"><strong>نتيجة التحديث (20:06): <code>backups/params_after-radio-cal_refresh.params</code></strong> (1,286 معلمة)<br>
+✅ عاد GPS: <code>GPS1_TYPE=1</code>، وإعدادات <code>GPS1_*</code> العشرة ظاهرة مجددًا.<br>
+⚠️ إعدادات VTOL الـ144 (<code>Q_A_* Q_P_* Q_M_* Q_WP_* Q_LOIT_* Q_WVANE_*</code>) <strong>لا تزال مفقودة</strong> بعد إعادة التشغيل + التحديث، و<code>SERVO7_FUNCTION</code> لا يزال 0 (يعيّنه QuadPlane تلقائيًا عادةً). إذن <strong>QuadPlane لا يُكمل بدء تشغيله</strong> هذه المرة (فعل ذلك في 02:47–03:54). في مصدر 4.7.2، يتوقف <code>QuadPlane::setup()</code> مع <em><bdi>"Config error"</bdi></em> مثل <em><bdi>"Not enough memory for quadplane"</bdi></em> أو خطأ في تخصيص الذاكرة. <strong>المطلوب: رسائل <bdi>Vehicle Messages</bdi> من إقلاع جديد.</strong> لا تغييرات في المعلمات حتى نعرف السبب.</div>
+
+<div class="box ok"><strong>إقلاع 20:07 (<a href="../../guides/guide4_screenshots/boot-messages_2007.txt">الرسائل</a>، <a href="../../guides/guide4_screenshots/sensor-status_2008.png">حالة المستشعرات</a>) (20:09):</strong>
+<ul>
+<li>✅ <code>QuadPlane initialised, Frame: TRI</code> <strong>بدون <bdi>Config error</bdi></strong>، إذن QuadPlane يبدأ فعلًا.</li>
+<li>✅ GPS يعمل: <code>GPS 1: detected u-blox</code> (HW 00070000).</li>
+<li>✅ <strong>اختفت <bdi>"Radio failsafe on"</bdi></strong>، وتُظهر <bdi>Sensor Status</bdi> <strong><bdi>RC receiver: Normal</bdi></strong> (الراديو أُصلح + عُويِر).</li>
+<li>رسائل PreArm المتبقية (كلها متوقعة على طاولة العمل): البطارية منخفضة (USB فقط) · تثبيت GPS سيئ (داخل المبنى) · <strong>البوصلة غير معايرة</strong> (مطلوب لاحقًا) · AHRS لا يستخدم EKF (يحتاج GPS + بوصلة) · مفتاح الأمان المادي (غير مضغوط).</li>
+<li>سؤال مفتوح: لماذا تفتقر قائمة QGC إلى مجموعات ضبط Q_ رغم أن QuadPlane يبدأ. اختبار: ابحث عن <code>Q_A_RAT_RLL_P</code> في <bdi>Parameters</bdi>.</li>
+</ul></div>
+
+<div class="box ok"><strong>✅ حُلّت (20:11): كانت قائمة QGC ناقصة فقط.</strong> لم يكن <code>Q_A_RAT_RLL_P</code> موجودًا، ثم بعد <strong><bdi>Tools → Refresh</bdi></strong> ظهر بقيمة <strong>0.45</strong> (دون تغيير). السبب: ينزّل QGC قائمة المعلمات لحظة اتصاله، لكن QuadPlane يضيف إعداداته (~144) بعد ثوانٍ قليلة (سجل الإقلاع: <code>QuadPlane initialised</code> بعد ~2 ثانية من البدء). <strong>القاعدة من الآن فصاعدًا:</strong> بعد كل إعادة تشغيل/إعادة اتصال، انتظر ~30 ثانية، ثم <strong><bdi>Parameters → Tools → Refresh</bdi></strong> قبل تعديل المعلمات أو حفظها.</div>
+
+<div class="box ok"><strong>✅ نسخة احتياطية كاملة (20:12):</strong> <code>backups/params_after-radio-cal_full.params</code>، 1,430 معلمة. هذه نقطة التراجع قبل الجزء E.</div>
+
+<h2>الجزء E: أوضاع الطيران على SWC + SWA كمفتاح تسليح</h2>
+<div class="step"><div class="num">E</div><div>
+  <h3>صفحة <bdi>Flight Modes</bdi></h3>
+  <p><strong><bdi>Vehicle Configuration → Flight Modes</bdi></strong>. سترى <em><bdi>"Flight mode channel:"</bdi></em>، و6 قوائم منسدلة <em><bdi>"Flight Mode"</bdi></em> (لكل منها نطاق PWM)، و<em><bdi>"Switch Options"</bdi></em>.</p>
+  <ol>
+    <li><strong><bdi>Flight mode channel:</bdi></strong> غيّرها من <em><bdi>Channel 8</bdi></em> إلى <strong><bdi>Channel 6</bdi></strong>.</li>
+    <li>اضبط أوضاع الطيران الستة. يرسل SWC ~1000 / ~1500 / ~2000، وهي تقع في الخانات <strong>1 و4 و6</strong>. أملأ أيضًا الخانات الوسيطة حتى لا تختار قيمة مفتاح منحرفة قليلًا وضعًا مفاجئًا أبدًا:</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>الخانة (نطاق PWM الذي يُظهره QGC)</th><th>اضبطها على</th><th>موضع SWC</th></tr>
+    <tr><td><bdi>Flight Mode 1</bdi> (0 – 1230)</td><td><strong>QLAND</strong></td><td>أعلى = خمول / هبوط آمن</td></tr>
+    <tr><td><bdi>Flight Mode 2</bdi> (1231 – 1360)</td><td>QLAND</td><td>(حشو أمان)</td></tr>
+    <tr><td><bdi>Flight Mode 3</bdi> (1361 – 1490)</td><td>QHOVER</td><td>(حشو أمان)</td></tr>
+    <tr><td><bdi>Flight Mode 4</bdi> (1491 – 1620)</td><td><strong>QHOVER</strong></td><td>وسط = وضع الدرون</td></tr>
+    <tr><td><bdi>Flight Mode 5</bdi> (1621 – 1749)</td><td>FLY_BY_WIRE_A (FBWA)</td><td>(حشو أمان)</td></tr>
+    <tr><td><bdi>Flight Mode 6</bdi> (1750 +)</td><td><strong>FLY_BY_WIRE_A (FBWA)</strong></td><td>أسفل = وضع الطائرة</td></tr>
+  </table>
+  </div>
+  <ol start="3">
+    <li><strong><bdi>Switch Options</bdi></strong>، تحت <bdi>"Channel option 5"</bdi>: يجب أن تكون <strong><bdi>ArmDisarm</bdi></strong> (وهي كذلك بالفعل، <code>RC5_OPTION=153</code>). اتركها.</li>
+    <li><strong><bdi>Switch Options</bdi></strong>، تحت <bdi>"Channel option 6"</bdi>: حاليًا <strong>RTL</strong> (بقايا قديمة). غيّرها إلى <strong><bdi>Do Nothing</bdi></strong>. القناة 6 أصبحت الآن مفتاح الأوضاع ولا يمكن أن تكون لها وظيفة ثانية.</li>
+  </ol>
+  <p><strong>فحص مباشر:</strong> في هذه الصفحة، تكون الكلمات <strong><bdi>"Flight Mode 1…6"</bdi></strong> على يسار القوائم المنسدلة بيضاء، باستثناء الخانة المحددة حاليًا بمفتاحك، فتصبح <strong>صفراء</strong>. اقلب SWC: للأعلى ← <bdi>Flight Mode 1</bdi>، الوسط ← 4، للأسفل ← 6 يجب أن تصبح صفراء.</p>
+  <p>التغييرات في هذه الصفحة تُحفظ فورًا. إذا كان SWC لديك فعليًا "أسفل = 1000" بدلًا من "أعلى = 1000"، ينقلب الترتيب (أعلى = طائرة). الجزء G يوضح ذلك. يمكننا عكس CH6 في جهاز الإرسال إذا فضّلت ذلك.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 1 من الجزء E (20:17):</strong> <bdi>Flight mode channel</bdi> = <strong><bdi>Channel 6</bdi></strong>؛ الأوضاع QLAND، QLAND، QHOVER، QHOVER، FBWA، FBWA. وSWC للأعلى، تكون <bdi>"Flight Mode 1"</bdi> صفراء ✅.<br><img src="../../guides/guide4_screenshots/flight-modes-set_2015.png" alt="أوضاع الطيران مضبوطة" style="max-width:480px;width:100%;border-radius:8px;margin:.5em 0"><br><small>ما تغيّر: <code>FLTMODE_CH</code> 8←6، <code>FLTMODE1..6</code> 17/19/5/17/11/5 ← 20/20/18/18/5/5.</small></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 2 من الجزء E (20:25):</strong> <bdi>Channel option 6</bdi>: <strong><bdi>RTL → Do Nothing</bdi></strong> (<code>RC6_OPTION</code> 4 ← 0). SWC للأعلى ← <bdi>Flight Mode 1</bdi>، الوسط ← 4، للأسفل ← 6 ✅.<br>
+<small>كيف تقرأ التسميات الصفراء (مصدر QGC 5.1.5، <code>APMFlightModesComponentController.cc</code>): <bdi>"Flight Mode N"</bdi> صفراء = الخانة التي تقع فيها إشارة مفتاحك. <bdi>"Channel option N"</bdi> صفراء = إشارة القناة N أعلى من 1800 µs (المفتاح عند طرفه المرتفع)، <em>أيًّا كانت</em> وظيفتها. لذا فإن ظهور <bdi>"Channel option 6"</bdi> صفراء وSWC للأسفل أمر طبيعي وغير ضار الآن بعد أن أصبحت <bdi>"Do Nothing"</bdi>.</small></div>
+
+<h2>الجزء F: تنظيف البقايا القديمة</h2>
+<div class="step"><div class="num">F</div><div>
+  <h3>وظائف المفاتيح القديمة + التسليح بالعصا</h3>
+  <p><strong><bdi>Vehicle Configuration → Parameters</bdi></strong>. لكل سطر: ابحث عن الاسم ← <strong>انقر على القيمة</strong> ← يُفتح <em><bdi>Value Editor</bdi></em> ← اكتب القيمة الجديدة ← <strong><bdi>Save</bdi></strong>.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>المعلمة</th><th>الآن</th><th>اضبطها على</th><th>السبب</th></tr>
+    <tr><td><code>RC9_OPTION</code></td><td>34</td><td><strong>0</strong></td><td rowspan="6">وظائف مفاتيح قديمة على القنوات 9–16 من تجارب سابقة. جهاز الراديو لديك (PPM) يرسل 8 قنوات فقط. مسحها يعني أنه لا يمكن لأي وظيفة مخفية أن تُفعَّل أبدًا. <code>RC16_OPTION=154</code> هو <strong>تسليح/فك تسليح ثانٍ</strong>؛ ونحن نريد SWA فقط.</td></tr>
+    <tr><td><code>RC10_OPTION</code></td><td>162</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC12_OPTION</code></td><td>28</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC13_OPTION</code></td><td>24</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC14_OPTION</code></td><td>16</td><td><strong>0</strong></td></tr>
+    <tr><td><code>RC16_OPTION</code></td><td>154</td><td><strong>0</strong></td></tr>
+    <tr><td><code>ARMING_RUDDER</code></td><td>2</td><td><strong>0</strong></td><td>حاليًا 2 = "التسليح <em>وفك التسليح</em> بإمساك العصا اليسرى لليمين/لليسار". ومع وجود الانعراج على العصا اليسرى، فإن انعراجًا طويلًا كاملًا لليسار مع خانق منخفض قد <strong>يفك التسليح</strong>. ‏0 = SWA وحده يُسلّح/يفك التسليح، بما يتوافق مع خطتك.</td></tr>
+  </table>
+  </div>
+  <p>ثم <strong>أعد تشغيل Pixhawk</strong> (افصل USB وأعد توصيله، 30 ثانية دون تحريك).</p>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 1 من الجزء F (20:28):</strong> <bdi>Channel options</bdi> من 6 إلى 16 كلها <strong><bdi>Do Nothing</bdi></strong> (<code>RC9_OPTION</code> 34←0، <code>RC10</code> 162←0، <code>RC12</code> 28←0، <code>RC13</code> 24←0، <code>RC14</code> 16←0، <code>RC16</code> 154←0). القناة 5 غير مدرجة في هذه الصفحة؛ ويبقى <code>RC5_OPTION=153</code> (<bdi>ArmDisarm</bdi>).<br><img src="../../guides/guide4_screenshots/switch-options-cleared_2027.png" alt="خيارات المفاتيح ممسوحة" style="max-width:420px;width:100%;border-radius:8px;margin:.5em 0"></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 2 من الجزء F (20:28):</strong> <code>ARMING_RUDDER</code> 2 (<bdi>ArmOrDisarm</bdi>) ← <strong>0 (<bdi>Disabled</bdi>)</strong>. لا يمكن تسليح المحركات الآن إلا بـ SWA، وليس بالعصي.</div>
+
+<h2>الجزء G: اختبر كل مفتاح (بدون بطارية، بدون مراوح)</h2>
+<div class="step"><div class="num">G</div><div>
+  <h3>راقب الشريط العلوي في QGC (<bdi>Fly view</bdi>)</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>افعل</th><th>يجب أن يُظهر QGC</th></tr>
+    <tr><td>SWC للأعلى</td><td>وضع الطيران <strong>QLand</strong></td></tr>
+    <tr><td>SWC في الوسط</td><td><strong>QHover</strong></td></tr>
+    <tr><td>SWC للأسفل</td><td><strong>FBWA</strong> (كانت سيرفوهات الإمالة الأمامية ستتحرك هنا، لكن لا شيء موصول بعد)</td></tr>
+    <tr><td>SWA إلى موضع "التشغيل"، الخانق للأسفل، SWC في الوسط</td><td><strong>لن</strong> يُسلّح بعد. تسرد الرسائل أسباب PreArm (مفتاح الأمان، البطارية، GPS…). <strong>هذا متوقع</strong> حاليًا. نحن نؤكد فقط أن <bdi>Channel 5</bdi> يتغير في صفحة <bdi>Radio</bdi>.</td></tr>
+  </table>
+  </div>
+  <p>أخبرني أي موضع لـ SWA هو "المرتفع" (~2000) = تسليح. معظم الناس يريدون <strong>SWA للأسفل = المحركات تعمل</strong>. إذا كان العكس، فسنعكس CH5 في جهاز الإرسال.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتمل الجزء G (20:32):</strong> الشريط العلوي في <bdi>Fly view</bdi>: SWC للأعلى = <strong>QLand</strong>، الوسط = <strong>QHover</strong>، للأسفل = <strong>FBWA</strong> ✅. SWA <strong>للأسفل</strong> (SWC في الوسط، الخانق للأسفل) ← محاولة تسليح ← محظورة: <em><bdi>"Arm: Hardware safety switch"</bdi></em> (إضافة إلى PreArm البطارية / لا يوجد تثبيت GPS). إذن <strong>SWA للأسفل = تسليح، SWA للأعلى = فك التسليح</strong> ✅، كما هو مطلوب. فحوصات السلامة ترفض التسليح على طاولة العمل بشكل صحيح.<br><img src="../../guides/guide4_screenshots/arm-test-safety-switch_2032.png" alt="محاولة التسليح محظورة بمفتاح الأمان" style="max-width:420px;width:100%;border-radius:8px;margin:.5em 0"></div>
+
+<h2>الجزء H: احفظ وأرسل التقرير</h2>
+<div class="step"><div class="num">H</div><div>
+  <h3>نسخة احتياطية + الرسائل</h3>
+  <p>أولًا <strong><bdi>Parameters → Tools → Refresh</bdi></strong> (قائمة كاملة)، ثم <strong><bdi>Tools → Save to file…</bdi></strong> ← <code>backups/params_after-guide04.params</code>، وانسخ والصق <strong><bdi>Vehicle Messages</bdi></strong>.</p>
+</div></div>
+
+<div class="box ok" id="final-summary"><strong>✅ اكتمل الدليل 04 (20:34).</strong> تحتوي النسخة الاحتياطية <code>backups/params_after-guide04.params</code> (1,430 معلمة) على هذه التغييرات بالضبط مقارنةً بـ <code>params_after-radio-cal_full.params</code>:
+<div class="table-wrap"><table>
+<tr><th>المعلمة</th><th>قبل ← بعد</th><th>المعنى</th></tr>
+<tr><td><code>FLTMODE_CH</code></td><td>8 ← <strong>6</strong></td><td>‏SWC (القناة 6) يختار وضع الطيران</td></tr>
+<tr><td><code>FLTMODE1…6</code></td><td>QStab, QLoiter, FBWA, QStab, RTL, FBWA ← <strong>QLAND, QLAND, QHOVER, QHOVER, FBWA, FBWA</strong></td><td>‏SWC للأعلى = هبوط/خمول، الوسط = درون، للأسفل = طائرة</td></tr>
+<tr><td><code>RC6_OPTION</code></td><td>4 (RTL) ← <strong>0</strong></td><td>لـ SWC وظيفة واحدة فقط</td></tr>
+<tr><td><code>RC9/10/12/13/14/16_OPTION</code></td><td>وظائف قديمة ← <strong>0</strong></td><td>لا وظائف مفاتيح متبقية</td></tr>
+<tr><td><code>ARMING_RUDDER</code></td><td>2 ← <strong>0</strong></td><td>التسليح بـ SWA فقط، وأبدًا بالعصي</td></tr>
+<tr><td><code>GPS1_TYPE</code></td><td>0 ← <strong>1</strong> (الخطوة D2)</td><td>تشغيل GPS (<bdi>Auto</bdi>)</td></tr>
+<tr><td><code>RC1–8_MIN/MAX/TRIM</code></td><td>معايَرة (الجزء D)</td><td>يعرف Pixhawk نطاق كل عصا</td></tr>
+</table></div>
+الراديو: <bdi>Output mode</bdi> في i6X <strong>PWM</strong> ← مُرمِّز PPM ← RC IN. ‏SWA للأسفل = تسليح، للأعلى = إيقاف. فحوصات السلامة تمنع التسليح على طاولة العمل (متوقع).</div>
+
+<h2>ما زال قادمًا (أدلة لاحقة، ليس الآن)</h2>
+<ul>
+  <li><strong>وضع الأمان عند فقدان الراديو</strong> (ماذا يحدث إذا أُطفئ جهاز الإرسال أو خرج عن المدى): خطوة منفصلة. مع أجهزة الاستقبال PPM يتطلب هذا فحصًا دقيقًا.</li>
+  <li><strong>اختبار التسليح مع المحركات</strong>: فقط بعد دليل التوصيلات، و<strong>المراوح مفكوكة</strong>.</li>
+</ul>
+
+<h2>أرسل التقرير</h2>
+<div class="box ok">
+  <strong>أرسل لي ما يلي:</strong>
+  <ul class="check">
+    <li>الجزء 0: حُفظ <code>backups/params_after-guide03.params</code></li>
+    <li><s>الجزء A: توزيع العصي؟</s> ✅ قياسي (الدحرجة على العصا اليمنى)</li>
+    <li><s>الجزء A2: SWD؟</s> ✅ غير مطلوب (الأسطح تهدأ تلقائيًا في وضع الدرون)</li>
+    <li>الجزء C/D: لقطات شاشة لصفحة <bdi>Radio</bdi> (قبل المعايرة وبعدها). هل اختفت <bdi>"Radio failsafe on"</bdi>؟</li>
+    <li>الجزء G: أي وضع يظهر لكل موضع من مواضع SWC؛ وأي موضع لـ SWA هو "التشغيل"</li>
+    <li>الجزء H: <code>backups/params_after-guide04.params</code> + <bdi>Vehicle Messages</bdi></li>
+    <li>أي شيء لم تستطع إيجاده على i6X (صورة لشاشته)</li>
+  </ul>
+</div>
+
+<h2>المصادر</h2>
+<ul>
+  <li><a href="https://ardupilot.org/plane/docs/common-auxiliary-functions.html">ArduPilot: الوظائف المساعدة (Auxiliary functions)</a> (153 <bdi>ArmDisarm</bdi>: يُسلّح عند الارتفاع بشرط اجتياز الفحوصات، <bdi>"disarms unconditionally if brought low"</bdi>؛ ‏LOW &lt; 1200 µs، ‏HIGH &gt; 1800 µs)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-rc-transmitter-flight-mode-configuration.html">ArduPilot: إعداد أوضاع الطيران (Flight mode configuration)</a> (FLTMODE_CH، 6 خانات، مفتاح ثلاثي المواضع)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/AutoPilotPlugins/APM/APMFlightModesComponent.qml">QGC 5.1.5: APMFlightModesComponent.qml</a> (خانات PWM ‏0–1230 / 1231–1360 / 1361–1490 / 1491–1620 / 1621–1749 / 1750+، <bdi>"Flight mode channel"</bdi>، <bdi>"Switch Options"</bdi>)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/Vehicle/VehicleSetup/RemoteControlCalibration.qml">QGC 5.1.5: RemoteControlCalibration.qml</a> (<bdi>Calibrate</bdi>، <bdi>Mode 1–4</bdi>، تصفير التريمات، تحذير المراوح/الطاقة)</li>
+  <li><a href="https://discuss.ardupilot.org/t/connecting-an-fs-ia10b-receiver-to-pixhawk/27833">منتدى ArduPilot: توصيل FS-iA10B بـ Pixhawk</a> (PPM من منفذ PPM/CH1 إلى RC IN؛ ~8 قنوات)</li>
+  <li><a href="https://discuss.ardupilot.org/t/pixhawk-2-4-8-channel-issue/54111">منتدى ArduPilot: مشكلة القنوات في Pixhawk 2.4.8</a> (اضبط وضع مخرج جهاز الإرسال على PPM أولًا)</li>
+  <li><a href="https://manuals.plus/asin/B01N6HYPBK">دليل FS-iA10B (manuals.plus)</a> (قابس الاقتران في B/VCC ← يومض LED بسرعة ← اضغط مطوّلًا على زر BIND أثناء تشغيل جهاز الإرسال ← LED ثابت)</li>
+  <li><a href="https://ardupilot.org/plane/docs/quadplane-flight-modes.html">ArduPilot: أوضاع طيران QuadPlane</a> (QHOVER، QLAND، QSTABILIZE)</li>
+  <li><a href="https://forums.parallax.com/uploads/editor/h3/zmuh5nvzzu85.pdf">دليل قوائم FS-i6X (Parallax)</a> (<bdi>Functions setup → Aux. channels</bdi>؛ <bdi>System → RX setup → Output mode</bdi>)</li>
+  <li><a href="https://blog.unmanned.tech/flysky-radio-setup/">إعداد راديو FlySky (Unmanned Tech)</a> (تعيين SWA/SWC إلى القنوات المساعدة)</li>
+</ul>
+
+<footer>مشروع VTOL Y3 · الدليل 04 · أُنشئ 2026-10-17 03:45 · المراجعة 2 03:53 · السابق: <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">الدليل 03</a> · التالي: <a href="guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html">الدليل 05، إعداد جهاز الإرسال i6X</a> ← الدليل 06، خطة التوصيلات الكاملة · © 2026 bellocloud.com</footer>
+</main>
+</body>
+</html>

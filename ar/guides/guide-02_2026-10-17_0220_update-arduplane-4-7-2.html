@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدليل 02 — تحديث ArduPlane</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html" hreflang="en">English</a> · <a href="../../fr/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html" hreflang="fr">Français</a> · <strong>العربية</strong></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">الدليل 02 / ~10</span>
+    <span class="pill">أُنشئ 2026-10-17 · 02:20</span>
+    <span class="pill">المراجعة 7 · 03:09</span>
+    <span class="pill">⏱ ~15 دقيقة</span>
+    <span class="pill">الحالة: ✅ مكتمل (جميع الخطوات)</span>
+  </div>
+  <h1>حدّث البرنامج الثابت إلى <bdi>ArduPlane 4.7.2</bdi> (واحتفظ بمعاملاتك)</h1>
+  <p class="lead">الهدف: استبدال <bdi>ArduPlane</bdi> <strong>4.7.1</strong> بأحدث إصدار مستقر <strong>4.7.2</strong>، باستخدام الإصدار الصحيح للوحتك (<strong><code>Pixhawk1</code></strong>)، <strong>دون فقدان إعداد <bdi>Y3</bdi> القديم</strong>. ثم التحقق من أن المعاملات بقيت سليمة.</p>
+</header>
+
+<div class="box ok" id="status-now"><strong>الحالة الآن (20:39):</strong> لا تزال على <strong><bdi>ArduPlane 4.7.2</bdi></strong> (fb773567)، مؤكدة عند كل تشغيل. رسالة <bdi>PreArm</bdi> <bdi>"Radio failsafe on"</bdi> المذكورة هنا أُصلحت في الدليل 04 (مُرمِّز <bdi>PPM</bdi> يحتاج وضع الإخراج <bdi>PWM</bdi> في <bdi>i6X</bdi>). <strong>ملاحظة:</strong> مباشرة بعد الاتصال، قد تفتقد قائمة المعاملات في <bdi>QGC</bdi> نحو 144 إعدادًا لـ <bdi>VTOL</bdi> (<code>Q_…</code>). استخدم دائمًا <strong><bdi>Parameters → Tools → Refresh</bdi></strong> بعد نحو 30 ثانية من التشغيل قبل حفظ نسخة احتياطية (اكتُشف 20:11).</div>
+
+
+<div class="box danger">
+  <strong>السلامة في هذا الدليل</strong>
+  <ul>
+    <li><strong><bdi>USB</bdi> فقط. لا بطارية <bdi>LiPo</bdi>.</strong> تقول وثائق <bdi>QGC</bdi> إنه يجب ألا تكون المركبة مغذّاة بالبطارية أثناء تحميل البرنامج الثابت.</li>
+    <li>أبقِ الماك <strong>موصولًا بالشاحن</strong>. <strong>لا تفصل كابل <bdi>USB</bdi> أبدًا أثناء تقدّم شريط التحميل.</strong></li>
+    <li>إذا حدث خطأ، فالـ <bdi>Pixhawk</bdi> <strong>لن "يتلف"</strong>: يبقى محمّل الإقلاع (<bdi>bootloader</bdi>) على اللوحة ويمكنك دائمًا التحميل من جديد.</li>
+  </ul>
+</div>
+
+<h2>من أين نبدأ (من الدليل 01)</h2>
+<div class="box info">
+  <ul>
+    <li>اللوحة: <strong><bdi>Pixhawk 2.4.8</bdi></strong>، هدف <bdi>ArduPilot</bdi> هو <strong><code>Pixhawk1</code></strong> (إصدار 2 MB الكامل) · تعمل بـ <strong><bdi>ArduPlane 4.7.1</bdi></strong> · <bdi>QGC</bdi> <strong>5.1.5</strong> على <bdi>macOS</bdi>.</li>
+    <li>الإعداد القديم = إعداد <bdi>Y3</bdi> كامل (<bdi>Tri</bdi>، إمالة <bdi>VectoredYaw</bdi>، ذيل على شكل V…)، <strong>لم يطِر أبدًا</strong>. القرار: <strong>الاحتفاظ به وإصلاحه</strong> في الأدلة التالية.</li>
+    <li>النسخة الاحتياطية: <code>backups/params-backup_2026-10-17_before-guide02.params</code> ✅</li>
+    <li>فحصت خادم البرامج الثابتة الرسمي لـ <bdi>ArduPilot</bdi> (02:19): <code>Plane/stable/Pixhawk1/</code> = <strong><bdi>"Plane: version to 4.7.2"</bdi></strong>، بُني في 2026-10-13. إذن 4.7.2 هو فعلًا الإصدار المستقر الحالي للوحتك.</li>
+  </ul>
+</div>
+
+<h2>هل هو فعلًا 4.7.2 وليس 4.7.1 الموجود لديك؟ (تم التحقق 02:25)</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>الدليل</th><th>ما يقوله</th></tr>
+  <tr><td>رسالة التشغيل من لوحتك (الدليل 01)</td><td><code>ArduPlane V4.7.1 (dbe79216)</code>: <strong>المثبّت حاليًا</strong></td></tr>
+  <tr><td>نافذة <bdi>QGC</bdi> (لقطة شاشتك)</td><td><bdi>"Running 4.7.1, latest stable is 4.7.2"</bdi></td></tr>
+  <tr><td>الخادم <code>Plane/stable/Pixhawk1/firmware-version.txt</code></td><td><code>4.7.2-FIRMWARE_VERSION_TYPE_OFFICIAL</code></td></tr>
+  <tr><td>الخادم <code>git-version.txt</code></td><td>الإيداع <code>fb773567</code>، <bdi>"Plane: version to 4.7.2"</bdi>، 2026-10-11</td></tr>
+  <tr><td>الترويسة داخل الملف القابل للتنزيل <code>arduplane.apj</code></td><td>اللوحة <code>Pixhawk1</code> (board_id 9)، git <code>fb773567</code>، 1.56 MB من 2.08 MB، إذن يتّسع ✅</td></tr>
+  <tr><td>قائمة مجلدات الخادم</td><td><code>stable-4.7.0</code>، <code>stable-4.7.1</code>، <code>stable-4.7.2</code>: 4.7.2 هو الأحدث</td></tr>
+</table>
+</div>
+<p>الإصدار المثبّت هو <code>dbe79216</code> والجديد هو <code>fb773567</code>، إذن هما فعلًا إصداران مختلفان. بعد التحديث، يجب أن تُظهر رسالة التشغيل <strong><bdi>V4.7.2 (fb773567)</bdi></strong>. هذا هو الدليل في الخطوة 6.</p>
+
+<h2>لماذا يُفترض أن تبقى المعاملات</h2>
+<p>البرنامج الثابت (البرنامج) والمعاملات (إعداداتك) مخزّنة في <strong>أماكن مختلفة</strong>. في <bdi>Pixhawk 1</bdi>، تُحفظ المعاملات في شريحة ذاكرة منفصلة (<bdi>FRAM</bdi>). التحديث العادي من <strong><bdi>ArduPlane → ArduPlane</bdi></strong> يستبدل البرنامج فقط. ويحوّل <bdi>ArduPilot</bdi> أي معاملات أُعيدت تسميتها تلقائيًا. لا تُمسح المعاملات إلا إذا ثبّتّ <em>نوع مركبة مختلفًا</em> (مثل <bdi>Copter</bdi>). لهذا تحتوي الخطوة 4 على قائمة تحقق: <strong>يجب أن تقول <bdi>Plane</bdi></strong>.</p>
+<p>رأى بعض المستخدمين إعادة ضبط رغم ذلك (نادرًا)، ولهذا صنعنا النسخة الاحتياطية ولهذا تتحقق الخطوة 7.</p>
+
+<h2>الخطوات</h2>
+
+<div class="box info">
+  <strong>تصحيح (المراجعة 3، 02:33):</strong> وصفت المراجعة 2 واجهة <bdi>QGC</bdi> أقدم. أنت على <strong><bdi>QGC 5.1.5</bdi></strong>، حيث تضغط <strong><bdi>Flash</bdi> أولًا</strong> ثم تفصل/تعيد التوصيل <strong>بعد ذلك</strong>. أعدت كتابة الخطوات 1–5 من <strong>الشيفرة المصدرية الفعلية لـ <bdi>QGC 5.1.5</bdi></strong> (<code>FirmwareUpgrade.qml</code>، الوسم v5.1.5)، لذا تطابق أسماء الأزرار وترتيبها أدناه شاشتك.
+</div>
+
+<div class="step"><div class="num">1</div><div>
+  <h3>افتح صفحة <bdi>Firmware</bdi> ✅ (تم 02:31)</h3>
+  <p>أيقونة Q البنفسجية ← <strong><bdi>Vehicle Configuration</bdi></strong> ← <strong><bdi>Firmware</bdi></strong>. سترى هذا:</p>
+  <img src="../../guides/guide2_screenshots/firmware-page_2026-10-17_0231.png" alt="صفحة البرنامج الثابت في QGC 5.1.5: قائمة منسدلة 'Pixhawk1 [ArduPilot ChibiOS]' وزر Flash" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <p>القائمة المنسدلة تقول <strong><code>Pixhawk1 [ArduPilot ChibiOS]</code></strong>. هذه لوحتك، وهي محددة بالفعل ✅. <em>لم يتغير شيء بعد.</em> زر <bdi>Flash</bdi> يبدأ العملية فقط؛ تأكيد "التثبيت" الحقيقي يأتي لاحقًا (الخطوة 4).</p>
+</div></div>
+
+<div class="step"><div class="num">2</div><div>
+  <h3>اضغط <strong><bdi>Flash</bdi></strong></h3>
+  <p>ستعرض منطقة النص تحت الأزرار، باللون الأحمر:</p>
+  <p><em>"<strong><bdi>Now unplug your device and plug it back in to enter bootloader mode.</bdi></strong>"</em></p>
+  <p>يظهر زر <strong><bdi>Cancel</bdi></strong> مكان <bdi>Flash</bdi>، لذا لا يزال بإمكانك التراجع هنا.</p>
+  <img src="../../guides/guide2_screenshots/after-flash-click_2026-10-17_0235.png" alt="بعد الضغط على Flash: 'Flashing - Pixhawk1 [ArduPilot ChibiOS]'، زر Cancel، وسجل ينتهي بـ 'Found device: ArduPilot ChibiOS (cu.usbmodem101)'" style="width:100%;border-radius:8px;border:1px solid var(--border)">
+  <div class="box info"><strong>ظهور <bdi>"Found device: ArduPilot ChibiOS (cu.usbmodem101)"</bdi> مباشرة بعد الضغط على <bdi>Flash</bdi> أمر عادي</strong> (شوهد 02:35). هذا <bdi>QGC</bdi> يرى اللوحة <em>وهي لا تزال تعمل بـ <bdi>ArduPlane</bdi></em> (الاكتشاف الأول). لا يفعل <bdi>QGC</bdi> بها شيئًا. إنه الآن <strong>ينتظر أن تفصلها وتعيد توصيلها</strong>. انتقل إلى الخطوة 3. (تم التحقق في الشيفرة المصدرية لـ <bdi>QGC 5.1.5</bdi>: لا يتم التواصل مع محمّل الإقلاع إلا عند الاكتشاف <em>الثاني</em>، بعد إعادة التوصيل.)</div>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 2 (02:35).</strong></div>
+</div></div>
+
+<div class="step"><div class="num">3</div><div>
+  <h3>افصل <bdi>USB</bdi>، انتظر 3 ثوانٍ، ثم أعد توصيله</h3>
+  <p>وصّله مباشرة بالماك. <strong>لا تضغط أي شيء في <bdi>QGC</bdi></strong>، راقب فقط. يجب أن تُضيف منطقة النص هذه الأسطر الجديدة:</p>
+  <ol>
+    <li>عند الفصل: <em>"<strong><bdi>Device disconnected — waiting for it to reappear in bootloader mode...</bdi></strong>"</em></li>
+    <li>عند إعادة التوصيل: سطر <em><bdi>"Found device: …"</bdi></em> <strong>ثانٍ</strong></li>
+    <li>ثم: <em><bdi>"Connected to bootloader:"</bdi></em> · <em><bdi>"Version: …"</bdi></em> · <em>"<strong><bdi>Board ID: 9</bdi></strong>"</em> · <em><bdi>"Flash size: …"</bdi></em></li>
+  </ol>
+  <p>إن لم ترَ السطر 1 (<bdi>"Device disconnected…"</bdi>)، فلم يُكتشف الفصل. افصل مرة أخرى وانتظر 3 ثوانٍ قبل إعادة التوصيل.</p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 3 (02:36).</strong> السجل: <bdi>"Device disconnected…"</bdi> ← <bdi>"Found device: ArduPilot ChibiOS (cu.usbmodem101)"</bdi> ← <bdi>"Connected to bootloader: Version 5 · Board ID 255 · Flash size 2080768"</bdi> ← انفتحت نافذة <bdi>Firmware Setup</bdi>.<br><small>ملاحظة: <em><bdi>Board ID 255</bdi></em> رقم غير معتاد لهذه اللوحة (ملف البرنامج الثابت مصنوع للمعرّف 9). ومع ذلك قُبل التحميل و<strong>تم التحقق منه</strong>، وحجم الفلاش 2,080,768 = بالضبط الـ 2 MB التي يتوقعها ملف <bdi>Pixhawk1</bdi>. نؤكد النتيجة برسالة التشغيل في الخطوة 6.</small></div>
+  <div class="expect">ثم تنفتح نافذة منبثقة: <strong><bdi>"Firmware Setup"</bdi></strong>، مع النص <em><bdi>"Detected Pixhawk board. You can select from the following flight stacks:"</bdi></em></div>
+  <p>لا نافذة بعد نحو 10 ثوانٍ؟ افصل وأعد التوصيل مرة أخرى. لا يزال لا شيء: اضغط <strong><bdi>Cancel</bdi></strong> وأرسل لي لقطة شاشة.</p>
+</div></div>
+
+<div class="step"><div class="num">4</div><div>
+  <h3>املأ نافذة <bdi>"Firmware Setup"</bdi>. ⚠️ غيّر نوع المركبة!</h3>
+  <ol>
+    <li>اختر زر الاختيار <strong><bdi>ArduPilot</bdi></strong> (وليس <bdi>"PX4 Pro"</bdi>). تظهر تحته ثلاث قوائم منسدلة.</li>
+    <li><strong>القائمة المنسدلة 1:</strong> <code>ChibiOS</code> (الافتراضي). اتركها ✅</li>
+    <li><strong>القائمة المنسدلة 2 (نوع المركبة): تبدأ على <code>Multi-Rotor</code>. ⚠️ غيّرها إلى <code>Plane</code>.</strong><br>
+      الخيارات هي: <bdi>Multi-Rotor · Helicopter · <strong>Plane</strong> · Rover · Sub</bdi>. <bdi>Multi-Rotor</bdi> هو <bdi>ArduCopter</bdi> و<strong>سيمسح إعدادك</strong>. طائرتك <bdi>QuadPlane VTOL</bdi> هي <strong><bdi>Plane</bdi></strong>.</li>
+    <li><strong>القائمة المنسدلة 3 (اللوحة + الإصدار):</strong> انتظر حتى تختفي <bdi>"Downloading list of available firmwares…"</bdi>. ثم اختر بالضبط <strong><code>Pixhawk1 - 4.7.2</code></strong>.<br>
+      تحتوي القائمة أيضًا على لوحات أخرى بنفس الإصدار (مثل <code>Pixhawk1-1M - 4.7.2</code>، <code>Pixhawk1-bdshot - 4.7.2</code>، <code>fmuv2</code>، <code>fmuv3</code>، <code>CubeBlack</code>، <code>CubePurple</code>…). قد يختار <bdi>QGC</bdi> مسبقًا اللوحة الخاطئة، لذا <strong>تحقق منها</strong>. إن ظهر <bdi>"Choose board type"</bdi>، افتحها واختر <code>Pixhawk1 - 4.7.2</code>.</li>
+    <li>اترك <strong><bdi>"Advanced settings"</bdi> غير محدد</strong>.</li>
+  </ol>
+  <div class="table-wrap">
+  <table>
+    <tr><th>✋ نقطة تحقق: قبل الضغط على <bdi>OK</bdi></th><th>يجب أن يكون</th></tr>
+    <tr><td><bdi>Flight stack</bdi></td><td><strong><bdi>ArduPilot</bdi></strong></td></tr>
+    <tr><td>القائمة المنسدلة 1</td><td><strong><bdi>ChibiOS</bdi></strong></td></tr>
+    <tr><td>القائمة المنسدلة 2</td><td><strong><bdi>Plane</bdi></strong> ← ❌ ليس <bdi>Multi-Rotor</bdi></td></tr>
+    <tr><td>القائمة المنسدلة 3</td><td><strong><bdi>Pixhawk1 - 4.7.2</bdi></strong> ← ليس <bdi>-1M</bdi>، ولا <bdi>-bdshot</bdi>، ولا <bdi>Cube…</bdi></td></tr>
+    <tr><td><bdi>Advanced settings</bdi></td><td>غير محدد</td></tr>
+  </table>
+  </div>
+  <p>📸 <strong>التقط لقطة شاشة للنافذة.</strong> إن لم يتطابق أي شيء، أو لم تكن متأكدًا: اضغط <strong><bdi>Cancel</bdi></strong> (لا يُكتب شيء على اللوحة حتى تضغط <bdi>OK</bdi>) وأرسل لي لقطة الشاشة.</p>
+  <p><small>فحصت القائمة الرسمية لـ <bdi>ArduPilot</bdi> التي ينزّلها <bdi>QGC</bdi> (<code>manifest.json</code>): للوحتك (المعرّف 9)، يحتوي <bdi>Plane stable</bdi> على المدخل <code>Pixhawk1</code> بالإصدار <strong>4.7.2</strong>، والملف <code>Plane/stable/Pixhawk1/arduplane.apj</code>.</small></p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 4 (02:36–02:37). جميع الفحوص الخمسة صحيحة:</strong> <bdi>ArduPilot</bdi> ✅ · <bdi>ChibiOS</bdi> ✅ · <strong><bdi>Plane</bdi></strong> ✅ · <strong><bdi>Pixhawk1 - 4.7.2</bdi></strong> ✅ (اختار <bdi>QGC</bdi> مسبقًا اللوحة الصحيحة هذه المرة) · <bdi>Advanced</bdi> غير محدد ✅<br><img src="../../guides/guide2_screenshots/firmware-setup-popup_2026-10-17_0236.png" alt="نافذة Firmware Setup: ArduPilot، ChibiOS، Plane، Pixhawk1 - 4.7.2" style="width:100%;max-width:520px;border-radius:8px;border:1px solid var(--border);margin:6px 0"><img src="../../guides/guide2_screenshots/board-list_2026-10-17_0237.png" alt="قائمة اللوحات: CubePurple، Pixhawk1-1M، Pixhawk1-1M-bdshot، Pixhawk1-bdshot، Pixhawk1 (محددة)، CubeBlack، mRo X2.1، fmuv3، CUAV-Pixhack-v3" style="width:100%;max-width:520px;border-radius:8px;border:1px solid var(--border);margin:6px 0"></div>
+</div></div>
+
+<div class="step"><div class="num">5</div><div>
+  <h3>اضغط <bdi>OK</bdi> وانتظر</h3>
+  <p>تعرض منطقة النص: <em><bdi>Downloading firmware from …Plane/stable/Pixhawk1/arduplane.apj</bdi></em> ← المسح ← البرمجة ← التحقق، مع <strong>شريط تقدّم</strong>. نحو 1–2 دقيقة. بمجرد أن يبدأ المسح، <strong>يصبح <bdi>Cancel</bdi> رماديًا</strong>. هذا عادي.</p>
+  <div class="box warn"><strong>لا تلمس الكابل أو اللوحة حتى ينتهي.</strong></div>
+  <div class="expect">يجب أن ترى: رسالة "اكتمل التحديث"، ثم <strong>يُعاد تشغيل</strong> الـ <bdi>Pixhawk</bdi> (نغمات الطنّان) و<strong>يعيد <bdi>QGC</bdi> الاتصال تلقائيًا</strong>. 📸 التقط لقطة شاشة لمنطقة النص.</div>
+  <p>إن قال إن التحديث فشل: نصيحة <bdi>QGC</bdi> نفسه هي التوصيل <strong>مباشرة</strong> بمنفذ <bdi>USB</bdi> مغذّى (دون موزّع) والتغذية <strong>عبر <bdi>USB</bdi> فقط، لا البطارية</strong>. ثم كرّر من الخطوة 2.</p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 5 (02:38). نجح التحميل.</strong> السجل: <em><bdi>Downloading firmware from https://firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj → Download complete → Erasing previous program… → Erase complete → Programming new version… → Verifying program… → Rebooting board</bdi></em>.<br>
+  السطران <em><bdi>"Firmware file missing parameter_xml_size key"</bdi></em> / <em><bdi>"airframe_xml_size key"</bdi></em> <strong>غير ضارين</strong>: هذه المفاتيح موجودة فقط في ملفات برامج <bdi>PX4</bdi> الثابتة، وليس في ملفات <code>.apj</code> الخاصة بـ <bdi>ArduPilot</bdi>.<br><img src="../../guides/guide2_screenshots/flash-log-complete_2026-10-17_0238.png" alt="سجل التحميل: تنزيل، مسح، برمجة، تحقق، إعادة تشغيل" style="width:100%;max-width:640px;border-radius:8px;border:1px solid var(--border);margin:6px 0"></div>
+</div></div>
+
+<div class="step"><div class="num">5b</div><div>
+  <h3><bdi>"Vehicle did not return the full parameter list"</bdi>: أعد الاتصال بشكل نظيف</h3>
+  <img src="../../guides/guide2_screenshots/after-reboot-param-list-incomplete_2026-10-17_0238.png" alt="Vehicle Configuration: 'Vehicle did not return the full parameter list. As a result, the configuration pages are not available.' و'Beginning INS calibration. Do not move plane'" style="width:100%;max-width:640px;border-radius:8px;border:1px solid var(--border);margin:6px 0">
+  <p>شوهدت في 02:38، مباشرة بعد إعادة التشغيل. <strong>هذا لا يعني أن معاملاتك ضاعت.</strong> أعاد <bdi>QGC</bdi> الاتصال واللوحة <em>لا تزال في طور التشغيل</em> (انظر <bdi>"Beginning INS calibration…"</bdi>) وبدأ تنزيل كل المعاملات قبل أن تكون اللوحة جاهزة، فكان التنزيل ناقصًا. في أول تشغيل لبرنامج ثابت جديد، قد يكون <bdi>ArduPilot</bdi> أيضًا يحوّل المعاملات، وهذا يستغرق وقتًا أطول.</p>
+  <ol>
+    <li><strong>افصل <bdi>USB</bdi></strong>، انتظر <strong>5 ثوانٍ</strong>، ثم أعد توصيله.</li>
+    <li><strong>لا تلمس اللوحة ولا تضغط أي شيء لمدة 30 ثانية</strong> (معايرة الجيروسكوب عند التشغيل + تنزيل المعاملات). راقب شريط التقدّم تحت شريط الأدوات العلوي في <bdi>QGC</bdi>.</li>
+    <li>افتح <strong><bdi>Vehicle Configuration</bdi></strong> مجددًا. يجب أن تنفتح الصفحات الآن بشكل طبيعي.</li>
+  </ol>
+  <p>لا تزال نفس الرسالة؟ في <strong><bdi>Parameters → Tools</bdi></strong> اضغط <strong><bdi>Refresh</bdi></strong>. لا يزال يفشل ← التقط لقطة شاشة وأرسلها لي؛ <strong>لا تحمّل النسخة الاحتياطية بعد</strong>.</p>
+</div></div>
+
+<div class="step"><div class="num">6</div><div>
+  <h3>تحقق من الإصدار الجديد في <bdi>Vehicle Messages</bdi></h3>
+  <ol>
+    <li>اترك <bdi>QGC</bdi> مفتوحًا. افصل <bdi>USB</bdi>، انتظر 5 ثوانٍ، أعد التوصيل، ليكون <bdi>QGC</bdi> مفتوحًا <strong>أثناء التشغيل</strong> ويلتقط أسطر التشغيل (كما تعلّمنا في الدليل 01).</li>
+    <li>اضغط على <strong>منطقة الحالة في أعلى اليسار</strong> (<bdi>"Not Ready"</bdi>) ← <strong><bdi>Vehicle Messages</bdi></strong>.</li>
+  </ol>
+  <div class="expect">يجب أن ترى:<br>
+    <code>ArduPlane V4.7.2 (fb773567)</code> ← إصدار جديد ✅ (القديم كان dbe79216)<br>
+    <code>Pixhawk1 00200035 …</code> ← نفس إصدار اللوحة ✅<br>
+    <code>QuadPlane initialised, Frame: TRI</code> ← <strong>الإعداد القديم بقي</strong> ✅<br>
+    و<strong>لا</strong> نافذة <bdi>"not running latest stable firmware"</bdi> بعد الآن.</div>
+  <p>📸 التقط لقطة شاشة للرسائل (أو انسخها والصقها).</p>
+</div></div>
+
+<div class="step"><div class="num">7</div><div>
+  <h3>تحقق من بقاء المعاملات + احفظ نسخة احتياطية جديدة</h3>
+  <ol>
+    <li><strong><bdi>Vehicle Configuration → Parameters</bdi></strong>. (إذا ظهرت مجددًا النافذة غير الضارة <bdi>"Parameters are missing… FS_OPTIONS…"</bdi>، اضغط <bdi>Ok</bdi>. انظر الدليل 01.)</li>
+    <li>ابحث عن هذه وقارنها بقيم الدليل 01:
+      <div class="table-wrap">
+      <table>
+        <tr><th>ابحث عن</th><th>المتوقع (من 4.7.1)</th></tr>
+        <tr><td><code>Q_TILT_TYPE</code></td><td><bdi>VectoredYaw</bdi></td></tr>
+        <tr><td><code>Q_FRAME_CLASS</code></td><td><bdi>Tri</bdi></td></tr>
+        <tr><td><code>SERVO9_FUNCTION</code></td><td><bdi>TiltMotorFrontLeft</bdi></td></tr>
+        <tr><td><code>SERVO3_FUNCTION</code></td><td><bdi>VTailLeft</bdi></td></tr>
+        <tr><td><code>AHRS_ORIENTATION</code></td><td><bdi>Yaw90</bdi> (نصلحه في الدليل 03، لا تغيّره الآن)</td></tr>
+      </table>
+      </div>
+    </li>
+    <li><strong><bdi>Tools → Save to file…</bdi></strong> ← احفظه باسم <code>params_after-guide02_4.7.2.params</code> في <code>dronev2/backups/</code>.</li>
+  </ol>
+  <div class="expect">يجب أن ترى: نفس القيم السابقة. مع ملف النسخة الاحتياطية الجديد، سأ<strong>قارن جميع المعاملات</strong> القديمة مقابل الجديدة وأخبرك بالضبط بما تغيّر (إن تغيّر شيء).</div>
+</div></div>
+
+<h2>البديل: التثبيت من ملف منزَّل</h2>
+<p>استخدم هذا فقط إن لم تنجح الخطوتان 2–3 (اللوحة لم تُكتشف أبدًا، أو <bdi>Plane/Pixhawk1</bdi> غير معروض):</p>
+<ol>
+  <li>نزّل الملف الرسمي: <a href="https://firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj"><code>firmware.ardupilot.org/Plane/stable/Pixhawk1/arduplane.apj</code></a>. استخدم ملف <strong><bdi>.apj</bdi></strong>، <strong>وليس</strong> <code>.hex</code> (وثائق <bdi>ArduPilot</bdi>: ملف <bdi>.hex</bdi> مخصص فقط لـ <bdi>DFU/JTAG</bdi>).</li>
+  <li>صفحة <bdi>Firmware</bdi> ← <strong><bdi>Flash</bdi></strong> ← افصل/أعد التوصيل ← في نافذة <bdi>Firmware Setup</bdi>: <strong><bdi>ArduPilot</bdi></strong> ← حدّد <strong><bdi>Advanced settings</bdi></strong> ← في قائمة الإصدارات اختر <strong><bdi>"Custom firmware file…"</bdi></strong> ← <bdi>OK</bdi> ← اختر الملف المنزَّل <code>arduplane.apj</code>.</li>
+  <li>ثم تابع من الخطوة 5.</li>
+</ol>
+
+<h2 id="results">النتائج: تم تحديث البرنامج الثابت ✅ (02:44–02:47)</h2>
+
+<h3>الخطوات 5b–7: كلها مؤكدة</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>الفحص</th><th>النتيجة</th></tr>
+  <tr><td>5b. إعادة الاتصال</td><td>✅ صفحات الإعداد تعمل مجددًا بعد إعادة الاتصال النظيفة</td></tr>
+  <tr><td>6. رسالة التشغيل</td><td>✅ <code>ArduPlane V4.7.2 (fb773567)</code> · <code>Pixhawk1 00200035…</code> (نفس إصدار اللوحة) · <code>QuadPlane initialised, Frame: TRI</code> · <bdi>IOMCU OK</bdi> · <code>RCOut: PWM:1-14</code></td></tr>
+  <tr><td>7. المعاملات الأساسية</td><td>✅ <code>Q_TILT_TYPE</code> = <bdi>VectoredYaw</bdi> · <code>Q_FRAME_CLASS</code> = <bdi>Tri</bdi> (7) · <code>SERVO9_FUNCTION</code> = <bdi>TiltMotorFrontLeft</bdi> (75) · <code>SERVO3_FUNCTION</code> = <bdi>VTailLeft</bdi> (79) · <code>AHRS_ORIENTATION</code> = <bdi>Yaw90</bdi> (2، يُصلَح في الدليل 03)</td></tr>
+  <tr><td>7. النسخة الاحتياطية الجديدة</td><td>✅ <code>backups/params_after-guide02_4.7.2.params</code>، الترويسة <bdi>"Version: 4.7.2 · Git Revision: fb773567"</bdi></td></tr>
+  <tr><td><bdi>Sensor Status</bdi></td><td>كما في السابق: الجيروسكوب، مقياس التسارع، المغناطيسية، البارومتر، التسجيل، البطارية <bdi>Normal</bdi>. <bdi>GPS / RC / AHRS / Pre-Arm</bdi> في حالة <bdi>"Error"</bdi> للأسباب المعروفة.</td></tr>
+</table>
+</div>
+<p>سجل الرسائل الكامل: <code>guide2_screenshots/vehicle-messages-4.7.2-boot_2026-10-17_0244.txt</code></p>
+
+<h3>مقارنة النسخة الاحتياطية القديمة والجديدة (جميع المعاملات)</h3>
+<p><strong>لم يضع أي معامل.</strong> لم يختفِ أي معامل، وكل إعدادات <bdi>Y3</bdi> (الإمالة، الهيكل، المخارج، الذيل على شكل V، الأوضاع، البطارية) متطابقة. الفروق:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>التغيير</th><th>قبل ← بعد</th><th>المعنى</th></tr>
+  <tr><td>عدد المعاملات</td><td>1,276 ← <strong>1,430</strong> (+154)</td><td>يحتوي الملف الجديد على مجموعات <bdi>QuadPlane</bdi> الكاملة: <code>Q_A_*</code> (معاملات <bdi>PID</bdi> لوضعية <bdi>VTOL</bdi>)، <code>Q_P_*</code> (التحكم في الموضع)، <code>Q_M_*</code> (محركات <bdi>VTOL</bdi>)، <code>Q_LOIT_*</code>، <code>Q_WP_*</code>، <code>Q_WVANE_*</code>، <code>GPS1_*</code>. كلها على <strong>القيم الافتراضية</strong>، وهذا عادي لإعداد لم يُضبط ولم يطِر أبدًا. <em>سبب غيابها عن النسخة القديمة غير واضح. ربما حفظ ناقص في <bdi>QGC</bdi>. الملف الجديد هو مرجعنا الآن.</em></td></tr>
+  <tr><td>⚠️ <code>SERVO7_FUNCTION</code></td><td>0 (<bdi>Disabled</bdi>) ← <strong>39</strong></td><td>39 = مخرج <strong>سيرفو انعراج الذيل</strong> في الهيكل الثلاثي. يخصصه <bdi>ArduPilot</bdi> تلقائيًا لهيكل <bdi>Tri</bdi>. طائرتك <bdi>Y3</bdi> تستخدم <strong><bdi>VectoredYaw</bdi></strong> (الانعراج من سيرفوهي الإمالة)، لذا <strong>لا شيء موصول بـ <bdi>MAIN 7</bdi></strong>، وهذا صحيح. <strong>أبقِ <bdi>MAIN 7</bdi> فارغًا.</strong> نراجع هذا في الدليل 07.</td></tr>
+  <tr><td><code>GPS1_TYPE</code></td><td>0 ← 1 (<bdi>Auto</bdi>)</td><td>الـ <bdi>GPS</bdi> مفعّل. يطابق اكتشاف <bdi>M8N</bdi> ✅</td></tr>
+  <tr><td><code>RC1–4_DZ</code></td><td>0 ← 30</td><td>المنطقة الميتة للعصي (افتراضية). تُفحص في معايرة جهاز التحكم في الدليل 05.</td></tr>
+  <tr><td><code>EK3_CHECK_SCALE</code> 150 ← 100 · <code>BRD_SD_SLOWDOWN</code> 1 ← 2</td><td></td><td>عادت إلى القيم الافتراضية للبرنامج الثابت. لا بأس.</td></tr>
+  <tr><td>إزاحات الجيروسكوب / الضغط الأرضي للبارومتر / عدد مرات التشغيل</td><td>تغييرات صغيرة</td><td>عادي: يُعاد قياسها عند كل تشغيل.</td></tr>
+</table>
+</div>
+
+<h3>⚠️ رسالة جديدة واحدة: <code>PreArm: Internal errors 0x100000 l:1375 flow_of_ctrl</code></h3>
+<p>ظهرت مرة واحدة عند التشغيل (<code>02:44:24 Critical: Internal Errors 0x100000</code>). <strong>لم</strong> تكن في سجل تشغيل 4.7.1. فككت شيفرتها من الشيفرة المصدرية لـ <bdi>ArduPilot 4.7.2</bdi>:</p>
+<ul>
+  <li><code>0x100000</code> = الفحص الداخلي <strong><bdi>"flow_of_control"</bdi></strong> (حالات "لا يُفترض أن نصل إلى هنا أبدًا").</li>
+  <li><code>l:1375</code> = السطر 1375 من <code>AP_HAL_ChibiOS/RCOutput.cpp</code>، في <code>RCOutput::push()</code>: <strong>أُرسلت مخارج السيرفو/المحرك (<bdi>"push"</bdi>) دون تجميعها أولًا (<bdi>"cork"</bdi>)</strong>. هذا فحص توقيت برمجي في مشغّل المخارج، <strong>وليس حساسًا معطلًا أو لوحة سيئة</strong>.</li>
+  <li>لم تتغير شيفرة <bdi>Plane</bdi> التي تشغّل المخارج بين 4.7.1 و4.7.2 (قارنت الإصدارين). لذا فالمسبب على الأرجح هو <strong>الإعداد</strong> وليس التحديث. أحد الاحتمالات هو <code>SERVO7_FUNCTION = 39</code> المخصص تلقائيًا حديثًا على هيكل <bdi>Tri</bdi> بنمط <bdi>VectoredYaw</bdi>، لكن <strong>هذه فرضية، وليست مُثبتة</strong>.</li>
+  <li>إنها <strong>تمنع التسليح</strong> (فهي خطأ <bdi>PreArm</bdi>)، لذا يجب أن تختفي قبل أي اختبار للمحركات. لا تهم الأدلة التالية (الاتجاه، المعايرة).</li>
+</ul>
+
+<div class="step"><div class="num">8</div><div>
+  <h3>اختبار متابعة: هل يعود الخطأ الداخلي؟</h3>
+  <p>تبقى الأخطاء الداخلية محفوظة حتى إعادة التشغيل التالية، لذا نتحقق هل تتكرر في تشغيل نظيف:</p>
+  <ol>
+    <li>افصل <bdi>USB</bdi>، انتظر 5 ثوانٍ، أعد التوصيل. لا تلمس اللوحة لمدة 30 ثانية.</li>
+    <li>افتح <strong><bdi>Vehicle Messages</bdi></strong> وابحث عن <code>Internal Errors</code>.</li>
+  </ol>
+  <div class="expect">أبلغ: <strong>"عاد الخطأ الداخلي"</strong> أو <strong>"اختفى"</strong>. انسخ الرسائل والصقها كالمرة السابقة.</div>
+  <p>حسب الجواب، سأواصل التحقيق (تغيير معامل واحد في كل مرة، مع الشرح أولًا) أو ننتقل إلى الدليل 03. <strong>لا تغيّر أي معاملات بنفسك لهذا الأمر بعد.</strong></p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 8 (03:04–03:08): الخطأ الداخلي اختفى.</strong> إعادة تشغيل نظيفة: لا سطر <code>Internal Errors</code> عند التشغيل، وقائمة <bdi>PreArm</bdi> (تكررت 6× خلال 2.5 دقيقة) لم تعد تحتويه. بقيت فقط بنود <bdi>PreArm</bdi> السبعة المتوقعة. إذن كان <strong>حدثًا لمرة واحدة في أول تشغيل بعد التحميل</strong>. ذلك التشغيل خصص أيضًا <code>SERVO7_FUNCTION=39</code> تلقائيًا وأنشأ معاملات <bdi>Q_</bdi> الجديدة، وهذا يتوافق مع تسلسل إعداد عند التشغيل الأول، مع أن المسبب الدقيق غير مُثبت. <strong>بند للمراقبة:</strong> إن عاد للظهور، دوّن ما حدث قبله مباشرة (مثل تغيير معامل).<br>السجل: <code>guide2_screenshots/vehicle-messages-recheck_2026-10-17_0304.txt</code></div>
+  <div class="box info"><strong>نتيجة إضافية:</strong> السطر الأول في هذا التشغيل كان <code>Debug: RCInput: decoding PPM (IOMCU)</code>. الـ <bdi>Pixhawk</bdi> <strong>يستقبل إشارة <bdi>PPM</bdi> على <bdi>RC IN</bdi></strong> من مسار جهاز استقبال <bdi>FlySky</bdi>. <bdi>"Radio failsafe on"</bdi> لا تزال موجودة (جهاز الإرسال مطفأ؟ الخانق منخفض جدًا؟). نحل هذا في الدليل 05.</div>
+</div></div>
+
+<h2>استكشاف الأخطاء وإصلاحها</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>المشكلة</th><th>جرّب هذا</th></tr>
+  <tr><td>لم تُكتشف اللوحة أبدًا في صفحة <bdi>Firmware</bdi></td><td>تأكد أن <bdi>QGC</bdi> على صفحة <bdi>Firmware</bdi> <em>قبل</em> التوصيل. جرّب كابل بيانات/منفذًا آخر. أغلق <bdi>Mission Planner</bdi> إن كان مفتوحًا.</td></tr>
+  <tr><td>توقف التحميل في المنتصف / خطأ</td><td>لا تقلق. افصل، انتظر، أعد التوصيل على صفحة <bdi>Firmware</bdi> وكرّر. محمّل الإقلاع لا يزال موجودًا.</td></tr>
+  <tr><td>بعد التحميل، عادت القيم إلى الافتراضية (مثل <code>Q_ENABLE</code> = 0، ولا رسالة <bdi>"Frame: TRI"</bdi>)</td><td>الاستعادة: <bdi>Parameters</bdi> ← <strong><bdi>Tools → Load from file…</bdi></strong> ← <code>backups/params-backup_2026-10-17_before-guide02.params</code> ← ثم <strong><bdi>Tools → Reboot Vehicle</bdi></strong>. أخبرني قبل أن تفعل ذلك.</td></tr>
+  <tr><td>لا يزال يقول <bdi>"not running latest stable"</bdi></td><td>أرسل لي <bdi>Vehicle Messages</bdi>. ربما لم يكتمل التحميل.</td></tr>
+</table>
+</div>
+
+<h2>أرسل تقريرك</h2>
+<div class="box ok">
+  <strong>تم الاستلام (02:47):</strong>
+  <ul class="check">
+    <li><s>لقطة شاشة <bdi>Firmware Setup</bdi></s> ✅ <bdi>ArduPilot / ChibiOS / Plane / Pixhawk1 - 4.7.2</bdi></li>
+    <li><s>سجل التحميل</s> ✅ مسح ← برمجة ← تحقق ← إعادة تشغيل</li>
+    <li><s><bdi>Vehicle Messages</bdi> بعد إعادة التشغيل</s> ✅ <bdi>V4.7.2 (fb773567)</bdi>، <bdi>Frame TRI</bdi></li>
+    <li><s>5 قيم + نسخة احتياطية جديدة</s> ✅ كلها متطابقة؛ حُفظت النسخة الاحتياطية</li>
+    <li><s>ما الموصول بـ <bdi>RC IN</bdi>؟</s> ✅ جهاز الاستقبال <bdi>FlySky iA10B</bdi></li>
+    <li><s>الخطوة 8: الخطأ الداخلي بعد إعادة تشغيل نظيفة؟</s> ✅ <strong>اختفى</strong> (03:04)</li>
+    <li>لا يزال مفتوحًا: هل الـ <bdi>Pixhawk</bdi> <strong>مركّب في الطائرة</strong>، وإلى أين يشير سهمه؟</li>
+  </ul>
+</div>
+
+<h2>المصادر</h2>
+<ul>
+  <li><a href="https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/firmware.html"><bdi>QGroundControl</bdi>: <bdi>Loading Firmware</bdi></a> (لا بطارية، <bdi>USB</bdi> مباشر، خيار <bdi>ArduPilot</bdi>، <bdi>Advanced settings</bdi>)</li>
+  <li><a href="https://ardupilot.org/plane/docs/common-loading-firmware-onto-pixhawk.html"><bdi>ArduPilot</bdi>: <bdi>Loading Firmware</bdi></a> (<bdi>"Pixhawk1 firmware is usually the best choice"</bdi>؛ استخدم <bdi>.apj</bdi>، وليس <bdi>.hex</bdi>)</li>
+  <li><a href="https://github.com/mavlink/qgroundcontrol/blob/v5.1.5/src/Vehicle/VehicleSetup/FirmwareUpgrade.qml">الشيفرة المصدرية لـ <bdi>QGroundControl v5.1.5</bdi>: <bdi>FirmwareUpgrade.qml</bdi></a> (<bdi>Flash</bdi> ← فصل/إعادة توصيل ← نافذة <bdi>"Firmware Setup"</bdi>؛ أنواع المركبات <bdi>Multi-Rotor/Helicopter/Plane/Rover/Sub</bdi>، والافتراضي <bdi>Multi-Rotor</bdi>)</li>
+  <li><a href="https://github.com/ArduPilot/ardupilot/blob/fb773567896014da007bca58358704d4a0d8516f/libraries/AP_HAL_ChibiOS/RCOutput.cpp#L1375">الشيفرة المصدرية لـ <bdi>ArduPilot 4.7.2</bdi>: <bdi>RCOutput.cpp</bdi> السطر 1375</a> (<bdi>push()</bdi> دون <bdi>cork()</bdi> ← <bdi>flow_of_control</bdi>) و<a href="https://github.com/ArduPilot/ardupilot/blob/fb773567896014da007bca58358704d4a0d8516f/libraries/AP_InternalError/AP_InternalError.h#L64"><bdi>AP_InternalError.h</bdi></a> (<bdi>0x100000 = flow_of_control</bdi>)</li>
+  <li><a href="https://firmware.ardupilot.org/manifest.json.gz">بيان البرامج الثابتة لـ <bdi>ArduPilot</bdi></a> (<bdi>board_id 9</bdi>، <bdi>Plane OFFICIAL</bdi>: <bdi>"Pixhawk1 - 4.7.2"</bdi>)</li>
+  <li><a href="https://firmware.ardupilot.org/Plane/stable/Pixhawk1/">خادم البرامج الثابتة لـ <bdi>ArduPilot</bdi>: <bdi>Plane / stable / Pixhawk1</bdi></a> (<bdi>git-version.txt</bdi>: <bdi>"Plane: version to 4.7.2"</bdi>)</li>
+  <li><a href="https://discuss.ardupilot.org/t/update-to-the-newest-firmware/143619">منتدى <bdi>ArduPilot</bdi>: <bdi>Update to the newest firmware</bdi></a> (الإعداد يُحفظ عبر التحديثات؛ 4.7 يحوّل المعاملات المعاد تسميتها تلقائيًا)</li>
+  <li><a href="https://discuss.ardupilot.org/t/all-parameters-set-to-default-by-themselves/52983">منتدى <bdi>ArduPilot</bdi>: إعادة ضبط المعاملات بعد التحميل</a> (نادر، لذا احتفظ بنسخة احتياطية)</li>
+</ul>
+
+<footer>مشروع <bdi>VTOL Y3</bdi> · الدليل 02 · أُنشئ 2026-10-17 02:20 · المراجعة 7 03:09 · ✅ مكتمل · السابق: <a href="guide-01_2026-10-17_0113_connect-and-check-arduplane.html">الدليل 01</a> · التالي: <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">الدليل 03، الاتجاه + معايرة الحساسات</a> · <bdi>© 2026 bellocloud.com</bdi></footer>
+</main>
+</body>
+</html>

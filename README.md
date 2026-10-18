@@ -1,5 +1,7 @@
 # VTOL Y3: drone that flies like a plane
 
+🌐 **English** · [Français](fr/README.md) · [العربية](ar/README.md)
+
 A tilt-rotor **tricopter VTOL**. It takes off and lands like a drone and flies like an airplane. Runs **ArduPlane 4.7.2** (QuadPlane) on a **Pixhawk 2.4.8**, set up with **QGroundControl 5.1.5** and a **FlySky i6X** radio.
 
 > **Start here**
@@ -53,6 +55,16 @@ The Pixhawk does all the mixing. In drone mode the wing and tail surfaces fade o
 | 10 | Transition bench test, battery failsafe | | | ⏳ |
 | 11 | Pre-flight checklist, first hover | | | ⏳ |
 
+## Reference
+
+| Page | HTML | Markdown |
+|---|---|---|
+| Sticks and switches: how the aircraft moves (drawings) | [open](https://soufianeblog.github.io/dronev2/guides/ref-stick-controls.html) | [MD](quick/ref-stick-controls.md) |
+| FlySky i6X: every setting changed and checked | [open](https://soufianeblog.github.io/dronev2/guides/ref-flysky-settings.html) | [MD](quick/ref-flysky-settings.md) |
+| Parameter changes: before → after → what for | [open](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html) | [MD](quick/ref-parameter-changes.md) |
+
+![Roll right in airplane mode](assets/drawings/air-roll-right.svg)
+
 ## Hardware
 
 | Qty | Part |
@@ -77,3 +89,9 @@ Bench work is **USB only: no LiPo, no propellers**, until a guide explicitly say
 | `quick/` | Short Markdown task lists |
 | `backups/` | QGroundControl parameter backups |
 | `docs/project-notes.md` | Working notes: verified facts, output map, full progress log, open questions |
+| `fr/`, `ar/` | French and Arabic versions of everything (same layout) |
+| `assets/drawings/` | Drawings (SVG) used by the guides |
+| `LICENSE` | © 2026 bellocloud.com |
+
+---
+© 2026 bellocloud.com. All rights reserved.

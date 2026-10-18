@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدليل 05 — إعداد i6X</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --border: #e2e2e0; --accent: #2457c5; --accent-bg: #eaf0fc;
+    --warn: #a14a00; --warn-bg: #fff3e6; --ok: #1e7a3c; --ok-bg: #e8f6ec;
+    --danger: #b3261e; --danger-bg: #fdecea; --code-bg: #f0f0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --border: #2e2e33; --accent: #7aa2ff; --accent-bg: #1c2742;
+      --warn: #ffb066; --warn-bg: #33240f; --ok: #6fd28f; --ok-bg: #132a1b;
+      --danger: #ff8a80; --danger-bg: #3a1714; --code-bg: #26262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+  header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 4px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+  .box { border-radius: 10px; padding: 14px 16px; margin: 16px 0; border: 1px solid var(--border); background: var(--card); }
+  .box.danger { background: var(--danger-bg); border-color: transparent; }
+  .box.danger strong:first-child { color: var(--danger); }
+  .box.warn { background: var(--warn-bg); border-color: transparent; }
+  .box.warn strong:first-child { color: var(--warn); }
+  .box.ok { background: var(--ok-bg); border-color: transparent; }
+  .box.ok strong:first-child { color: var(--ok); }
+  .box.info { background: var(--accent-bg); border-color: transparent; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; display: grid; grid-template-columns: 36px 1fr; gap: 14px; }
+  .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step ul, .step ol { padding-left: 20px; margin: 6px 0; }
+  .expect { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ok); background: var(--ok-bg); border-radius: 4px; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; }
+  .check li { list-style: none; margin-left: -20px; }
+  .check li::before { content: "☐ "; color: var(--accent); }
+  a { color: var(--accent); }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { fill: var(--text); font: 13px -apple-system, sans-serif; }
+  .diagram .muted { fill: var(--muted); }
+  .diagram .line { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .diagram .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .diagram .motor { fill: var(--accent); }
+  .diagram .motor2 { fill: var(--warn); }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+  .fig { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig text { fill: var(--text); font: 12px -apple-system, sans-serif; }
+  .fig .t { font-weight: 700; font-size: 14px; }
+  .fig .m { fill: var(--muted); }
+  .fig .body { fill: var(--code-bg); stroke: var(--muted); stroke-width: 2; }
+  .fig .wing { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2; }
+  .fig .on { fill: var(--ok); }
+  .fig .off { fill: var(--muted); opacity: .45; }
+  .fig .act { fill: var(--warn); }
+  .fig .quiet { fill: var(--muted); opacity: .5; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .arr { stroke: var(--accent); stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+  .fig .stick { fill: var(--bg); stroke: var(--text); stroke-width: 2; }
+  .fig .sw { fill: var(--accent); }
+  .fig .unused { fill: var(--muted); opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs-bar" style="text-align:end;font-size:14px;margin:0 0 12px">🌐 <a href="../../guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html" hreflang="en">English</a> · <a href="../../fr/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html" hreflang="fr">Français</a> · <strong>العربية</strong></nav>
+
+<header>
+  <div class="meta">
+    <span class="pill">الدليل 05 / ~11</span>
+    <span class="pill">أُنشئ 2026-10-17 · 14:21</span>
+    <span class="pill">✅ اكتمل 19:10 · المراجعة 4 · 16:58 (أُعيدت كتابة الخطوة 4: 4.1–4.4) · كانت المراجعة 3 · 16:36 (سجل أقصر، قائمة تقدّم)</span>
+    <span class="pill">⏱ ~25 دقيقة</span>
+    <span class="pill">الحالة: ✅ مكتمل</span>
+  </div>
+  <h1>إعداد جهاز الإرسال FlySky i6X (البرنامج الثابت 1.0، 09-Feb-2022)</h1>
+  <p class="lead">الهدف: إعداد i6X نفسه وفق خطتنا: نوع النموذج الصحيح، عصي <bdi>Mode 2</bdi>، <strong>بدون مزج في جهاز الإرسال</strong> (ArduPlane يقوم بكل المزج)، <strong>SWA ← CH5</strong>، <strong>SWC ← CH6</strong>، وضع مخرج جهاز الاستقبال (<strong>PWM</strong> في إعدادك، بسبب مُرمِّز PPM). ثم التحقق من كل أداة تحكم على شاشة <strong><bdi>Display</bdi></strong> الخاصة بجهاز الإرسال نفسه، قبل إشراك Pixhawk على الإطلاق.</p>
+</header>
+
+<div class="box danger">
+  <strong>السلامة:</strong> USB فقط، <strong>بدون LiPo، بدون مراوح</strong>. يتغذى جهاز الاستقبال بالطاقة من Pixhawk (USB) عبر RC IN.
+</div>
+
+<div class="box ok" id="glance"><strong>أين نحن (19:10):</strong>
+  <ol style="margin:.4em 0 0 1.2em;padding:0">
+    <li>✅ بدء التشغيل: متصل</li>
+    <li>✅ أساسيات النموذج: <bdi>Airplane</bdi>، <bdi>Mode 2</bdi>، مفاتيح <bdi>Aux</bdi> مُفعّلة</li>
+    <li>✅ كل المزج في جهاز الإرسال متوقف (7 عناصر)</li>
+    <li>✅ <strong>مخرجات نظيفة:</strong> 4.1 <bdi>Reverse</bdi> ✅ · 4.2 <bdi>End points</bdi> ✅ · 4.3 <bdi>Subtrim</bdi> ✅ · 4.4 التريمات ✅</li>
+    <li>✅ SWA ← Ch5، SWC ← Ch6 <strong>(تم التغيير)</strong></li>
+    <li>✅ مخرج جهاز الاستقبال = <strong>PWM</strong> (تغيّر لاحقًا، بسبب المُرمِّز)</li>
+    <li>✅ الاختبار على شاشة <bdi>Display</bdi>: القنوات الست كلها صحيحة</li>
+  </ol></div>
+
+<div class="box info">
+  <strong>المصدر:</strong> كل أسماء القوائم وإجراءات الأزرار أدناه مأخوذة من <strong>دليل التعليمات الرسمي لـ FlySky FS-i6X</strong> (FlySky، 2016؛ الأقسام 4–9). جهاز الإرسال لديك: <strong>البرنامج الثابت 1.0 (09-Feb-2022)، العتاد V1.0</strong>. قد تُظهر البرامج الثابتة الأحدث بعض عناصر القوائم الإضافية، لكن العناصر المستخدمة هنا هي نفسها.
+</div>
+
+<h2>الأزرار (الأسماء الرسمية)</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>تريد أن…</th><th>افعل هذا</th></tr>
+  <tr><td>تفتح القائمة الرئيسية</td><td><strong>اضغط مطوّلًا على OK</strong> (~2 ثانية) ← أيقونتان: <strong><bdi>System setup</bdi></strong> و<strong><bdi>Functions setup</bdi></strong></td></tr>
+  <tr><td>تتنقل في قائمة / تغيّر قيمة</td><td><strong>UP</strong> / <strong>DOWN</strong></td></tr>
+  <tr><td>تفتح عنصرًا / تنتقل إلى الحقل التالي</td><td><strong>ضغطة قصيرة على OK</strong></td></tr>
+  <tr><td><strong>تحفظ</strong> وترجع</td><td><strong>اضغط مطوّلًا على CANCEL</strong> (~2 ثانية). بدون الضغط المطوّل، <em>لا</em> تُحفظ التغييرات.</td></tr>
+  <tr><td>ترجع دون حفظ</td><td>ضغطة قصيرة على CANCEL</td></tr>
+  <tr><td>تعيد عنصرًا إلى قيمته الافتراضية</td><td>اضغط مطوّلًا على OK لمدة 3 ثوانٍ، ثم اضغط مطوّلًا على CANCEL للحفظ (غير مطلوب اليوم)</td></tr>
+</table>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 770 400" role="img" aria-label="جهاز التحكم FlySky i6X مع التعيينات المتفق عليها">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>
+  <text x="360" y="22" text-anchor="middle" class="t">FlySky i6X: وظيفة كل أداة تحكم</text>
+  <rect x="150" y="60" width="420" height="250" rx="40" class="body"/>
+  <!-- top switches -->
+  <rect x="185" y="40" width="14" height="34" rx="4" class="sw"/><text x="192" y="34" text-anchor="middle" class="t">SWA</text>
+  <rect x="235" y="40" width="14" height="34" rx="4" class="unused"/><text x="242" y="34" text-anchor="middle" class="m">SWB</text>
+  <rect x="471" y="40" width="14" height="34" rx="4" class="sw"/><text x="478" y="34" text-anchor="middle" class="t">SWC</text>
+  <rect x="521" y="40" width="14" height="34" rx="4" class="unused"/><text x="528" y="34" text-anchor="middle" class="m">SWD</text>
+  <circle cx="300" cy="95" r="12" class="unused"/><text x="300" y="122" text-anchor="middle" class="m">VrA</text>
+  <circle cx="420" cy="95" r="12" class="unused"/><text x="420" y="122" text-anchor="middle" class="m">VrB</text>
+  <rect x="320" y="140" width="80" height="50" rx="6" fill="var(--bg)" stroke="var(--muted)"/><text x="360" y="170" text-anchor="middle" class="m">الشاشة</text>
+  <!-- sticks -->
+  <circle cx="245" cy="225" r="48" class="stick"/><circle cx="245" cy="225" r="10" fill="var(--text)"/>
+  <circle cx="475" cy="225" r="48" class="stick"/><circle cx="475" cy="225" r="10" fill="var(--text)"/>
+  <path class="arr" d="M245 205 L245 185"/><path class="arr" d="M245 245 L245 265"/>
+  <path class="arr" d="M225 225 L205 225"/><path class="arr" d="M265 225 L285 225"/>
+  <path class="arr" d="M475 205 L475 185"/><path class="arr" d="M475 245 L475 265"/>
+  <path class="arr" d="M455 225 L435 225"/><path class="arr" d="M495 225 L515 225"/>
+  <!-- labels left -->
+  <text x="20" y="60" class="t">SWA (CH5)</text><text x="20" y="76">تسليح / فك التسليح</text><text x="20" y="92" class="m">أسفل = تشغيل · أعلى = إيقاف</text>
+  <path class="ln" d="M120 70 L185 56"/>
+  <text x="20" y="190" class="t">العصا اليسرى</text>
+  <text x="20" y="208">↑↓ الخانق (CH3)</text>
+  <text x="20" y="226">←→ الانعراج (CH4)، انعطاف</text>
+  <text x="20" y="244" class="m">الخانق للأسفل للتسليح</text>
+  <path class="ln" d="M150 220 L195 225"/>
+  <!-- labels right -->
+  <text x="590" y="52" class="t">SWC (CH6) ثلاثي المواضع</text>
+  <text x="590" y="70">أعلى: QLAND (خمول)</text>
+  <text x="590" y="86">وسط: QHOVER (درون)</text>
+  <text x="590" y="102">أسفل: FBWA (طائرة)</text>
+  <path class="ln" d="M588 66 L485 56"/>
+  <text x="590" y="190" class="t">العصا اليمنى</text>
+  <text x="590" y="208">↑↓ الانحدار (CH2)</text>
+  <text x="590" y="226">←→ الدحرجة (CH1)</text>
+  <path class="ln" d="M588 220 L525 225"/>
+  <text x="360" y="340" text-anchor="middle" class="m">الرمادي = غير مستخدم: SWB، SWD، VrA، VrB (متاحة لاحقًا)</text>
+  <text x="360" y="360" text-anchor="middle" class="m">‏"Mode 2" القياسي. تبقى الدحرجة على العصا اليمنى (متفق عليه، المراجعة 2)</text>
+</svg>
+</div>
+
+<div class="box ok" id="surfaces"><strong>كيف تحرّك العصي الأسطح (وصفك، 19:48، وضع الطائرة):</strong>
+  <div class="table-wrap"><table>
+    <tr><th>العصا</th><th>الأسطح</th><th>الحركة</th><th>مخرج Pixhawk</th></tr>
+    <tr><td>العصا اليمنى ←→ (الدحرجة، CH1)</td><td>سيرفوهان في الجناح الرئيسي (الجنيحات)</td><td><strong>متعاكسة</strong>: واحد لأعلى وواحد لأسفل</td><td>MAIN 1–2 <code>Aileron</code></td></tr>
+    <tr><td>العصا اليمنى ↑↓ (الانحدار، CH2)</td><td>سيرفوهان في جناح الذيل</td><td><strong>معًا</strong>: كلاهما لأعلى / كلاهما لأسفل</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>العصا اليسرى ←→ (الانعراج، CH4)</td><td>سيرفوهان في جناح الذيل</td><td><strong>متعاكسة</strong>: واحد لأعلى وواحد لأسفل</td><td>MAIN 3–4 <code>VTailLeft/Right</code></td></tr>
+    <tr><td>العصا اليسرى ↑↓ (الخانق، CH3)</td><td>المحركات</td><td>قدرة أكثر / أقل</td><td>MAIN 5, 6, 8</td></tr>
+    <tr><td><em>تلقائي</em></td><td>سيرفوهان أماميان للإمالة</td><td>المحركات لأعلى (درون) ↔ للأمام (طائرة)، بالإضافة إلى الانعراج في وضع الدرون</td><td>AUX 1–2 <code>TiltMotorFront…</code></td></tr>
+  </table></div>
+  كل عمليات المزج يقوم بها <strong>Pixhawk</strong> (ولهذا يكون مزج <bdi>V-Tail/Elevon</bdi> في i6X على <bdi>Off</bdi>). الانحدار + الانعراج معًا: يجمع مازج الذيل V الاثنين. تُفحص اتجاهات السيرفوهات واحدًا تلو الآخر في الدليل 08، بعد توصيل السيرفوهات.</div>
+
+<h2 id="log">سجل الإعدادات: ما تحققنا منه/غيّرناه وماذا يعني (حُدِّث 19:32)</h2>
+<p>سطر واحد لكل إعداد، بالترتيب الذي نفّذناه به. الخطوات أدناه تشرح <em>كيف</em>؛ وهذا الجدول يبيّن <em>ما وجدناه</em>.</p>
+<div class="table-wrap">
+<table id="settings-log">
+  <tr><th>#</th><th>القائمة ← العنصر</th><th>نتيجتك</th><th>تغيّر؟</th><th>المعنى (سطر واحد)</th></tr>
+  <tr><td>1</td><td>الشاشة الرئيسية</td><td>أشرطة TX+RX · IntV1 4.52 V · SigS1 10</td><td>–</td><td>جهاز الإرسال وجهاز الاستقبال متصلان (جهاز الاستقبال يُبلغ عن الجهد + الإشارة 10/10).</td></tr>
+  <tr><td>2</td><td><bdi>System → Type select</bdi></td><td><bdi>Airplane</bdi></td><td>لا</td><td>قنوات عادية، بدون مزج الهليكوبتر.</td></tr>
+  <tr><td>3</td><td><bdi>System → Sticks mode</bdi></td><td><bdi>Mode 2</bdi></td><td>لا</td><td>اليسرى: الخانق ↑↓ / الانعراج ←→. اليمنى: الانحدار ↑↓ / الدحرجة ←→.</td></tr>
+  <tr><td>4</td><td><bdi>System → Aux switches</bdi></td><td><bdi>All On · Ch 10</bdi></td><td>لا</td><td>المفاتيح قابلة للاستخدام ويُرسَل عدد كافٍ من القنوات.</td></tr>
+  <tr><td>5</td><td><bdi>Functions → V Tail</bdi></td><td><bdi>Off</bdi></td><td>لا</td><td>Pixhawk يمزج الذيل V. فعل ذلك مرتين سيُفسد الانحدار/الانعراج.</td></tr>
+  <tr><td>6</td><td><bdi>Functions → Elevon</bdi></td><td><bdi>Off</bdi></td><td>لا</td><td>مزج الجناح الطائر. ليس لنا.</td></tr>
+  <tr><td>7</td><td><bdi>Functions → Mixes</bdi></td><td><bdi>Mix 1–3 Off</bdi></td><td>لا</td><td>لا توجد عصا تحرّك قناة أخرى خفية.</td></tr>
+  <tr><td>8</td><td><bdi>Functions → Throttle hold</bdi></td><td><bdi>Off</bdi></td><td>لا</td><td>كان سيجمّد الخانق. SWA هو مفتاح إيقاف المحركات لدينا.</td></tr>
+  <tr><td>9</td><td><bdi>Functions → Throttle curve</bdi></td><td>0/25/50/75/100</td><td>لا</td><td>خط مستقيم: يرى Pixhawk العصا الحقيقية.</td></tr>
+  <tr><td>10</td><td><bdi>Functions → Dual rate/exp.</bdi></td><td><bdi>Ch1/2/4: Rate 100, Exp 0</bdi></td><td>لا</td><td>المدى الكامل للعصا، دون تنعيم (مطلوب للمعايرة).</td></tr>
+  <tr><td>11</td><td><bdi>Functions → Assign switches</bdi></td><td><bdi>All None</bdi></td><td>لا</td><td>‏SWA/SWC لا تُفعّل أي ميزة في جهاز الإرسال، فقط CH5/CH6.</td></tr>
+  <tr><td>12</td><td><bdi>Functions → Reverse</bdi></td><td><bdi>All Nor</bdi></td><td>لا</td><td>لا توجد قناة معكوسة في جهاز الإرسال.</td></tr>
+  <tr><td>13</td><td><bdi>Functions → End points</bdi></td><td>كلها 100% / 100%</td><td>لا</td><td>المدى الكامل على كل قناة، مطلوب للمعايرة.</td></tr>
+  <tr><td>14</td><td><bdi>Functions → Subtrim</bdi></td><td>كلها في المنتصف (Ch1–10)</td><td>لا</td><td>منتصف العصا = المنتصف الحقيقي. (بدت Ch1 منحرفة بمقدار بكسل واحد فقط لأنها كانت مُظلَّلة.)</td></tr>
+  <tr><td>15</td><td>الشاشة الرئيسية ← التريمات</td><td>العلامات الأربع كلها في المنتصف (صورة 18:25)</td><td>لا</td><td>لا يوجد في العصي إزاحة مدمجة. ArduPlane يتولى التريم بنفسه.</td></tr>
+  <tr><td>16</td><td><bdi>Functions → Aux. channels</bdi></td><td>Ch5: VrA ← <strong>SwA</strong> · Ch6: VrB ← <strong>SwC</strong> (محفوظ، وأُعيد التحقق)</td><td><strong>نعم</strong> (أول تغيير حقيقي)</td><td>‏Ch5 تتبع الآن <strong>SWA</strong> (تسليح/فك التسليح، <code>RC5_OPTION=153</code>). ‏Ch6 تتبع الآن <strong>SWC</strong> (3 أوضاع طيران: QLAND/QHOVER/FBWA، <code>FLTMODE_CH=6</code> في الدليل 04). قبل ذلك: المقبضان VrA/VrB (إعداد المصنع الافتراضي؛ تذكّرت "VrB وVrA").</td></tr>
+  <tr><td>17</td><td><bdi>System → RX setup → Output mode</bdi></td><td>كان PPM ← <strong>تغيّر إلى PWM</strong> في 19:32 (الدليل 04 C5) · <bdi>Serial: i-BUS</bdi></td><td><strong>نعم</strong> (لاحقًا)</td><td>توصيلاتك تتضمن <strong>مُرمِّز PPM</strong> بين جهاز الاستقبال وRC IN. وهو يحتاج إلى <strong>قنوات منفصلة (PWM)</strong> من جهاز الاستقبال ويبني إشارة PPM بنفسه. مع PPM كان Pixhawk يرى قيمًا مجمّدة، ومع PWM يعمل ✅.</td></tr>
+  <tr><td>18</td><td><bdi>Functions → Display</bdi></td><td>Ch1 الدحرجة ✅ · Ch2 الانحدار ✅ · Ch3 الخانق ✅ · Ch4 الانعراج ✅ · Ch5 SWA ✅ · Ch6 SWC 3 مواضع ✅</td><td>–</td><td><strong>جهاز الإرسال</strong> يرسل كل أداة تحكم على القناة الصحيحة. أي مشكلة من هنا فصاعدًا تكون في كابل جهاز الاستقبال ← Pixhawk / جانب QGC.</td></tr>
+  <tr><td>–</td><td><bdi>System → RX setup → RF standard</bdi></td><td>فُتح بالخطأ ← <strong><bdi>No/CANCEL</bdi></strong></td><td>لا</td><td>يبقى AFHDS2A (ظاهر على الشاشة الرئيسية). لا تغيّره أبدًا، وإلا قد ينقطع الاتصال.</td></tr>
+</table>
+</div>
+
+<h2>الخطوة 1: بدء التشغيل</h2>
+<div class="step"><div class="num">1</div><div>
+  <h3>شغّل الجهاز بالشكل الصحيح</h3>
+  <ol>
+    <li>المفاتيح الأربعة كلها <strong>للأعلى</strong>، العصا اليسرى (الخانق) <strong>للأسفل بالكامل</strong>، ثم شغّل الجهاز. وإلا سيُصدر i6X صفير تحذير (الدليل 04).</li>
+    <li>وصّل USB الخاص بـ Pixhawk (يغذي جهاز الاستقبال بالطاقة). مؤشر LED في جهاز الاستقبال <strong>ثابت</strong>.</li>
+    <li>الشاشة الرئيسية: بجانب <strong>RX</strong> يجب أن ترى شريط بطارية. يقول الدليل: <em><bdi>"If a receiver is not connected or bound to the transmitter no battery status will be displayed for the receiver."</bdi></em> (إذا لم يكن جهاز الاستقبال متصلًا أو مقترنًا بجهاز الإرسال فلن تُعرض حالة بطارية جهاز الاستقبال.) ظهور شريط RX = <strong>متصل</strong> ✅.</li>
+  </ol>
+  <p>📸 صوّر الشاشة الرئيسية (تُظهر أيضًا رقم النموذج، مثل <strong>M01</strong>).</p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 1 (14:29):</strong> شريطا TX وRX ظاهران؛ القياس عن بُعد <code>TX.V 5.14 V</code>، <code>IntV1 4.52 V</code> (جهد جهاز الاستقبال)، <code>SigS1 10</code> (قوة الإشارة، الحد الأقصى). جهاز الاستقبال <strong>متصل</strong> بجهاز الإرسال هذا.</div>
+</div></div>
+
+<h2>الخطوة 2: أساسيات النموذج (<bdi>System setup</bdi>)</h2>
+<div class="step"><div class="num">2</div><div>
+  <h3>النموذج، النوع، وضع العصي</h3>
+  <p>اضغط مطوّلًا على OK ← <strong><bdi>System setup</bdi></strong> ← ضغطة قصيرة على OK. ثم:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>عنصر القائمة</th><th>اضبط / تحقّق</th><th>السبب</th></tr>
+    <tr><td><strong><bdi>Model select</bdi></strong></td><td>دوّن النموذج النشط (مثل <bdi>Model 1</bdi>). <strong>لا تغيّره</strong>: جهاز الاستقبال مقترن ومُعدّ لهذا النموذج.</td><td>لكل ذاكرة نموذج إعداداتها الخاصة</td></tr>
+    <tr><td><strong><bdi>Model name</bdi></strong> (اختياري)</td><td><code>VTOL-Y3</code> (UP/DOWN للحرف، OK للتالي، الضغط المطوّل على CANCEL للحفظ)</td><td>لتعرف دائمًا أنك على النموذج الصحيح</td></tr>
+    <tr><td><strong><bdi>Type select</bdi></strong></td><td><strong><bdi>Airplane</bdi></strong> (وليس نوع هليكوبتر)</td><td>أنواع الهليكوبتر تضيف مزج الصحن المتأرجح/الخطوة</td></tr>
+    <tr><td><strong><bdi>Sticks mode</bdi></strong></td><td><strong>2</strong></td><td><bdi>Mode 2</bdi> = الخانق + الانعراج يسارًا، الانحدار + الدحرجة يمينًا (خطتنا)</td></tr>
+    <tr><td><strong><bdi>Aux switches</bdi></strong></td><td>فعّل <strong>SwA</strong> و<strong>SwC</strong> (<strong>on</strong>). عدد القنوات <strong>Ch</strong>: على الأقل <strong>6</strong></td><td>الدليل: هذا <em><bdi>"activates and deactivates switches/knobs as well as changing the amount of active channels"</bdi></em> (يُفعّل ويُعطّل المفاتيح/المقابض ويغيّر عدد القنوات النشطة)</td></tr>
+  </table>
+  </div>
+  <p>تذكّر: <strong>اضغط مطوّلًا على CANCEL</strong> بعد كل تغيير.</p>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 2 (14:48):</strong> <bdi>Type select</bdi> = <strong><bdi>Airplane</bdi></strong> (مضبوط مسبقًا؛ طلب i6X إطفاء جهاز الاستقبال أولًا، ففُصل USB، وهذا طبيعي) · <bdi>Sticks mode</bdi> = <strong>2</strong> (اليسرى: Ch3 الخانق ↑↓ / Ch4 الانعراج ←→؛ اليمنى: Ch2 الانحدار ↑↓ / Ch1 الدحرجة ←→) · <bdi>Aux switches</bdi>: <strong>كلها مُفعّلة</strong>، <strong>Ch = 10</strong>. لم يلزم تغيير أي شيء. لم يُغيَّر <bdi>Model select/name</bdi>.<br>
+  <small>ملاحظة من الدليل: مع 10 قنوات يكون الافتراضي: المقابض = CH5/CH6، المفاتيح = CH7–CH10. نحن نستبدل CH5/CH6 في الخطوة 5. تحمل إشارة PPM أول 8 قنوات.</small></div>
+</div></div>
+
+<h2>الخطوة 3: أوقف كل المزج في جهاز الإرسال (<bdi>Functions setup</bdi>)</h2>
+<div class="step"><div class="num">3</div><div>
+  <h3>Pixhawk يقوم بكل المزج، وليس جهاز الإرسال</h3>
+  <p>اضغط مطوّلًا على OK ← <strong><bdi>Functions setup</bdi></strong> ← تحقّق من كل عنصر:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>عنصر القائمة</th><th>يجب أن يكون</th><th>السبب</th><th>أنت</th></tr>
+    <tr><td><strong><bdi>V Tail</bdi></strong></td><td><strong><bdi>Off</bdi></strong></td><td>⚠️ مهم لطائرتك <em>أنت</em>: ArduPlane يمزج الذيل V بالفعل (<code>SERVO3/4 = VTailLeft/Right</code>). مزج ثانٍ في جهاز الإرسال سيمزج الانحدار/الانعراج <strong>مرتين</strong>، ما يعطي قنوات خاطئة ويُربك Pixhawk.</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Elevon</bdi></strong></td><td><strong><bdi>Off</bdi></strong></td><td>للسبب نفسه</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Mixes</bdi></strong> (<bdi>Mix#1…#3</bdi>)</td><td>كل منها <strong><bdi>"Mix is Off"</bdi></strong></td><td>لا مزج خفي للقنوات</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Throttle hold</bdi></strong></td><td><strong><bdi>Off</bdi></strong></td><td>للمحركات التي تعمل بالوقود. ‏SWA (تسليح/فك التسليح) هو مفتاح إيقاف المحركات لدينا</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Throttle curve</bdi></strong></td><td>خط مستقيم: L 0%، 1 25%، 2 50%، 3 75%، H 100%</td><td>يحتاج ArduPlane إلى الموضع الحقيقي للعصا</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Dual rate/exp.</bdi></strong></td><td>Ch1، Ch2، Ch4: <strong><bdi>Rate 100</bdi></strong>، <strong><bdi>Exp 0</bdi></strong></td><td>مدى كامل وخطي للمعايرة (يمكن ضبط الإحساس لاحقًا في ArduPlane)</td><td>✅</td></tr>
+    <tr><td><strong><bdi>Assign switches</bdi></strong></td><td>لا شيء معيّن (أو <bdi>"Off"</bdi>)</td><td>حتى يرسل SWA/SWC قناتيهما فقط</td><td>✅</td></tr>
+  </table>
+  </div>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 3 (16:36):</strong> العناصر السبعة كلها صحيحة مسبقًا، لم يتغير شيء.<br>
+<em>"هل من الآمن إعادة توصيل جهاز الاستقبال؟" نعم:</em> USB فقط، بدون LiPo، ولا شيء موصول بمخارج MAIN/AUX في Pixhawk، فلا شيء يمكن أن يتحرك. طلب "إطفاء جهاز الاستقبال" يظهر فقط للتغييرات على مستوى النموذج (<bdi>type/model select</bdi>).</div>
+
+<h2>الخطوة 4: مخرجات قنوات نظيفة (4 فحوصات صغيرة)</h2>
+<div class="box warn"><strong>قاعدة أساسية في هذه الشاشات</strong> (الدليل الرسمي §5.2–5.6): <strong>ضغطة قصيرة على OK = الانتقال إلى القناة التالية</strong>. <strong>UP/DOWN = تغيير القيمة</strong> للقناة المحددة. لذا <u>لا تستخدم UP/DOWN للتمرير</u>، لأنها تغيّر الإعدادات. <strong>CANCEL مرة واحدة</strong> = الخروج دون حفظ · <strong>الضغط المطوّل على CANCEL لمدة ثانيتين</strong> = الحفظ والخروج.</div>
+<p><strong>افتح القائمة (بالطريقة نفسها لـ 4.1–4.3):</strong> الشاشة الرئيسية ← <strong>اضغط مطوّلًا على OK</strong> ثانيتين ← ظلّل <strong><bdi>Functions setup</bdi></strong> (UP/DOWN) ← ضغطة قصيرة على <strong>OK</strong>. ترتيب القائمة: <strong>1 <bdi>Reverse</bdi></strong> · 2 <bdi>End points</bdi> · 3 <bdi>Display</bdi> · 4 <bdi>Aux. channels</bdi> · <strong>5 <bdi>Subtrim</bdi></strong> · 6 <bdi>Dual rate/exp.</bdi> · …</p>
+
+<div class="step"><div class="num">4.1</div><div>
+  <h3><bdi>Reverse</bdi>: كل القنوات <bdi>"Nor"</bdi></h3>
+  <ol>
+    <li>في القائمة، <strong><bdi>Reverse</bdi></strong> هو العنصر الأول ← ضغطة قصيرة على <strong>OK</strong>.</li>
+    <li>سترى Ch1، Ch2… لكل منها <strong><bdi>Nor</bdi></strong> أو <strong><bdi>Rev</bdi></strong>. اضغط ضغطة قصيرة على <strong>OK</strong> للمرور على كل قناة. اقرأها فقط.</li>
+    <li>كلها <strong><bdi>Nor</bdi></strong> ← اضغط <strong>CANCEL مرة واحدة</strong>. إحداها تُظهر <strong><bdi>Rev</bdi></strong> ← وهي محددة اضغط <strong>UP أو DOWN</strong> مرة واحدة (تصبح <bdi>Nor</bdi>) ← <strong>اضغط مطوّلًا على CANCEL</strong>.</li>
+  </ol>
+  <p class="m">المعنى: <bdi>Rev</bdi> يعكس اتجاه القناة. تصحيحات الاتجاه تتم لاحقًا في ArduPlane، وليس هنا أبدًا.</p>
+</div></div>
+
+<div class="step"><div class="num">4.2</div><div>
+  <h3><bdi>End points</bdi>: كل القنوات 100% / 100%</h3>
+  <ol>
+    <li>في القائمة، DOWN مرة واحدة إلى <strong><bdi>End points</bdi></strong> (العنصر الثاني) ← ضغطة قصيرة على <strong>OK</strong>.</li>
+    <li>تُظهر كل قناة <strong>رقمين</strong>: الأيسر = الطرف المنخفض، الأيمن = الطرف المرتفع. الضغطة القصيرة على <strong>OK</strong> تنتقل إلى القناة التالية.</li>
+    <li>كلها <strong>100%</strong> على الجانبين ← <strong>CANCEL مرة واحدة</strong>. ليست 100 ← حدّد تلك القناة، <strong>حرّك عصاها</strong> نحو الجانب المراد تصحيحه (يختار المربع الأيسر/الأيمن)، UP/DOWN حتى 100 ← <strong>اضغط مطوّلًا على CANCEL</strong>.</li>
+  </ol>
+  <p class="m">المعنى: نقاط النهاية تحدّ من مدى حركة القناة. يحتاج ArduPlane إلى المدى الكامل للمعايرة.</p>
+</div></div>
+
+<div class="step"><div class="num">4.3</div><div>
+  <h3><bdi>Subtrim</bdi>: كل القنوات 0 (المنتصف)</h3>
+  <ol>
+    <li>في القائمة، DOWN إلى <strong><bdi>Subtrim</bdi></strong> (العنصر الخامس) ← ضغطة قصيرة على <strong>OK</strong>.</li>
+    <li>الضغطة القصيرة على <strong>OK</strong> تمر على القنوات. يجب أن تُظهر كل منها <strong>0</strong> / العلامة في المنتصف.</li>
+    <li>كلها 0 ← <strong>CANCEL مرة واحدة</strong>. ليست 0 ← حدّدها، UP/DOWN حتى 0 ← <strong>اضغط مطوّلًا على CANCEL</strong>.</li>
+  </ol>
+  <p class="m">نصيحة: قد يبدو سهم القناة <strong>المُظلَّلة</strong> منحرفًا بنحو بكسل واحد. اضغط OK لنقل التظليل بعيدًا وانظر مجددًا.</p>
+  <p class="m">المعنى: <bdi>Subtrim</bdi> يزيح منتصف القناة. يجب أن يكون في المنتصف حتى يكون "العصا في المنتصف" هو المنتصف فعلًا.</p>
+</div></div>
+
+<div class="step"><div class="num">4.4</div><div>
+  <h3>التريمات: المنزلقات الأربع الصغيرة، في المنتصف (بدون قائمة)</h3>
+  <p><strong>أين توجد أشرطة التريم على الشاشة الرئيسية</strong> (تم التحقق مقارنةً بصورة حقيقية للشاشة الرئيسية لـ i6X، انظر المصادر):</p>
+<pre style="font-size:13px;line-height:1.25;overflow-x:auto">
+ ┌────────────────────────────────────────┐
+ ║  FlySky logo   AFHDS2A    TX [battery] ║
+ ║  M01 · model name · airplane drawing   ║
+ ║  telemetry: TX.V / IntV1 / SigS1 / RX  ║  ← side bars = ║
+ ║                                        ║
+ └──[====|====]──────────[====|====]──────┘
+  LEFT side ║ = Trim 1 → Ch3 throttle  (left stick ↑↓)
+  bottom-left ═ = Trim 2 → Ch4 yaw     (left stick ←→)
+  RIGHT side ║ = Trim 3 → Ch2 pitch    (right stick ↑↓)
+  bottom-right ═ = Trim 4 → Ch1 roll   (right stick ←→)
+</pre>
+  <p>لكل شريط <strong>علامة منتصف ثابتة</strong> و<strong>مؤشر متحرك</strong>. في المنتصف = المؤشر يقع على علامة المنتصف.</p>
+  <ol>
+    <li>ارجع إلى <strong>الشاشة الرئيسية</strong> (CANCEL حتى تصل إليها).</li>
+    <li>أزرار التريم الأربعة المتأرجحة بجانب العصي: <bdi>Trim 1</bdi> بجانب العصا اليسرى (عمودي)، <bdi>Trim 2</bdi> أسفلها (أفقي)، <bdi>Trim 3</bdi> بجانب العصا اليمنى، <bdi>Trim 4</bdi> أسفلها.</li>
+    <li><strong>اختبار الصفير</strong> لكل زر: انقر مرة في اتجاه، ثم مرة للعودة. <strong>صفير أعلى نغمة</strong> عند العودة يعني أنه في المنتصف ✅. وإلا استمر بالنقر نحو المنتصف حتى تسمع الصفير الأعلى. الدليل: <em><bdi>"When the trim position reaches the middle, the transmitter beeps in a higher tone."</bdi></em> (عندما يصل موضع التريم إلى المنتصف، يُصدر جهاز الإرسال صفيرًا بنغمة أعلى.)</li>
+    <li>يُحفظ تلقائيًا.</li>
+  </ol>
+  <figure style="margin:.6em 0"><img src="../../guides/guide5_screenshots/i6x-home-screen_1825.jpeg" alt="الشاشة الرئيسية لجهاز i6X لديك" style="max-width:320px;width:100%;border-radius:8px"><figcaption class="m">شاشتك الرئيسية (18:25): أشرطة التريم الأربعة هي <strong>الشريط الجانبي الأيسر</strong> (Ch3)، و<strong>الشريط الجانبي الأيمن</strong> (Ch2)، و<strong>أسفل اليسار</strong> (Ch4) و<strong>أسفل اليمين</strong> (Ch1). العلامات الأربع كلها في المنتصف ✅. "البكسلات الثلاثة الممتلئة" هي المؤشر نفسه.</figcaption></figure>
+  <div class="box ok"><strong>✅ اكتملت الخطوة 4 (18:31):</strong> <bdi>Reverse</bdi> كلها <bdi>Nor</bdi> · <bdi>End points</bdi> كلها 100%/100% · <bdi>Subtrim</bdi> كلها في المنتصف · التريمات كلها في المنتصف. لم يتغير شيء.</div>
+  <p class="m">المعنى: التريمات تزيح منتصف العصا. ArduPlane يتولى التريم بنفسه، لذا يجب أن تكون في المنتصف قبل المعايرة.</p>
+</div></div>
+
+<h2>الخطوة 5: عيّن المفاتيح</h2>
+<div class="step"><div class="num">5</div><div>
+  <h3><bdi>Functions setup → Aux. channels</bdi></h3>
+  <p><strong>من الشاشة الرئيسية:</strong> اضغط مطوّلًا على <strong>OK</strong> ثانيتين ← ظلّل <strong><bdi>Functions setup</bdi></strong> ← ضغطة قصيرة على OK ← DOWN ثلاث مرات إلى <strong><bdi>Aux. channels</bdi></strong> (العنصر الرابع) ← ضغطة قصيرة على OK.</p>
+  <p>الافتراضي (حسب الدليل): <em><bdi>Channel 5 Source VrA, Channel 6 Source VrB</bdi></em>. غيّرها إلى:</p>
+  <ol>
+    <li>ضغطات قصيرة على OK حتى تُحدَّد <strong><bdi>Channel 5</bdi></strong> ← UP/DOWN ← <bdi>Source</bdi> <strong>SwA</strong>.</li>
+    <li>ضغطة قصيرة على OK إلى <strong><bdi>Channel 6</bdi></strong> ← UP/DOWN ← <bdi>Source</bdi> <strong>SwC</strong>.</li>
+    <li><strong>اضغط مطوّلًا على CANCEL</strong> للحفظ.</li>
+  </ol>
+  <p>لا يظهر SwA/SwC كخيار؟ ارجع إلى الخطوة 2، <strong><bdi>Aux switches</bdi></strong>، وفعّلهما.</p>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 5 (18:38)، تم التغيير:</strong>
+  <div class="table-wrap"><table>
+    <tr><th>القناة</th><th>قبل</th><th>بعد</th><th>ما تتحكم فيه على الدرون</th></tr>
+    <tr><td>Ch5</td><td>VrA (المقبض الأيسر)</td><td><strong>SwA</strong></td><td>تسليح / فك التسليح (تشغيل/إيقاف المحركات)</td></tr>
+    <tr><td>Ch6</td><td>VrB (المقبض الأيمن)</td><td><strong>SwC</strong></td><td>أعلى = QLAND · وسط = QHOVER · أسفل = FBWA</td></tr>
+  </table></div>
+  حُفظ بالضغط المطوّل على CANCEL، ثم أُعيد فتحه للتأكيد. "قبل" = إعداد المصنع الافتراضي وفق الدليل §9؛ وقد تذكّرت "VrB وVrA". المقبضان الآن غير مستخدمين.</div>
+
+<h2>الخطوة 6: وضع مخرج جهاز الاستقبال (الآن PWM، انظر التحديث أدناه)</h2>
+<div class="step"><div class="num">6</div><div>
+  <h3><bdi>System setup → RX setup</bdi></h3>
+  <p><strong>من الشاشة الرئيسية:</strong> اضغط مطوّلًا على <strong>OK</strong> ثانيتين ← ظلّل <strong><bdi>System setup</bdi></strong> ← ضغطة قصيرة على OK ← DOWN إلى <strong><bdi>RX setup</bdi></strong> (قرب أسفل القائمة) ← ضغطة قصيرة على OK ← DOWN <strong>7 مرات</strong> إلى <strong><bdi>Output mode</bdi></strong> (<bdi>RF standard</bdi>، <bdi>RX battery</bdi>، <bdi>Failsafe</bdi>، <bdi>Sensors list</bdi>، <bdi>Choose sensors</bdi>، <bdi>Speed and distance</bdi>، <bdi>ASL pressure</bdi>، <strong><bdi>Output mode</bdi></strong>؛ لا تفتح شيئًا في الطريق) ← ضغطة قصيرة على OK. يجب أن يكون جهاز الاستقبال <strong>مُشغَّلًا</strong> (USB الخاص بـ Pixhawk موصول، وشريط RX ظاهر).</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th><bdi>RX setup → …</bdi></th><th>اضبط / تحقّق</th></tr>
+    <tr><td><strong><bdi>RF standard</bdi></strong></td><td>⚠️ <strong>لا تفتحه.</strong> الشاشة الرئيسية تُظهر بالفعل <strong>AFHDS2A</strong> في الأعلى، وهذا هو الفحص. فتحه يطلب إطفاء جهاز الاستقبال ثم <em><bdi>"This will change the AFHDS mode, are you sure?"</bdi></em>. الإجابة بنعم قد تقطع الاتصال وتتطلب إعادة الاقتران. إذا وصلت إلى هناك: <strong><bdi>CANCEL / No</bdi></strong>.</td></tr>
+    <tr><td><strong><bdi>Output mode</bdi></strong></td><td>⚠️ <strong>PWM</strong> لتوصيلاتك (مُرمِّز PPM بين جهاز الاستقبال وRC IN). ‏PPM فقط إذا أُزيل المُرمِّز واستُخدم كابل مباشر. المكتوب في الأصل: <strong>PPM</strong> في السطر العلوي (سطر <bdi>Serial</bdi>: اتركه على <strong>i-BUS</strong>). الدليل: <em><bdi>"When [PPM] is selected the receiver will output a standard PPM signal via the PPM interface."</bdi></em> (عند اختيار [PPM] سيُخرج جهاز الاستقبال إشارة PPM قياسية عبر واجهة PPM.) ← اضغط مطوّلًا على CANCEL.</td></tr>
+    <tr><td><strong><bdi>Failsafe</bdi></strong></td><td><strong>ليس الآن</strong>. يتطلب عناية مع ArduPlane، لذا سيكون له دليله الخاص.</td></tr>
+  </table>
+  </div>
+  <p>يجب أن يكون جهاز الاستقبال <strong>مُغذّى بالطاقة ومتصلًا</strong> (الخطوة 1) عند حفظ <bdi>Output mode</bdi>، لأن الإعداد يُرسَل إليه.</p>
+</div></div>
+
+<div class="box warn"><strong>ملاحظة (18:48):</strong> فتحت <strong><bdi>RF standard</bdi></strong> بالخطأ (تعليماتي قالت "تحقّق" منه). طلب i6X إطفاء جهاز الاستقبال، ثم <em><bdi>"This will change the AFHDS mode, are you sure?"</bdi></em> ← أجبت بـ <strong><bdi>No/CANCEL</bdi></strong>. الشاشة الرئيسية لا تزال تُظهر <strong>AFHDS2A</strong> ✅. لم يتغير شيء.</div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 6 (18:51):</strong> <bdi>Output mode</bdi> = <strong>PPM</strong>، <bdi>Serial</bdi> = <strong>i-BUS</strong>. مضبوط مسبقًا، لم يتغير شيء.</div>
+
+<div class="box warn"><strong>تحديث (19:32): <bdi>Output mode</bdi> الآن PWM، وليس PPM.</strong> أظهرت الصورة لوحة مُرمِّز PPM بين جهاز الاستقبال وRC IN. هذه اللوحة تتوقع PWM من جهاز الاستقبال. بعد التبديل إلى <strong>PWM</strong>، يتبع <bdi>Raw Channel Monitor</bdi> في QGC كل عصا وكل مفتاح. إذا أُزيل المُرمِّز يومًا (كابل مباشر PPM/CH1 ← RC IN)، فأعد هذا الإعداد إلى PPM.</div>
+
+<h2>الخطوة 7: الاختبار على جهاز الإرسال نفسه</h2>
+<div class="step"><div class="num">7</div><div>
+  <h3><bdi>Functions setup → Display</bdi></h3>
+  <p><strong>من الشاشة الرئيسية:</strong> اضغط مطوّلًا على <strong>OK</strong> ثانيتين ← ظلّل <strong><bdi>Functions setup</bdi></strong> ← ضغطة قصيرة على OK ← DOWN مرتين إلى <strong><bdi>Display</bdi></strong> (العنصر الثالث) ← ضغطة <strong>قصيرة</strong> على OK.</p>
+  <p>تُظهر هذه الشاشة ما يرسله جهاز الإرسال، <strong>مباشرةً</strong>. <strong>لا أزرار تُضغط هنا:</strong> فقط تحرّك العصي والمفاتيح بأصابعك وتراقب الأشرطة.</p>
+  <p><strong>كيف تبدو:</strong> قائمة من الأشرطة (Ch1، Ch2، Ch3…). لكل شريط جزء ممتلئ يكبر أو يصغر عندما تحرّك أداة تحكم. أداة التحكم في المنتصف = الشريط <strong>نصف ممتلئ</strong>. أداة التحكم عند طرف = الشريط <strong>فارغ</strong>، والطرف الآخر = <strong>ممتلئ</strong>.</p>
+  <p><strong>أين يوجد SWA وSWC:</strong> الحافة العلوية لجهاز الإرسال. <strong>SWA</strong> = الجانب الأيسر، المفتاح الخارجي (موضعان). <strong>SWC</strong> = الجانب الأيمن، المفتاح الداخلي (3 مواضع: أعلى / وسط / أسفل).</p>
+  <p>اختبر <strong>أداة تحكم واحدة في كل مرة</strong>، ببطء، من طرف إلى طرف، وراقب أي شريط يتحرك:</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>التحريك</th><th>الشريط الذي يجب أن يتحرك</th></tr>
+    <tr><td>العصا اليمنى ←→</td><td>Ch1 (الدحرجة)</td></tr>
+    <tr><td>العصا اليمنى ↑↓</td><td>Ch2 (الانحدار)</td></tr>
+    <tr><td>العصا اليسرى ↑↓</td><td>Ch3 (الخانق)</td></tr>
+    <tr><td>العصا اليسرى ←→</td><td>Ch4 (الانعراج)</td></tr>
+    <tr><td>SWA أعلى/أسفل</td><td>Ch5: طرف ↔ الطرف الآخر</td></tr>
+    <tr><td>SWC أعلى/وسط/أسفل</td><td>Ch6: طرف / وسط / طرف</td></tr>
+  </table>
+  </div>
+  <p>ضغطة قصيرة على CANCEL للخروج. (لا تضغط مطوّلًا على OK هناك: فهذا يبدأ <bdi>"scrub mode"</bdi> الذي يمسح كل القنوات.) 📸 صوّر شاشة <bdi>Display</bdi> وSWC في الوسط.</p>
+  <div class="expect">كل الأشرطة تتحرك بشكل صحيح = <strong>جهاز الإرسال مُعدّ</strong> ✅. إذا تحركت هذه بينما لا يتحرك <bdi>Raw Channel Monitor</bdi> في Pixhawk، فالمشكلة في <strong>كابل جهاز الاستقبال ← Pixhawk</strong>: نفّذ <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">الدليل 04، الجزء C5</a> . في حالتك كان الحل هو الخيار B: <bdi>Output mode</bdi> في i6X على <strong>PWM</strong> حتى يعمل مُرمِّز PPM. ثم معايرة الراديو.</div>
+</div></div>
+
+<div class="box ok"><strong>✅ اكتملت الخطوة 7، اكتمل الدليل 05 (19:10):</strong> على شاشة <bdi>Display</bdi> حرّكت كل أداة تحكم شريطها فقط: العصا اليمنى ←→ Ch1، ↑↓ Ch2؛ العصا اليسرى ↑↓ Ch3، ←→ Ch4؛ SWA Ch5؛ SWC Ch6 (طرف/وسط/طرف). التغيير الوحيد في هذا الدليل كله: <strong><bdi>Aux. channels</bdi> Ch5 ← SwA، Ch6 ← SwC</strong>. التالي: <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">الدليل 04</a>، تحقّق من <bdi>Radio</bdi> في QGC، ثم الجزء C5 إذا لزم الأمر.</div>
+
+<h2>أرسل التقرير</h2>
+<div class="box ok">
+  <ul class="check">
+    <li>صورة الشاشة الرئيسية (هل شريط بطارية RX ظاهر؟ رقم النموذج؟)</li>
+    <li>الخطوات 2–6 منجزة (أي شيء لم تستطع إيجاده، مع صورة للشاشة)</li>
+    <li>الخطوة 7: هل تحرّك كل شريط بشكل صحيح على شاشة <bdi>Display</bdi> في i6X؟ (صورة)</li>
+    <li>ثم: نتيجة C5 في الدليل 04. هل تتبع نقاط <bdi>Raw Channel Monitor</bdi> في QGC العصي؟</li>
+  </ul>
+</div>
+
+<h2>المصادر</h2>
+<ul>
+  <li><a href="https://perthradiosailing.com.au/uploads/FlySky%20FS-I6%20and%20I6X%20Programming%20for%20Winch%20and%20Rudder%20Control%20(Draft%2004).pdf">Perth Radio Sailing: برمجة FlySky FS-i6 / i6X (2022)</a>: صورة للشاشة الرئيسية مع أشرطة التريم الأربعة (<bdi>"All four slider trims set to zero"</bdi>)</li>
+  <li><a href="https://www.amyaclubs.org/HomeImages/HowTo/39.pdf">AMYA: إعداد FlySky FS-i6</a>: أشرطة التريم في الشاشة الرئيسية <bdi>"Far Left / Lower Edge Left / Lower Edge Right / Far Right"</bdi></li>
+
+  <li><a href="https://static1.squarespace.com/static/5bc852d6b9144934c40d499c/t/5d6f66305487dc0001e34939/1567581800555/FS-i6X+User+manual+20160817.pdf">دليل التعليمات FlySky FS-i6X (PDF)</a>: §2.2.2 مؤشر البطارية، §2.2.3 التريمات، §4.2 الاقتران، §5.2–5.13 <bdi>Functions</bdi>، §7 <bdi>System</bdi> (<bdi>Sticks mode</bdi>، <bdi>Aux switches</bdi>)، §8 <bdi>RX setup</bdi> (<bdi>RF standard</bdi>، <bdi>Failsafe</bdi>، <bdi>Output mode</bdi>)، §9 القنوات الافتراضية</li>
+  <li><a href="https://www.manualslib.com/manual/1295793/Fly-Sky-Fs-I6x.html">دليل التعليمات FS-i6X (نسخة ManualsLib)</a></li>
+  <li><a href="https://discuss.ardupilot.org/t/connecting-an-fs-ia10b-receiver-to-pixhawk/27833">منتدى ArduPilot: FS-iA10B إلى Pixhawk</a> (PPM من PPM/CH1 إلى RC IN)</li>
+</ul>
+
+<footer>مشروع VTOL Y3 · الدليل 05 · أُنشئ 2026-10-17 14:21 · المراجعة 4 · السابق: <a href="guide-04_2026-10-17_0345_flysky-switches-and-calibration.html">الدليل 04</a> · التالي: العودة إلى الدليل 04 الجزء C5 ← D (المعايرة) · © 2026 bellocloud.com</footer>
+</main>
+</body>
+</html>
