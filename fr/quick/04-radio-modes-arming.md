@@ -3,7 +3,8 @@
 [English](../../quick/04-radio-modes-arming.md) · **Français** · [العربية](../../ar/quick/04-radio-modes-arming.md)
 
 
-[← 05](05-flysky-i6x.md) · [Sommaire](README.md) · Suivant : 06 câblage ⏳ · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html)
+
+[← 05](05-flysky-i6x.md) · [Sommaire](README.md) · [Suivant : 06 →](06-outputs-servo-test.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html)
 
 **Objectif :** le Pixhawk lit la radio. SWC choisit le mode de vol, SWA arme.
 **Il vous faut :** l'étape [05](05-flysky-i6x.md) terminée. Émetteur allumé, tous les interrupteurs **en HAUT**, manche des gaz **en BAS**. USB uniquement.

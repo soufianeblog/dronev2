@@ -3,6 +3,7 @@
 [English](../../quick/README.md) · **Français** · [العربية](../../ar/quick/README.md)
 
 
+
 Des check-lists étape par étape pour configurer le VTOL Y3. Chacune se lit en quelques minutes.
 Vous voulez aussi les explications, les captures d'écran et les journaux ? Ouvrez les **[guides complets dans le navigateur](https://soufianeblog.github.io/dronev2/fr/)**.
 
@@ -25,7 +26,7 @@ Vous voulez aussi les explications, les captures d'écran et les journaux ? Ouvr
 | 03 | [Orientation et calibration](03-orientation-calibration.md) | 20 min | 🟡 Reste la boussole (après le câblage) |
 | 05 | [Configuration de l'émetteur FlySky i6X](05-flysky-i6x.md) | 25 min | ✅ Fait |
 | 04 | [Calibration radio, modes de vol, interrupteur d'armement](04-radio-modes-arming.md) | 30 min | ✅ Fait |
-| 06 | Câblage | | ⏳ Prochaine étape |
+| 06 | [Sorties : brancher et tester les servos, puis les moteurs](06-outputs-servo-test.md) | 45 min | 🟡 En cours |
 
 ## Pages de référence
 

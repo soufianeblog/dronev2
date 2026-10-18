@@ -5,6 +5,7 @@
 [English](../README.md) · [Français](../fr/README.md) · **العربية**
 
 
+
 طائرة **VTOL ثلاثية المراوح** بمراوح قابلة للإمالة. تقلع وتهبط مثل الطائرة المسيّرة (الدرون) وتطير مثل الطائرة ذات الأجنحة. تعمل بنظام **ArduPlane 4.7.2** (QuadPlane) على **Pixhawk 2.4.8**، ويتم إعدادها باستخدام **QGroundControl 5.1.5** وجهاز الإرسال **FlySky i6X**.
 
 > **ابدأ من هنا**
@@ -51,7 +52,7 @@
 | 03 | الاتجاه والمعايرة | [HTML](https://soufianeblog.github.io/dronev2/ar/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html) | [MD](quick/03-orientation-calibration.md) | 🟡 البوصلة بعد التوصيلات |
 | 05 | إعداد جهاز الإرسال FlySky i6X | [HTML](https://soufianeblog.github.io/dronev2/ar/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html) | [MD](quick/05-flysky-i6x.md) | ✅ |
 | 04 | معايرة الراديو، أوضاع الطيران، مفتاح التسليح | [HTML](https://soufianeblog.github.io/dronev2/ar/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html) | [MD](quick/04-radio-modes-arming.md) | ✅ |
-| 06 | التوصيلات (ESC، السيرفوهات، الطاقة) | | | ⏳ التالي |
+| 06 | المخارج: توصيل السيرفوهات واختبارها، ثم المحركات | [HTML](https://soufianeblog.github.io/dronev2/ar/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html) | [MD](quick/06-outputs-servo-test.md) | 🟡 |
 | 07 | الحماية عند فقدان إشارة الراديو (failsafe) | | | ⏳ |
 | 08 | المخرجات: المحركات، سيرفوهات الإمالة، الأسطح، الاتجاهات | | | ⏳ |
 | 09 | معايرة ESC، اتجاه دوران المحركات | | | ⏳ |

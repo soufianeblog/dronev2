@@ -3,6 +3,7 @@
 [English](../../quick/ref-flysky-settings.md) · **Français** · [العربية](../../ar/quick/ref-flysky-settings.md)
 
 
+
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-flysky-settings.html)
 
 Seuls **2 réglages ont été modifiés**. 9 autres écrans ont été vérifiés et étaient déjà corrects.

@@ -3,6 +3,7 @@
 **English** · [Français](../fr/quick/ref-parameter-changes.md) · [العربية](../ar/quick/ref-parameter-changes.md)
 
 
+
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html)
 
 Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-guide04.params` (now). **Bold** = changed.

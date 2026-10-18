@@ -3,6 +3,7 @@
 **English** · [Français](../fr/quick/05-flysky-i6x.md) · [العربية](../ar/quick/05-flysky-i6x.md)
 
 
+
 [← 03](03-orientation-calibration.md) · [Index](README.md) · [Next: 04 →](04-radio-modes-arming.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html)
 
 **Goal:** a clean transmitter. No mixing, SWA on Ch5, SWC on Ch6.

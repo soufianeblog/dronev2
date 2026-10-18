@@ -3,6 +3,7 @@
 [English](../../quick/02-update-firmware.md) · **Français** · [العربية](../../ar/quick/02-update-firmware.md)
 
 
+
 [← 01](01-connect-and-check.md) · [Sommaire](README.md) · [Suivant : 03 →](03-orientation-calibration.md) · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-02_2026-10-17_0220_update-arduplane-4-7-2.html)
 
 **Objectif :** installer le dernier firmware stable en conservant tous les anciens réglages.

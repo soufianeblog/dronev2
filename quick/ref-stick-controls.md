@@ -3,6 +3,7 @@
 **English** · [Français](../fr/quick/ref-stick-controls.md) · [العربية](../ar/quick/ref-stick-controls.md)
 
 
+
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-stick-controls.html)
 
 **Legend:** red circle = what you move · red line = what it acts on · orange = aileron / faster motor · green = V-tail · blue = spinning propeller · arrows = direction.

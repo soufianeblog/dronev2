@@ -3,6 +3,7 @@
 **English** · [Français](../fr/quick/03-orientation-calibration.md) · [العربية](../ar/quick/03-orientation-calibration.md)
 
 
+
 [← 02](02-update-firmware.md) · [Index](README.md) · [Next: 05 →](05-flysky-i6x.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html)
 
 **Goal:** tell the Pixhawk how it's mounted, then calibrate its sensors.

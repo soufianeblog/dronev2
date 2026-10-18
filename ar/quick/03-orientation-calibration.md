@@ -5,6 +5,7 @@
 [English](../../quick/03-orientation-calibration.md) · [Français](../../fr/quick/03-orientation-calibration.md) · **العربية**
 
 
+
 [← 02](02-update-firmware.md) · [الفهرس](README.md) · [التالي: 05 →](05-flysky-i6x.md) · [الدليل الكامل](https://soufianeblog.github.io/dronev2/ar/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html)
 
 **الهدف:** إخبار Pixhawk بطريقة تركيبه، ثم معايرة حساساته.

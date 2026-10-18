@@ -5,6 +5,7 @@
 [English](../../quick/ref-parameter-changes.md) · [Français](../../fr/quick/ref-parameter-changes.md) · **العربية**
 
 
+
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-parameter-changes.html)
 
 المقارنة بين: `backups/params_after-guide02_4.7.2.params` (الإعداد القديم، مباشرة بعد تحديث البرنامج الثابت) → `backups/params_after-guide04.params` (الآن). **الخط العريض** = تم تغييره.

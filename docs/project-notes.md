@@ -3,6 +3,7 @@
 **English** · [Français](../fr/docs/project-notes.md) · [العربية](../ar/docs/project-notes.md)
 
 
+
 Internal notes for this project: how we work, verified facts, the full progress log and open questions.
 The public overview is the [README](../README.md).
 
@@ -322,6 +323,8 @@ The public overview is the [README](../README.md).
 - 2026-10-17 21:48 — **README split** (user: README had unnecessary internal info): README.md is now a short public overview (aircraft, controls, progress table with HTML + MD links, hardware, safety, repo layout). Everything internal (working rules, known facts, output map, PreArm table, roadmap details, progress log, open questions) moved here to `docs/project-notes.md`, which is now the source of truth for facts and history.
 
 - 2026-10-18 00:52 — **Reference pages + 3 languages:** new `guides/ref-stick-controls.html` (12 CoreWing-style 3/4 drawings: plane + transmitter, highlighted stick/switch, red line to the surface/motor; airplane + drone mode + switches), `guides/ref-flysky-settings.html` (2 changes + 9 checked screens as i6X LCD drawings, channel map), `guides/ref-parameter-changes.html` (every param change before→after→what for, kept settings, auto-changing values), each with an MD version in `quick/`. Drawings in `assets/drawings/`. Everything translated to French (`fr/`) and Arabic (`ar/`, RTL) with a language switcher on every page (big buttons on the start pages). © 2026 bellocloud.com footers + LICENSE. Commit history rewritten to remove AI co-author trailers. 489 relative links checked: 0 broken.
+
+- 2026-10-18 02:11 — **Guide 06 started (outputs + servo test).** Component photos (10) saved to `guides/guide6_screenshots/component_*.jpg` (resized, metadata stripped). Output map confirmed with the user: MAIN 1/2 ailerons (L/R), MAIN 3/4 V-tail (L/R), MAIN 5/6/8 ESCs (M1 front-right, M2 front-left, M4 tail), AUX 1/2 tilt servos (front-left/right) = matches SERVOn_FUNCTION. Before first power: narrow SERVO9/10 to 1100–1900 (were 800–1940 / 700–2100). Servo rail needs 5 V from one ESC BEC or the PDB 5 V BEC (never 12 V). Open: do the ESC leads carry 5 V (3 wires)?
 
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.

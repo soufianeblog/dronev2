@@ -3,6 +3,7 @@
 **English** · [Français](fr/README.md) · [العربية](ar/README.md)
 
 
+
 A tilt-rotor **tricopter VTOL**. It takes off and lands like a drone and flies like an airplane. Runs **ArduPlane 4.7.2** (QuadPlane) on a **Pixhawk 2.4.8**, set up with **QGroundControl 5.1.5** and a **FlySky i6X** radio.
 
 > **Start here**
@@ -49,7 +50,7 @@ The Pixhawk does all the mixing. In drone mode the wing and tail surfaces fade o
 | 03 | Orientation and calibration | [HTML](https://soufianeblog.github.io/dronev2/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html) | [MD](quick/03-orientation-calibration.md) | 🟡 compass after wiring |
 | 05 | FlySky i6X transmitter setup | [HTML](https://soufianeblog.github.io/dronev2/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html) | [MD](quick/05-flysky-i6x.md) | ✅ |
 | 04 | Radio calibration, flight modes, arm switch | [HTML](https://soufianeblog.github.io/dronev2/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html) | [MD](quick/04-radio-modes-arming.md) | ✅ |
-| 06 | Wiring (ESCs, servos, power) | | | ⏳ next |
+| 06 | Outputs: plug in and test servos, then motors | [HTML](https://soufianeblog.github.io/dronev2/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html) | [MD](quick/06-outputs-servo-test.md) | 🟡 |
 | 07 | Radio failsafe | | | ⏳ |
 | 08 | Outputs: motors, tilt servos, surfaces, directions | | | ⏳ |
 | 09 | ESC calibration, motor direction | | | ⏳ |

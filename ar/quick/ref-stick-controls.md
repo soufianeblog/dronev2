@@ -5,6 +5,7 @@
 [English](../../quick/ref-stick-controls.md) · [Français](../../fr/quick/ref-stick-controls.md) · **العربية**
 
 
+
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-stick-controls.html)
 
 **مفتاح الرسم:** دائرة حمراء = ما تحرّكه · خط أحمر = ما يؤثر عليه · برتقالي = جنيح / محرك أسرع · أخضر = الذيل على شكل V · أزرق = مروحة تدور · الأسهم = الاتجاه.

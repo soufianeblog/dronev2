@@ -3,6 +3,7 @@
 [English](../README.md) · **Français** · [العربية](../ar/README.md)
 
 
+
 Un **VTOL tricoptère** à rotors basculants. Il décolle et atterrit comme un drone et vole comme un avion. Il tourne sous **ArduPlane 4.7.2** (QuadPlane) sur un **Pixhawk 2.4.8**, configuré avec **QGroundControl 5.1.5** et une radio **FlySky i6X**.
 
 > **Commencez ici**
@@ -49,7 +50,7 @@ Le Pixhawk s'occupe de tous les mixages. En mode drone, les gouvernes de l'aile 
 | 03 | Orientation et calibration | [HTML](https://soufianeblog.github.io/dronev2/fr/guides/guide-03_2026-10-17_0309_orientation-and-calibration.html) | [MD](quick/03-orientation-calibration.md) | 🟡 boussole après le câblage |
 | 05 | Configuration de l'émetteur FlySky i6X | [HTML](https://soufianeblog.github.io/dronev2/fr/guides/guide-05_2026-10-17_1421_flysky-i6x-transmitter-setup.html) | [MD](quick/05-flysky-i6x.md) | ✅ |
 | 04 | Calibration radio, modes de vol, interrupteur d'armement | [HTML](https://soufianeblog.github.io/dronev2/fr/guides/guide-04_2026-10-17_0345_flysky-switches-and-calibration.html) | [MD](quick/04-radio-modes-arming.md) | ✅ |
-| 06 | Câblage (ESC, servos, alimentation) | | | ⏳ prochaine étape |
+| 06 | Sorties : brancher et tester les servos, puis les moteurs | [HTML](https://soufianeblog.github.io/dronev2/fr/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html) | [MD](quick/06-outputs-servo-test.md) | 🟡 |
 | 07 | Failsafe radio | | | ⏳ |
 | 08 | Sorties : moteurs, servos de bascule, gouvernes, sens | | | ⏳ |
 | 09 | Calibration des ESC, sens de rotation des moteurs | | | ⏳ |

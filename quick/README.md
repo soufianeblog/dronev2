@@ -3,6 +3,7 @@
 **English** · [Français](../fr/quick/README.md) · [العربية](../ar/quick/README.md)
 
 
+
 Do-this-then-that checklists for setting up the VTOL Y3. Each one takes a few minutes to read.
 Want the reasons, screenshots and logs too? Open the **[full guides in the browser](https://soufianeblog.github.io/dronev2/)**.
 
@@ -25,7 +26,7 @@ Want the reasons, screenshots and logs too? Open the **[full guides in the brows
 | 03 | [Orientation and calibration](03-orientation-calibration.md) | 20 min | 🟡 Compass left (after wiring) |
 | 05 | [FlySky i6X transmitter setup](05-flysky-i6x.md) | 25 min | ✅ Done |
 | 04 | [Radio calibration, flight modes, arm switch](04-radio-modes-arming.md) | 30 min | ✅ Done |
-| 06 | Wiring | | ⏳ Next |
+| 06 | [Outputs: plug in and test servos, then motors](06-outputs-servo-test.md) | 45 min | 🟡 In progress |
 
 ## Reference pages
 

@@ -3,6 +3,7 @@
 [English](../../quick/ref-parameter-changes.md) · **Français** · [العربية](../../ar/quick/ref-parameter-changes.md)
 
 
+
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-parameter-changes.html)
 
 Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-guide04.params` (maintenant). **Gras** = modifié.

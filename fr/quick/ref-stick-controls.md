@@ -3,6 +3,7 @@
 [English](../../quick/ref-stick-controls.md) · **Français** · [العربية](../../ar/quick/ref-stick-controls.md)
 
 
+
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-stick-controls.html)
 
 **Légende :** cercle rouge = ce que vous bougez · trait rouge = ce sur quoi il agit · orange = aileron / moteur plus rapide · vert = empennage en V · bleu = hélice en rotation · flèches = sens.
