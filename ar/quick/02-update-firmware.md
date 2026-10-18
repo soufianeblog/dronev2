@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 02 · التحديث إلى ArduPlane 4.7.2
 
 🌐 [English](../../quick/02-update-firmware.md) · [Français](../../fr/quick/02-update-firmware.md) · **العربية**
@@ -38,3 +40,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

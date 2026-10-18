@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # تغييرات المعاملات: قبل → بعد
 
 🌐 [English](../../quick/ref-parameter-changes.md) · [Français](../../fr/quick/ref-parameter-changes.md) · **العربية**
@@ -69,3 +71,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

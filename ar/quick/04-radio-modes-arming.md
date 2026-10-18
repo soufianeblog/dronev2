@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 04 · معايرة الراديو، أوضاع الطيران، مفتاح التسليح
 
 🌐 [English](../../quick/04-radio-modes-arming.md) · [Français](../../fr/quick/04-radio-modes-arming.md) · **العربية**
@@ -84,3 +86,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # VTOL Y3 · قوائم مهام سريعة
 
 🌐 [English](../../quick/README.md) · [Français](../../fr/quick/README.md) · **العربية**
@@ -48,3 +50,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

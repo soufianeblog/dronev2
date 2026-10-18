@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>الدليل 03 — الاتجاه والمعايرة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
@@ -58,6 +59,17 @@
   .diagram .motor { fill: var(--accent); }
   .diagram .motor2 { fill: var(--warn); }
   footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+
+  /* RTL layout (Arabic) */
+  [dir="rtl"] body { font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, -apple-system, sans-serif; line-height: 1.75; }
+  [dir="rtl"] th, [dir="rtl"] td { text-align: right; }
+  [dir="rtl"] .step ul, [dir="rtl"] .step ol { padding-left: 0; padding-right: 20px; }
+  [dir="rtl"] .check li { margin-left: 0; margin-right: -20px; }
+  [dir="rtl"] .expect { border-left: 0; border-right: 3px solid var(--ok); }
+  [dir="rtl"] .langs { float: left; }
+  [dir="rtl"] svg { direction: ltr; }
+  [dir="rtl"] code, [dir="rtl"] kbd, [dir="rtl"] pre { direction: ltr; unicode-bidi: isolate; }
+  [dir="rtl"] pre { text-align: left; }
 </style>
 </head>
 <body>

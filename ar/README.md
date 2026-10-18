@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # VTOL Y3: طائرة مسيّرة تطير مثل الطائرة
 
 🌐 [English](../README.md) · [Français](../fr/README.md) · **العربية**
@@ -95,3 +97,5 @@
 
 ---
 © 2026 bellocloud.com. All rights reserved.
+
+</div>

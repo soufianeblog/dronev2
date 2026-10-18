@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # ملاحظات المشروع (ملف العمل)
 
 🌐 [English](../../docs/project-notes.md) · [Français](../../fr/docs/project-notes.md) · **العربية**
@@ -334,3 +336,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

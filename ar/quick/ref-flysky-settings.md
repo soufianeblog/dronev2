@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # FlySky i6X: كل الإعدادات في لمحة
 
 🌐 [English](../../quick/ref-flysky-settings.md) · [Français](../../fr/quick/ref-flysky-settings.md) · **العربية**
@@ -67,3 +69,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

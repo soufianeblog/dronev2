@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 01 · الاتصال والتحقق من ArduPlane
 
 🌐 [English](../../quick/01-connect-and-check.md) · [Français](../../fr/quick/01-connect-and-check.md) · **العربية**
@@ -41,3 +43,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

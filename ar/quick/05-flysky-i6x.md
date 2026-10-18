@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 05 · إعداد جهاز الإرسال FlySky i6X
 
 🌐 [English](../../quick/05-flysky-i6x.md) · [Français](../../fr/quick/05-flysky-i6x.md) · **العربية**
@@ -67,3 +69,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

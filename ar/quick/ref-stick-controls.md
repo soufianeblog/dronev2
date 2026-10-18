@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # العصي والمفاتيح: كيف تتحرك VTOL Y3
 
 🌐 [English](../../quick/ref-stick-controls.md) · [Français](../../fr/quick/ref-stick-controls.md) · **العربية**
@@ -102,3 +104,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>

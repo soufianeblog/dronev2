@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 03 · الاتجاه والمعايرة
 
 🌐 [English](../../quick/03-orientation-calibration.md) · [Français](../../fr/quick/03-orientation-calibration.md) · **العربية**
@@ -32,3 +34,5 @@
 
 ---
 © 2026 bellocloud.com
+
+</div>
