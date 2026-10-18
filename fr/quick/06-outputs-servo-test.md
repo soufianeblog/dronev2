@@ -44,6 +44,8 @@ Gauche/droite = vu assis dans l'avion, en regardant vers l'avant. Rien à réatt
   | `SERVO10_MIN` | 700 | **1100** |
   | `SERVO10_MAX` | 2100 | **1900** |
 
+  Rév. 4 : butées définitives dans la partie N (`SERVO9` 800–1900, `SERVO10` 800–2000).
+
 ## D. Alimenter le rail servo (5 V)
 
 Le Pixhawk n'alimente **pas** les broches servo depuis l'USB ni depuis le module d'alimentation. Choisissez une option :
@@ -135,25 +137,62 @@ Pourquoi : chaque ESC apprend 1000 µs = arrêt, 2000 µs = plein gaz. Des ESC n
 | En bas | **FBWA** | Avion | Basculent vers l'avant |
 
 - FBWA sur table : les moteurs basculants bougent car Q-Assist (`Q_ASSIST_SPEED` = 10 m/s) voit une vitesse air de 0 (`Transition started airspeed 0.0`). Normal.
-- Modes drone, armé : 90° plus de petits basculements de lacet jusqu'à ±10° (`Q_TILT_YAW_ANGLE`). Plus grands à bas régime (×2), plus petits à haut régime (×0,5). Désarmé : immobiles à 90°. Indispensable pour le lacet.
+- Modes drone, armé : 90° plus de petits basculements de lacet jusqu'à ±5° (`Q_TILT_YAW_ANGLE`, avant ±10°, partie N). Plus grands à bas régime (×2), plus petits à haut régime (×0,5). Désarmé : immobiles à 90°. Indispensable pour le lacet.
 - [ ] Test à la main : armé, QStabilize, gaz bas, hélices retirées. Tournez le nez à la main → les moteurs avant basculent en sens opposés.
 
 ## L. Retour au point de départ avec SWB ([Étape 11](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#swb))
 
 - **SWB en bas** → QRTL (`Q_RTL_MODE` = 3) : monte à `Q_RTL_ALT` 20 m, rentre en drone au point d'armement, atterrit verticalement, se désarme.
 - **SWB en haut** → vous reprenez la main.
-- Nécessite un fix GPS (dehors). La perte du signal radio est séparée : il atterrit sur place (QLand).
+- Nécessite un fix GPS (dehors). La perte du signal radio est séparée : il atterrit sur place (QLand, partie M).
 
-💾 Sauvegarde : [`params_after-esc-cal.params`](../../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0,369 → 0,479 a été appris sur table : à surveiller avant le premier vol stationnaire.
+## M. Failsafe radio au démarrage ([étape 12](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#rc-failsafe))
 
-## M. Reste à faire
+Vu : `Throttle failsafe on`, `RC Short/Long Failsafe: switched to QLand`, `Radio failsafe on`, `QLand mode not armable` = l'émetteur était **ÉTEINT**.
+
+- [ ] **1.** Émetteur **ALLUMÉ en premier** (interrupteurs en haut, gaz en bas), **puis** branchez l'avion.
+- [ ] **2.** Voyant du récepteur : **rouge fixe** = lié, **clignotant** = pas de liaison.
+- [ ] **3.** À la fin : débranchez l'avion **d'abord**, **puis** éteignez l'émetteur.
+- [ ] **4.** Si c'est arrivé : radio revenue → `Throttle failsafe off` / `RC Long Failsafe Cleared` → **SWC au milieu**, puis de nouveau **en haut** → QStabilize.
+
+## N. Servos de basculement avant en mode drone ([étape 13](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#tilt)) ⚠️ problème ouvert
+
+Modifié sur l'appareil (**Q** → **Vehicle Configuration** → **Parameters**), enregistré dans [`params_after-tilt-changes.params`](../../backups/params_after-tilt-changes.params) :
+
+| Paramètre | Ancien | Nouveau |
+|---|---|---|
+| `SERVO9_MAX` (avant gauche, inversé) | 1940 | **1900** (MIN 800 inchangé) |
+| `SERVO10_MIN` (avant droit) | 700 | **800** |
+| `SERVO10_MAX` (avant droit) | 2100 | **2000** |
+| `Q_TILT_YAW_ANGLE` | 10 | **5** (basculement de direction plus petit) |
+| `Q_M_THST_HOVER` | 0,479 | **0,37** (valeur apprise sur table remise à zéro) |
+
+- [x] Désarmé, QStabilize : **Q** → **Vehicle Configuration** → **Servo Outputs** → ligne 9 = **1847**, ligne 10 = **857** = la commande « verticale » du Pixhawk pour les deux (valeurs en miroir). Les deux moteurs bien droits.
+- ~10 µs ≈ 1°. Extrémité « haut » de l'avant gauche = `SERVO9_MAX` (inversé). Extrémité « haut » de l'avant droit = `SERVO10_MIN`.
+- **Problème ouvert :** armé en mode drone, gaz bas → moteurs avant pas à 90° ; gaz élevés → retour à 90°. Attendu : toujours 90°. En cours de recherche (code et documentation ArduPilot) ; la correction sera ajoutée ici. Cause non confirmée.
+- Certain : en QStabilize/QHover le basculement de base est commandé vertical (`Q_FWD_THR_USE` = 0). Le basculement de lacet (vectored yaw) est multiplié par gaz de vol stationnaire ÷ gaz (×2 bas, ×0,5 haut) : principal suspect.
+
+💾 Sauvegarde : [`params_after-esc-cal.params`](../../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0,369 → 0,479 a été appris sur table : à surveiller avant le premier vol stationnaire. Sauvegarde plus récente avec les modifications de la partie N : [`params_after-tilt-changes.params`](../../backups/params_after-tilt-changes.params).
+
+## O. Reste à faire
 
 - [ ] Test des gaz (hélices retirées) : moteur arrière et deuxième moteur avant se comportent comme les autres
 - [ ] Sens de rotation de chaque moteur
-- [ ] Butées des servos de basculement (`SERVO9` 800–1940 inversé contre `SERVO10` 700–2100) : lisez **Servo Outputs** en haut et en avant, ajustez l'extrémité décalée (~10 µs ≈ 1°)
+- [ ] Résoudre le problème basculement/gaz (partie N)
+- [x] Enregistrer une nouvelle sauvegarde après les modifications de basculement → `params_after-tilt-changes.params`
 - [ ] Refaire la boussole dehors pour le vert
 - [ ] `ARMING_SKIPCHK` = 0 avant tout vol
 - [ ] Vérification de SWB dehors : le mode de vol affiche QRTL
+
+## P. Liste de vérification avant vol ([détails](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#preflight))
+
+- [ ] `ARMING_SKIPCHK` remis à **0**
+- [ ] `Q_M_THST_HOVER` ≈ **0,37** avant le premier vol stationnaire (le Pixhawk le réapprend)
+- [ ] Boussole refaite dehors, **verte**
+- [ ] Émetteur **allumé en premier**, puis l'avion
+- [ ] Bouton de sécurité **fixe**
+- [ ] Hélices sur les bons moteurs
+- [ ] SWB testé dehors (QRTL affiché)
 
 ## ✅ Terminé quand
 
@@ -179,6 +218,8 @@ Pourquoi : chaque ESC apprend 1000 µs = arrêt, 2000 µs = plein gaz. Des ESC n
 | Les moteurs tournent tout seuls ou l'un semble mort | Calibration des ESC (partie J). |
 | Les moteurs basculants bougent en FBWA sur table | Q-Assist, normal (partie K). |
 | Les moteurs avant remuent en mode drone, armé | Basculement de lacet, normal (partie K). |
+| `Radio failsafe on`, `QLand mode not armable` à la mise sous tension | L'émetteur était éteint. Émetteur allumé en premier, puis SWC milieu → haut (partie M). |
+| Moteurs avant pas à 90° à gaz bas, armé | Problème ouvert, en cours de recherche (partie N). |
 
 ---
 © 2026 bellocloud.com

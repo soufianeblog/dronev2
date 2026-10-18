@@ -44,6 +44,8 @@ Left/right = as seen sitting in the plane, looking forward. Nothing to re-assign
   | `SERVO10_MIN` | 700 | **1100** |
   | `SERVO10_MAX` | 2100 | **1900** |
 
+  Rev 4: final end points in part N (`SERVO9` 800–1900, `SERVO10` 800–2000).
+
 ## D. Power the servo rail (5 V)
 
 The Pixhawk does **not** power the servo pins from USB or the power module. Pick one:
@@ -135,25 +137,62 @@ Why: each ESC learns 1000 µs = stop, 2000 µs = full. Uncalibrated ESCs spin by
 | Down | **FBWA** | Airplane | Tilt forward |
 
 - FBWA on the bench: the tilts move because Q-Assist (`Q_ASSIST_SPEED` = 10 m/s) sees 0 airspeed (`Transition started airspeed 0.0`). Normal.
-- Drone modes, armed: 90° plus small yaw tilts up to ±10° (`Q_TILT_YAW_ANGLE`). Bigger at low throttle (×2), smaller at high (×0.5). Disarmed: still at 90°. Required for yaw.
+- Drone modes, armed: 90° plus small yaw tilts up to ±5° (`Q_TILT_YAW_ANGLE`, was ±10°, part N). Bigger at low throttle (×2), smaller at high (×0.5). Disarmed: still at 90°. Required for yaw.
 - [ ] Hand test: armed, QStabilize, low throttle, props off. Turn the nose by hand → front motors tilt opposite each other.
 
 ## L. SWB return home ([Step 11](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#swb))
 
 - **SWB down** → QRTL (`Q_RTL_MODE` = 3): climbs to `Q_RTL_ALT` 20 m, flies home as a drone to the arming point, lands vertically, disarms.
 - **SWB up** → you take back control.
-- Needs a GPS fix (outdoors). Radio-signal loss is separate: it lands where it is (QLand).
+- Needs a GPS fix (outdoors). Radio-signal loss is separate: it lands where it is (QLand, part M).
 
-💾 Backup: [`params_after-esc-cal.params`](../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0.369 → 0.479 was learned on the bench: watch it before the first hover.
+## M. Radio failsafe at startup ([Step 12](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#rc-failsafe))
 
-## M. Still to do
+Seen: `Throttle failsafe on`, `RC Short/Long Failsafe: switched to QLand`, `Radio failsafe on`, `QLand mode not armable` = the transmitter was **OFF**.
+
+- [ ] **1.** Transmitter **ON first** (switches up, throttle down), **then** plug the plane.
+- [ ] **2.** Receiver light: **solid red** = linked, **blinking** = no link.
+- [ ] **3.** At the end: unplug the plane **first**, **then** transmitter off.
+- [ ] **4.** If it happened: radio back → `Throttle failsafe off` / `RC Long Failsafe Cleared` → **SWC middle**, then back **up** → QStabilize.
+
+## N. Front tilt servos in drone mode ([Step 13](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#tilt)) ⚠️ open issue
+
+Changed on the vehicle (**Q** → **Vehicle Configuration** → **Parameters**), saved in [`params_after-tilt-changes.params`](../backups/params_after-tilt-changes.params):
+
+| Parameter | Old | New |
+|---|---|---|
+| `SERVO9_MAX` (front left, reversed) | 1940 | **1900** (MIN 800 unchanged) |
+| `SERVO10_MIN` (front right) | 700 | **800** |
+| `SERVO10_MAX` (front right) | 2100 | **2000** |
+| `Q_TILT_YAW_ANGLE` | 10 | **5** (smaller steering tilt) |
+| `Q_M_THST_HOVER` | 0.479 | **0.37** (bench-learned value reset) |
+
+- [x] Disarmed, QStabilize: **Q** → **Vehicle Configuration** → **Servo Outputs** → row 9 = **1847**, row 10 = **857** = the Pixhawk's "vertical" command for both (mirror values). Both motors straight up.
+- ~10 µs ≈ 1°. Front left "up" end = `SERVO9_MAX` (reversed). Front right "up" end = `SERVO10_MIN`.
+- **Open issue:** armed in drone modes, low throttle → front motors not at 90°; high throttle → back to 90°. Expected: always 90°. Being researched (ArduPilot code + docs); the fix will be added here. Cause not confirmed.
+- Known: in QStabilize/QHover the base tilt is commanded vertical (`Q_FWD_THR_USE` = 0). The vectored-yaw tilt is scaled by hover throttle ÷ throttle (×2 low, ×0.5 high): main suspect.
+
+💾 Backup: [`params_after-esc-cal.params`](../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0.369 → 0.479 was learned on the bench: watch it before the first hover. Newer backup with the part N changes: [`params_after-tilt-changes.params`](../backups/params_after-tilt-changes.params).
+
+## O. Still to do
 
 - [ ] Throttle test (props off): tail motor and second front motor behave like the others
 - [ ] Spin direction of each motor
-- [ ] Tilt servo end points (`SERVO9` 800–1940 reversed vs `SERVO10` 700–2100): read **Servo Outputs** up and forward, adjust the off end (~10 µs ≈ 1°)
+- [ ] Resolve the tilt-vs-throttle issue (part N)
+- [x] Save a new backup after the tilt changes → `params_after-tilt-changes.params`
 - [ ] Redo the compass outdoors for green
 - [ ] `ARMING_SKIPCHK` = 0 before any flight
 - [ ] SWB check outdoors: flight mode shows QRTL
+
+## P. Pre-flight checklist ([details](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#preflight))
+
+- [ ] `ARMING_SKIPCHK` back to **0**
+- [ ] `Q_M_THST_HOVER` ≈ **0.37** before the first hover (the Pixhawk relearns it)
+- [ ] Compass redone outdoors, **green**
+- [ ] Transmitter **on first**, then the plane
+- [ ] Safety button **solid**
+- [ ] Props on the correct motors
+- [ ] SWB tested outdoors (QRTL shown)
 
 ## ✅ Done when
 
@@ -179,6 +218,8 @@ Why: each ESC learns 1000 µs = stop, 2000 µs = full. Uncalibrated ESCs spin by
 | Motors spin by themselves or one seems dead | ESC calibration (part J). |
 | Tilts move in FBWA on the bench | Q-Assist, normal (part K). |
 | Front motors wiggle in drone mode when armed | Yaw tilt, normal (part K). |
+| `Radio failsafe on`, `QLand mode not armable` at power-up | Transmitter was off. Transmitter on first, then SWC middle → up (part M). |
+| Front motors not at 90° at low throttle when armed | Open issue, being researched (part N). |
 
 ---
 © 2026 bellocloud.com

@@ -7,7 +7,7 @@ A tilt-rotor **tricopter VTOL**. It takes off and lands like a drone and flies l
 > **Start here**
 > - **Full guides in the browser:** https://soufianeblog.github.io/dronev2/ (offline: open `index.html`)
 > - ✅ **Short task lists:** [`quick/`](quick/README.md)
-> - 💾 **Parameter backups:** [`backups/`](backups/) · **[⬇ Download the latest backup](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-esc-cal.params)** (`params_after-esc-cal.params`)
+> - 💾 **Parameter backups:** [`backups/`](backups/) · **[⬇ Download the latest backup](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-tilt-changes.params)** (`params_after-tilt-changes.params`)
 
 ## The aircraft
 

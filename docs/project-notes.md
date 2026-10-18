@@ -342,6 +342,12 @@ The public overview is the [README](../README.md).
 
 - 2026-10-18 19:40: Backup backups/params_after-esc-cal.params saved and diffed vs params_after-switches: ARMING_SKIPCHK 0→16, new compass calibration (COMPASS_OFS/DIA/ODI/SCALE), gyro offsets, Q_M_THST_HOVER 0.369→0.479 (learned on the bench while armed; watch it, may need ~0.37 before first hover), Q_ESC_CAL confirmed 0. Guide 06 rev 3 written (Steps 8–11).
 
+- 2026-10-18 20:30: Lesson learned, radio failsafe at startup: messages "Throttle failsafe on", "RC Short/Long Failsafe: switched to QLand", "Radio failsafe on", "QLand mode not armable" = transmitter was OFF when the plane was powered. Rule: transmitter ON first, then plug the plane; at the end unplug the plane first, then transmitter off. Receiver light solid red = linked, blinking = no link. After the radio returns ("Throttle failsafe off" / "RC Long Failsafe Cleared"), flip SWC middle and back up to return to QStabilize. Guide 06 Step 12.
+
+- 2026-10-18 20:50: Tilt servo changes made by the user on the vehicle (saved by the user as backups/params_after-tilt-changes.params at 20:55; diff vs params_after-esc-cal = only these 5 plus auto-changing values): SERVO9_MAX 1940→1900 (SERVO9_MIN 800 unchanged, front left, reversed), SERVO10_MIN 700→800, SERVO10_MAX 2100→2000 (front right), Q_TILT_YAW_ANGLE 10→5 (smaller steering tilt), Q_M_THST_HOVER 0.479→0.37 (bench-learned value reset). Verified disarmed in QStabilize: Servo Outputs row 9 = 1847, row 10 = 857 = Pixhawk's vertical command for both (mirror values), both motors straight up. Guide 06 Step 13, ref-parameter-changes updated.
+
+- 2026-10-18 21:00: Open issue, under research: armed in drone modes, at low throttle the front motors are not at 90°, at high throttle they return to 90° (expected: always 90°). Known for certain: base tilt commanded vertical in QStabilize/QHover (Q_FWD_THR_USE = 0); vectored-yaw tilt scaled by hover-throttle/throttle (×2 low, ×0.5 high) = main suspect, not confirmed. Guide 06 rev 4 written (Steps 12–13, pre-flight checklist).
+
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.
 - ✅ Radio input solved (option B: i6X Output mode PWM, encoder kept). Optional later: option A (remove encoder, direct PPM/CH1 → RC IN) for fewer wires/failure points.

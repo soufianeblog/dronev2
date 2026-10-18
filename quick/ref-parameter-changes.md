@@ -4,7 +4,7 @@
 
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html)
 
-Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-esc-cal.params` (latest, Guide 06). **Bold** = changed.
+Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-tilt-changes.params` (latest, Guide 06 rev 4). **Bold** = changed.
 
 ## Every change
 
@@ -44,6 +44,11 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | Bench & calibration | `ARMING_SKIPCHK` | 0 | **16** (INS) | 06 | Skips the INS/AHRS check so it arms indoors without a GPS fix. Bench only: set back to **0** before any flight. |
 | Bench & calibration | `COMPASS_OFS_*, COMPASS_DIA_*, COMPASS_ODI_*, COMPASS_SCALE` | old values | new values | 06 | Compass offsets recalibrated (external HMC5883, quality yellow). Redo outdoors for green before the first flight. |
 | Bench & calibration | `Q_ESC_CAL` | 0 | 0 → **1** → 0 | 06 | ESC calibration done (each ESC learned 1000 = stop, 2000 = full), then set back to 0. |
+| Tilt servos | `SERVO9_MAX` | 1940 | **1900** | 06 | Front left tilt (AUX 1, reversed): its 'up' end is MAX. `SERVO9_MIN` 800 unchanged. |
+| Tilt servos | `SERVO10_MIN` | 700 | **800** | 06 | Front right tilt (AUX 2): its 'up' end is MIN. |
+| Tilt servos | `SERVO10_MAX` | 2100 | **2000** | 06 | Front right tilt: 'forward' end. |
+| Tilt servos | `Q_TILT_YAW_ANGLE` | 10° | **5°** | 06 | Smaller steering tilt (VectoredYaw) in drone modes. |
+| Tilt servos | `Q_M_THST_HOVER` | 0.479 | **0.37** | 06 | Hover throttle: the value learned on the bench was reset; the Pixhawk relearns it in flight. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmed) | 04 | GPS on port 1, auto-detect (u-blox M8N). It showed 0 once because QGC had loaded an incomplete list; set to Auto and confirmed. |
 
 ## Important settings kept from the old setup
@@ -54,7 +59,7 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | `Q_FRAME_CLASS` | 7 | Tricopter: 3 lift motors |
 | `Q_TILT_ENABLE / Q_TILT_MASK` | 1 / 3 | Motors 1 + 2 tilt |
 | `Q_TILT_TYPE` | 2 | VectoredYaw: tilt servos also steer yaw |
-| `Q_TILT_MAX / Q_TILT_YAW_ANGLE` | 70 / 10° | Max tilt in VTOL modes / yaw tilt range |
+| `Q_TILT_MAX` | 70 | Max tilt in VTOL modes |
 | `SERVO1/2_FUNCTION` | 4 Aileron | MAIN 1–2: ailerons |
 | `SERVO3/4_FUNCTION` | 79 / 80 VTailLeft/Right | MAIN 3–4: V-tail |
 | `SERVO5/6/8_FUNCTION` | 33 / 34 / 36 Motor1/2/4 | MAIN 5, 6, 8: ESCs |
@@ -71,7 +76,7 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | `BARO1_GND_PRESS` | Ground air pressure, measured at every boot. |
 | `STAT_*` | Statistics: boot count, run time, flight time. |
 | `BRD_SD_SLOWDOWN` | SD-card speed setting adjusted by the board. |
-| `Q_M_THST_HOVER` | Hover throttle, learned automatically while armed (0.369 → 0.479 on the bench). Check it before the first hover. |
+| `Q_M_THST_HOVER` | Hover throttle, learned automatically while armed (0.369 → 0.479 on the bench, then reset by hand to 0.37 in Guide 06). Check it before the first hover. |
 
 > 💡 After a reboot, QGC may list only ~1,276 of the ~1,430 parameters. Use **Parameters → Tools → Refresh** before saving or comparing.
 

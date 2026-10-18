@@ -4,7 +4,7 @@
 
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-parameter-changes.html)
 
-Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-esc-cal.params` (la plus récente, Guide 06). **Gras** = modifié.
+Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-tilt-changes.params` (la plus récente, Guide 06 rév. 4). **Gras** = modifié.
 
 ## Toutes les modifications
 
@@ -44,6 +44,11 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | Banc et calibration | `ARMING_SKIPCHK` | 0 | **16** (INS) | 06 | Ignore la vérification INS/AHRS pour armer à l'intérieur sans fix GPS. Sur table uniquement : remettre à **0** avant tout vol. |
 | Banc et calibration | `COMPASS_OFS_*, COMPASS_DIA_*, COMPASS_ODI_*, COMPASS_SCALE` | anciennes valeurs | nouvelles valeurs | 06 | Décalages de la boussole recalibrés (HMC5883 externe, qualité jaune). À refaire dehors pour le vert avant le premier vol. |
 | Banc et calibration | `Q_ESC_CAL` | 0 | 0 → **1** → 0 | 06 | Calibration des ESC faite (chaque ESC a appris 1000 = arrêt, 2000 = plein gaz), puis remis à 0. |
+| Servos de basculement | `SERVO9_MAX` | 1940 | **1900** | 06 | Basculement avant gauche (AUX 1, inversé) : son extrémité « haut » est MAX. `SERVO9_MIN` 800 inchangé. |
+| Servos de basculement | `SERVO10_MIN` | 700 | **800** | 06 | Basculement avant droit (AUX 2) : son extrémité « haut » est MIN. |
+| Servos de basculement | `SERVO10_MAX` | 2100 | **2000** | 06 | Basculement avant droit : extrémité « avant ». |
+| Servos de basculement | `Q_TILT_YAW_ANGLE` | 10° | **5°** | 06 | Basculement de direction (VectoredYaw) plus petit en modes drone. |
+| Servos de basculement | `Q_M_THST_HOVER` | 0,479 | **0,37** | 06 | Gaz de vol stationnaire : la valeur apprise sur table a été remise à zéro ; le Pixhawk la réapprend en vol. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmé) | 04 | GPS sur le port 1, détection automatique (u-blox M8N). Il a affiché 0 une fois car QGC avait chargé une liste incomplète ; réglé sur Auto et confirmé. |
 
 ## Réglages importants conservés de l'ancienne configuration
@@ -54,7 +59,7 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | `Q_FRAME_CLASS` | 7 | Tricoptère : 3 moteurs de sustentation |
 | `Q_TILT_ENABLE / Q_TILT_MASK` | 1 / 3 | Les moteurs 1 + 2 basculent |
 | `Q_TILT_TYPE` | 2 | VectoredYaw : les servos de bascule gèrent aussi le lacet |
-| `Q_TILT_MAX / Q_TILT_YAW_ANGLE` | 70 / 10° | Bascule max en modes VTOL / plage de bascule pour le lacet |
+| `Q_TILT_MAX` | 70 | Bascule max en modes VTOL |
 | `SERVO1/2_FUNCTION` | 4 Aileron | MAIN 1–2 : ailerons |
 | `SERVO3/4_FUNCTION` | 79 / 80 VTailLeft/Right | MAIN 3–4 : empennage en V |
 | `SERVO5/6/8_FUNCTION` | 33 / 34 / 36 Motor1/2/4 | MAIN 5, 6, 8 : ESC |
@@ -71,7 +76,7 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | `BARO1_GND_PRESS` | Pression atmosphérique au sol, mesurée à chaque démarrage. |
 | `STAT_*` | Statistiques : nombre de démarrages, temps de fonctionnement, temps de vol. |
 | `BRD_SD_SLOWDOWN` | Réglage de vitesse de la carte SD ajusté par la carte. |
-| `Q_M_THST_HOVER` | Gaz de vol stationnaire, appris automatiquement une fois armé (0,369 → 0,479 sur table). À vérifier avant le premier vol stationnaire. |
+| `Q_M_THST_HOVER` | Gaz de vol stationnaire, appris automatiquement une fois armé (0,369 → 0,479 sur table, puis remis à la main à 0,37 dans le Guide 06). À vérifier avant le premier vol stationnaire. |
 
 > 💡 Après un redémarrage, QGC peut n'afficher que ~1 276 des ~1 430 paramètres. Utilisez **Parameters → Tools → Refresh** avant d'enregistrer ou de comparer.
 

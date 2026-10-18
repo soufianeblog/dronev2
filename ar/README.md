@@ -9,7 +9,7 @@
 > **ابدأ من هنا**
 > - **الأدلة الكاملة في المتصفح:** https://soufianeblog.github.io/dronev2/ar/ (دون اتصال: افتح `index.html`)
 > - ✅ **قوائم مهام مختصرة:** [`quick/`](quick/README.md)
-> - 💾 **النسخ الاحتياطية للمعاملات:** [`backups/`](../backups/) (الأحدث: `params_after-esc-cal.params`) · **[⬇ تنزيل أحدث نسخة احتياطية](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-esc-cal.params)**
+> - 💾 **النسخ الاحتياطية للمعاملات:** [`backups/`](../backups/) (الأحدث: `params_after-tilt-changes.params`) · **[⬇ تنزيل أحدث نسخة احتياطية](https://github.com/soufianeblog/dronev2/raw/main/backups/params_after-tilt-changes.params)**
 
 ## الطائرة
 
