@@ -2,9 +2,6 @@
 
 [English](../../docs/project-notes.md) · **Français** · [العربية](../../ar/docs/project-notes.md)
 
-
-
-
 Notes internes de ce projet : notre méthode de travail, les faits vérifiés, le journal complet d'avancement et les questions ouvertes.
 La présentation publique est le [README](../README.md).
 
@@ -328,6 +325,16 @@ La présentation publique est le [README](../README.md).
 - 2026-10-18 : Appliqué par l'utilisateur (vérifié dans backups/params_after-switches.params) : FlySky Aux. channels Channel 7 = SwB ; RC7_OPTION=4 (SWB en bas = RTL) ; Q_RTL_MODE=3 (QRTL toujours) ; FLTMODE1/2=17 (SWC en haut = QSTABILIZE, armement possible, gaz directs) ; ARMING_RUDDER=2 (manche gauche en bas+droite 3 s arme, en bas+gauche 2 s désarme). Limites sûres de basculement SERVO9/10 pas encore modifiées.
 
 - 2026-10-18 : Retours du test sur table : les moteurs avant ont tourné une fois, le moteur arrière (MAIN8) jamais ; après rebranchement de la batterie aucun ne tourne ; les gaz et l'armement au manche ne font rien (probablement pas armé : bouton de sécurité / PreArm). Ouvert : le bouton de sécurité rouge du kit est-il présent sur le port SWITCH (BRD_SAFETY_DEFLT=1 bloque les sorties sans lui) ? Les plages de basculement avant diffèrent (SERVO9 800–1940 inv., SERVO10 700–2100) ; l'utilisateur voit un basculement décalé de quelques degrés, logiciel et non matériel (test d'inversion). En attente des messages PreArm + quel côté/quelle position est décalé.
+
+- 2026-10-18 18:50 : Blocages d'armement levés un par un : microSD formatée (FAT32) → « Logging failed » disparu ; boussole calibrée (HMC5883 externe, qualité jaune → à refaire dehors pour le vert avant le premier vol) + redémarrage → « Compass not calibrated » disparu ; ARMING_SKIPCHK=16 (ignore la vérification INS/AHRS, table uniquement, remettre à 0 avant le vol) → « AHRS: not using configured AHRS type » ignoré ; batterie branchée → tension basse disparue. Il ne reste que « Hardware safety switch ». Suite : calibration des ESC (Q_ESC_CAL=1) car certains moteurs tournent désarmés et d'autres non.
+
+- 2026-10-18 19:10 : Calibration des ESC faite avec Q_ESC_CAL=1 (batterie débranchée, USB seul, hélices retirées ; ARMING_SKIPCHK=400 temporairement = INS 16 + Board voltage 128 + Battery level 256 ; SWC en haut QStabilize, sécurité fixe, SWA en bas = Armed, manche gauche tout en haut, batterie branchée → 2 bips, manche tout en bas dans les ~2 s → 3 courts + 1 long). Rétabli Q_ESC_CAL=0 et ARMING_SKIPCHK=16. Moteurs maintenant presque homogènes ; moteur arrière / deuxième moteur avant à confirmer par un test des gaz.
+
+- 2026-10-18 19:20 : Expliqué : les moteurs basculants bougent en FBWA sur table car Q-Assist (Q_ASSIST_SPEED=10 m/s) voit une vitesse air de 0 et fait intervenir les moteurs VTOL (« Transition started airspeed 0.0 »), normal. Modes drone armé : moteurs à 90° + basculement de lacet jusqu'à ±10° (Q_TILT_YAW_ANGLE, VectoredYaw), multiplié par hover_throttle/throttle (×2 à bas régime, ×0,5 à haut régime), d'où l'aspect important sur table ; désarmé = immobiles à 90°. Test à la main : tourner le nez → les moteurs avant basculent en sens opposés.
+
+- 2026-10-18 19:30 : Expliqué SWB : en bas = QRTL (Q_RTL_MODE=3) : monte à Q_RTL_ALT 20 m, rentre en drone au point d'armement, atterrit verticalement, se désarme ; en haut = reprise en main. Nécessite un fix GPS. Failsafe radio séparé (actuellement QLand sur place).
+
+- 2026-10-18 19:40 : Sauvegarde backups/params_after-esc-cal.params enregistrée et comparée à params_after-switches : ARMING_SKIPCHK 0→16, nouvelle calibration boussole (COMPASS_OFS/DIA/ODI/SCALE), décalages gyro, Q_M_THST_HOVER 0,369→0,479 (appris sur table une fois armé ; à surveiller, peut-être ~0,37 avant le premier vol stationnaire), Q_ESC_CAL confirmé à 0. Guide 06 rév. 3 rédigé (étapes 8–11).
 
 ### Questions ouvertes
 - ✅ Paramètres Q_ : simplement le téléchargement anticipé de QGC. Toujours faire Refresh ~30 s après le démarrage avant de modifier/enregistrer.

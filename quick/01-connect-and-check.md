@@ -2,9 +2,6 @@
 
 **English** · [Français](../fr/quick/01-connect-and-check.md) · [العربية](../ar/quick/01-connect-and-check.md)
 
-
-
-
 [Index](README.md) · [Next: 02 →](02-update-firmware.md) · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-01_2026-10-17_0113_connect-and-check-arduplane.html)
 
 **Goal:** see what's on the board and back it up. Nothing gets changed.

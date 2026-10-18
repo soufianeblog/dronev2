@@ -4,7 +4,7 @@
 
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html)
 
-Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-switches.params` (latest, Guide 06). **Bold** = changed.
+Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-esc-cal.params` (latest, Guide 06). **Bold** = changed.
 
 ## Every change
 
@@ -41,6 +41,9 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | Switches & modes | `Q_RTL_MODE` | 2 VTOL approach | **3 QRTL Always** | 06 | Return home as a drone and land vertically (was: fly home as an airplane, then land vertically). |
 | Switches & modes | `FLTMODE1 / FLTMODE2` | 20 QLAND / 20 QLAND | **17 QSTABILIZE / 17 QSTABILIZE** | 06 | SWC up = QStabilize: drone with direct throttle. The Pixhawk can't arm in QLand and ignored the throttle there. |
 | Switches & modes | `ARMING_RUDDER` | 0 Disabled | **2 ArmOrDisarm** | 06 | Left stick down + right 3 s arms, down + left 2 s disarms. Works together with SWA. |
+| Bench & calibration | `ARMING_SKIPCHK` | 0 | **16** (INS) | 06 | Skips the INS/AHRS check so it arms indoors without a GPS fix. Bench only: set back to **0** before any flight. |
+| Bench & calibration | `COMPASS_OFS_*, COMPASS_DIA_*, COMPASS_ODI_*, COMPASS_SCALE` | old values | new values | 06 | Compass offsets recalibrated (external HMC5883, quality yellow). Redo outdoors for green before the first flight. |
+| Bench & calibration | `Q_ESC_CAL` | 0 | 0 → **1** → 0 | 06 | ESC calibration done (each ESC learned 1000 = stop, 2000 = full), then set back to 0. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmed) | 04 | GPS on port 1, auto-detect (u-blox M8N). It showed 0 once because QGC had loaded an incomplete list; set to Auto and confirmed. |
 
 ## Important settings kept from the old setup
@@ -68,6 +71,7 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | `BARO1_GND_PRESS` | Ground air pressure, measured at every boot. |
 | `STAT_*` | Statistics: boot count, run time, flight time. |
 | `BRD_SD_SLOWDOWN` | SD-card speed setting adjusted by the board. |
+| `Q_M_THST_HOVER` | Hover throttle, learned automatically while armed (0.369 → 0.479 on the bench). Check it before the first hover. |
 
 > 💡 After a reboot, QGC may list only ~1,276 of the ~1,430 parameters. Use **Parameters → Tools → Refresh** before saving or comparing.
 

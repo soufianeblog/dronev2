@@ -15,14 +15,14 @@
 <div class="site-bar"><div class="site-bar-in"><a class="brand" href="../index.html"><span class="brand-dot"></span>VTOL Y3 <span class="brand-text" style="font-weight:500;color:var(--muted)">Guides</span></a><nav class="lang-switch" aria-label="Language"><span aria-current="page" lang="en">English</span><a href="../fr/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html" hreflang="fr" lang="fr">Français</a><a href="../ar/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html" hreflang="ar" lang="ar">العربية</a></nav><button class="theme-btn" type="button" data-label-dark="Switch to dark mode" data-label-light="Switch to light mode" aria-label="Switch to dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button></div></div><!-- /site-bar -->
 <main>
 <header>
-  <div class="meta"><span class="pill">Guide 06</span><span class="pill">Created 2026-10-18 · 02:10</span><span class="pill">Rev 2 · 2026-10-18 15:40</span><span class="pill">⏱ ~45 min</span><span class="pill">Status: in progress</span></div>
+  <div class="meta"><span class="pill">Guide 06</span><span class="pill">Created 2026-10-18 · 02:10</span><span class="pill">Rev 3 · 2026-10-18 19:40</span><span class="pill">⏱ ~45 min</span><span class="pill">Status: in progress</span></div>
   <h1>Outputs: plug in and test the servos (then the motors)</h1>
   <p class="lead">Connect the 6 servos and 3 ESCs to the right Pixhawk outputs, power the servo rail, and check that every surface and tilt servo moves the right way. Servos first. Motors come at the end of this guide, <strong>props off</strong>.</p>
 </header>
 
 <div class="box danger"><strong>Safety, for this whole guide:</strong> <strong>propellers OFF</strong> on all 3 motors. The LiPo is only connected when a step says so. Keep fingers away from the tilt mounts when the servos get power: they can snap to an end position.</div>
 
-<div class="box info"><strong>Status now (rev 2):</strong> all servos and the 3 ESCs are plugged in, and the servos move. The switches are set up (SWB = return home, SWC up = QStabilize, stick arming on), see <a href="#switches">Step 6</a>. The motors don't spin yet because the Pixhawk refuses to arm. <a href="#prearm">Step 7</a> explains why and what is left: battery reading, compass calibration. Backup: <a href="../backups/params_after-switches.params" download><code>params_after-switches.params</code></a>.</div>
+<div class="box info"><strong>Status now (rev 3):</strong> all servos and the 3 ESCs are plugged in and move. Switches are set (<a href="#switches">Step 6</a>). On the bench the Pixhawk now arms and QGC shows <b>Ready To Fly</b>: the arming blockers are cleared (<a href="#blockers">Step 8</a>) and the ESCs are calibrated (<a href="#esc-cal">Step 9</a>). <a href="#modes">Step 10</a> explains why the tilt motors move, <a href="#swb">Step 11</a> what SWB does. Bench-only setting still active: <code>ARMING_SKIPCHK = 16</code> (back to 0 before any flight). Backup: <a href="../backups/params_after-esc-cal.params" download><code>params_after-esc-cal.params</code></a>.</div>
 
 <h2>Your parts</h2>
 <div class="lcd-grid"><figure><img src="guide6_screenshots/component_020039175.jpg" alt="4 × EMAX ES08MA II servos (wings + tail)" loading="lazy"><figcaption>4 × EMAX ES08MA II servos (wings + tail)</figcaption></figure><figure><img src="guide6_screenshots/component_020058500.jpg" alt="M8N GPS + compass" loading="lazy"><figcaption>M8N GPS + compass</figcaption></figure><figure><img src="guide6_screenshots/component_020110839.jpg" alt="3S 3000 mAh 60C LiPo" loading="lazy"><figcaption>3S 3000 mAh 60C LiPo</figcaption></figure><figure><img src="guide6_screenshots/component_020159193.jpg" alt="30A ESC + A2212 1000 KV motor" loading="lazy"><figcaption>30A ESC + A2212 1000 KV motor</figcaption></figure><figure><img src="guide6_screenshots/component_020202710.jpg" alt="PDB (XT60, 5 V + 12 V BEC)" loading="lazy"><figcaption>PDB (XT60, 5 V + 12 V BEC)</figcaption></figure><figure><img src="guide6_screenshots/component_020205063.jpg" alt="PDB, other side" loading="lazy"><figcaption>PDB, other side</figcaption></figure><figure><img src="guide6_screenshots/component_020212048.jpg" alt="Front motor on its tilt mount (tilt servo)" loading="lazy"><figcaption>Front motor on its tilt mount (tilt servo)</figcaption></figure><figure><img src="guide6_screenshots/component_020225335.jpg" alt="FS-iA10B receiver + encoder wires" loading="lazy"><figcaption>FS-iA10B receiver + encoder wires</figcaption></figure><figure><img src="guide6_screenshots/component_020231668.jpg" alt="Power module (XT60)" loading="lazy"><figcaption>Power module (XT60)</figcaption></figure><figure><img src="guide6_screenshots/component_020235669.jpg" alt="Power module v1.0" loading="lazy"><figcaption>Power module v1.0</figcaption></figure></div>
@@ -134,32 +134,95 @@
   </ol>
 </div></div>
 
-<h2 id="prearm">Step 7: Why the motors don't spin yet</h2>
+<h2 id="prearm">Step 7: Why the motors didn't spin (PreArm checks)</h2>
 <div class="step"><div class="num">7</div><div>
   <p>Motors only spin when the Pixhawk is <b>armed</b>. Before arming it runs a safety checklist (<i>PreArm checks</i>). If one item fails it refuses, so SWA, the stick and the throttle do nothing. This is the Pixhawk, not QGroundControl: QGC only shows the messages (click the status text in the top bar of the <b>Fly</b> screen, or the megaphone icon).</p>
   <div class="table-wrap"><table><tr><th>Message</th><th>Meaning</th><th>Fix</th><th>Status</th></tr>
-  <tr><td><code>Hardware safety switch</code></td><td>Red safety button not pressed</td><td>Hold it 2 s until solid</td><td>✅ gone</td></tr>
+  <tr><td><code>Hardware safety switch</code></td><td>Red safety button not pressed</td><td>Hold it 3 s until solid. Locks again after every reboot</td><td>✅ every boot</td></tr>
   <tr><td><code>QLand mode not armable</code></td><td>SWC up was QLand</td><td>Flight Mode 1/2 = QStabilize</td><td>✅ fixed</td></tr>
   <tr><td><code>QRTL mode not armable</code></td><td>SWB was down</td><td>Keep SWB up to arm</td><td>✅ normal</td></tr>
   <tr><td><code>RC calibrating</code></td><td>QGC's <b>Radio</b> page is open</td><td>Leave that page (go to <b>Fly</b>)</td><td>✅ easy</td></tr>
-  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>The Pixhawk reads less than 10.5 V (<code>BATT_LOW_VOLT</code>)</td><td>Charged battery read 12.48 V on the charger → the Pixhawk reading is probably wrong. Compare with the battery icon in QGC.</td><td>⏳ in progress</td></tr>
-  <tr><td><code>Compass not calibrated</code></td><td>Compass needs calibrating</td><td>Outdoors, <a href="guide-03_2026-10-17_0309_orientation-and-calibration.html">Guide 03</a> part E</td><td>⏳ to do</td></tr>
-  <tr><td><code>Board (4.2v) out of range</code></td><td>Pixhawk only on USB, voltage a bit low</td><td>Goes away with the battery + power module</td><td>ℹ️ info</td></tr>
+  <tr><td><code>Battery 1 low voltage failsafe</code></td><td>The Pixhawk reads less than 10.5 V (<code>BATT_LOW_VOLT</code>)</td><td>Plug the LiPo (<a href="#blockers">Step 8</a>)</td><td>✅ gone</td></tr>
+  <tr><td><code>Compass not calibrated</code></td><td>Compass needs calibrating</td><td>Calibrated on the bench (<a href="#blockers">Step 8</a>). Redo outdoors for green</td><td>✅ bench</td></tr>
+  <tr><td><code>Board (4.2v) out of range</code></td><td>Pixhawk only on USB, voltage a bit low</td><td>Goes away with the battery + power module</td><td>✅ gone</td></tr>
+  <tr><td><code>Logging failed</code></td><td>No usable microSD card</td><td>Format it FAT32 (<a href="#blockers">Step 8</a>)</td><td>✅ gone</td></tr>
+  <tr><td><code>AHRS: not using configured AHRS type</code></td><td>Navigation filter waits for a GPS fix</td><td>Outdoors, open sky. Indoors: <code>ARMING_SKIPCHK = 16</code></td><td>⚠️ skipped (bench)</td></tr>
   </table></div>
   <div class="box info"><strong>ESC beeps:</strong> while disarmed, each ESC beeps every few seconds, meaning "powered, waiting for a throttle signal". It is normal and stops when the Pixhawk arms.</div>
   <div class="box info"><strong>Charging the battery (iMAX B6):</strong> program <b>LiPo</b>, <b>3S</b>, <b>3.0 A</b> (1C for 3000 mAh), balance lead plugged. Screen <code>LI3S 3.0A 12.48V CHG 000:31 00013</code> = LiPo 3 cells, 3 A, 12.48 V now, 31 s, 13 mAh in. Full = 12.6 V. Never leave it unattended.</div>
 </div></div>
 
+<h2 id="blockers">Step 8: Clear the arming blockers (indoor bench)</h2>
+<div class="step"><div class="num">8</div><div>
+  <p>One message at a time. Props off.</p>
+  <ol>
+    <li><b>microSD:</b> on the computer, format the card <b>FAT32</b> (cards up to 32 GB; bigger cards: exFAT). Put it back with the Pixhawk off. → <code>Logging failed</code> gone.</li>
+    <li><b>Compass:</b> Q logo → <b>Vehicle Configuration → Sensors → Compass</b> → <b>OK</b>. Rotate the plane slowly in every direction (nose up, nose down, each side, upside down) until <b>Completed</b>. Then <b>Reboot Vehicle</b> (also in <b>Parameters → Tools → Reboot Vehicle</b>) and keep the plane still for 30 s.
+      <div class="expect">External HMC5883 compass calibrated, quality bar <b>yellow</b>: fine for the bench. Before the first flight, redo it outdoors away from metal (cars, tools, rebar) to get <b>green</b>.</div></li>
+    <li><b>AHRS:</b> <code>AHRS: not using configured AHRS type</code> = the navigation filter waits for a GPS fix, which needs open sky. Indoors only: Q logo → <b>Vehicle Configuration → Parameters</b> → search <code>ARMING_SKIPCHK</code> → tick only <b>INS</b> (value 16) → <b>Save</b>.</li>
+    <li><b>Battery:</b> plug the LiPo → the low-voltage message is gone.</li>
+    <li><b>Safety button:</b> the small red button on the <b>SWITCH</b> port. Blinking = locked, solid = unlocked. Hold it 3 s. It locks again after every reboot.</li>
+  </ol>
+  <div class="expect">QGC shows <b>Ready To Fly</b>.</div>
+  <div class="box warn"><strong>Bench only:</strong> <code>ARMING_SKIPCHK = 16</code> lets the Pixhawk arm without GPS/navigation checks. Set it back to <b>0</b> before any flight.</div>
+</div></div>
+
+<h2 id="esc-cal">Step 9: ESC calibration (<code>Q_ESC_CAL</code>) (done 2026-10-18)</h2>
+<div class="step"><div class="num">9</div><div>
+  <p><b>Why:</b> each ESC must learn the throttle range: 1000 µs = stop, 2000 µs = full. Uncalibrated ESCs spin by themselves or seem dead.</p>
+  <ol>
+    <li>Battery <b>unplugged</b>, USB only, <b>props off</b>.</li>
+    <li>Q logo → <b>Vehicle Configuration → Parameters</b> → <code>Q_ESC_CAL</code> = <b>1</b> → <b>Save</b>.</li>
+    <li><code>ARMING_SKIPCHK</code> = <b>400</b> (INS 16 + Board voltage 128 + Battery level 256) → <b>Save</b>. Lets it arm without the battery.</li>
+    <li>SWC <b>up</b> (QStabilize).</li>
+    <li>Press the safety button until <b>solid</b>.</li>
+    <li>SWA <b>down</b> → QGC shows <b>Armed</b>.</li>
+    <li>Left stick <b>full up</b>.</li>
+    <li>Plug the battery. The ESCs beep <b>twice</b> = full throttle saved.</li>
+    <li>Within about 2 s: left stick <b>full down</b>. <b>3 short beeps + 1 long</b> = stop saved.</li>
+    <li>SWA <b>up</b> (disarm).</li>
+    <li>Restore: <code>Q_ESC_CAL</code> = <b>0</b>, <code>ARMING_SKIPCHK</code> = <b>16</b> → <b>Save</b> each.</li>
+  </ol>
+  <div class="expect">Done. The motors now start and stop mostly together. Tail motor and second front motor: check with the throttle test (Still to do).</div>
+</div></div>
+
+<h2 id="modes">Step 10: Modes and tilt behaviour explained</h2>
+<div class="step"><div class="num">10</div><div>
+  <div class="table-wrap"><table><tr><th>SWC</th><th>Mode</th><th>Flies as</th><th>Front motors</th></tr>
+  <tr><td>Up</td><td><b>QStabilize</b></td><td>Drone</td><td>90° (straight up)</td></tr>
+  <tr><td>Middle</td><td><b>QHover</b></td><td>Drone</td><td>90° (straight up)</td></tr>
+  <tr><td>Down</td><td><b>FBWA</b></td><td>Airplane</td><td>Tilt forward</td></tr>
+  </table></div>
+  <div class="box info"><strong>FBWA on the bench, the tilts move:</strong> Q-Assist (<code>Q_ASSIST_SPEED = 10</code> m/s) sees 0 airspeed and brings the VTOL motors in to help (message <code>Transition started airspeed 0.0</code>). Normal on the ground.</div>
+  <p><b>Drone modes, armed:</b> the front motors stay at 90° plus small yaw tilts, up to ±10° (<code>Q_TILT_YAW_ANGLE</code>, VectoredYaw). This is how the plane turns its nose as a drone, so it is required. ArduPilot scales the yaw tilt by hover throttle ÷ throttle (×2 at low throttle, ×0.5 at high), so on the bench at low throttle the tilt looks bigger. <b>Disarmed:</b> still, at 90°.</p>
+  <div class="expect">Hand test: armed, QStabilize, low throttle, props off. Turn the nose by hand → the two front motors tilt opposite each other to resist.</div>
+</div></div>
+
+<h2 id="swb">Step 11: SWB return home explained</h2>
+<div class="step"><div class="num">11</div><div>
+  <ul>
+    <li><b>SWB down</b> → <b>QRTL</b> (<code>Q_RTL_MODE = 3</code>): climbs to <code>Q_RTL_ALT</code> = 20 m, flies home as a drone to the point where it was armed, lands vertically, disarms.</li>
+    <li><b>SWB up</b> → you take back control (the SWC mode).</li>
+  </ul>
+  <div class="box warn"><strong>Needs a GPS fix</strong> (outdoors). Home = where it was armed. Losing the radio signal is separate: right now it lands where it is (QLand).</div>
+</div></div>
+
+<div class="box ok" id="backup"><strong>Backup:</strong> <a href="../backups/params_after-esc-cal.params" download><code>backups/params_after-esc-cal.params</code></a> (saved 2026-10-18 after the ESC calibration). Verified against <code>params_after-switches.params</code>:
+  <ul>
+    <li><code>ARMING_SKIPCHK</code> 0 → 16 (bench only)</li>
+    <li>New compass calibration (<code>COMPASS_OFS_*</code>, <code>COMPASS_DIA_*</code>, <code>COMPASS_ODI_*</code>, <code>COMPASS_SCALE</code>) and gyro offsets</li>
+    <li><code>Q_M_THST_HOVER</code> 0.369 → 0.479: learned automatically while armed on the bench. Watch it: it may need resetting to about 0.37 before the first hover</li>
+    <li><code>Q_ESC_CAL</code> = 0 confirmed</li>
+  </ul></div>
+
 <h2>Still to do in this guide</h2>
 <ul class="check">
-  <li>Battery voltage: compare QGC's battery icon with the charger (12.6 V full), correct the reading if needed</li>
-  <li>Compass calibration outdoors</li>
-  <li>Arm test: SWA down, then the left stick. Motors start slow, stop on disarm</li>
-  <li>Throttle test: all 3 motors speed up together. Tail motor (MAIN 8) did not spin in the first try, check it here</li>
-  <li>ESC calibration if the motors don't start/stop evenly</li>
+  <li>Throttle test (props off): tail motor and second front motor start and speed up like the others</li>
   <li>Spin direction of each motor</li>
-  <li>Tilt servos (<code>SERVO9</code> left, <code>SERVO10</code> right): the ranges differ (800–1940 reversed vs 700–2100), so one motor stops a few degrees off. Read the live values in <b>Servo Outputs</b> in drone and airplane position, then adjust that end</li>
-  <li>SWB check: Flight mode shows QRTL when SWB is down</li>
+  <li>Tilt servo end points: <code>SERVO9</code> 800–1940 reversed vs <code>SERVO10</code> 700–2100. Read the live values in <b>Servo Outputs</b> in the up and forward positions, then adjust the end that is off (~10 µs ≈ 1°)</li>
+  <li>Redo the compass calibration outdoors for green</li>
+  <li><code>ARMING_SKIPCHK</code> = 0 before any flight</li>
+  <li>SWB check outdoors (GPS fix): flight mode shows QRTL when SWB is down</li>
 </ul>
 
 <h2>Report back</h2>
@@ -171,7 +234,7 @@
   <li>Tilt servos: up / forward correct? Any buzzing?</li>
 </ul>
 
-<footer><a href="../index.html">All guides</a> · VTOL Y3 · Guide 06 · created 2026-10-18 02:10 · rev 2 (2026-10-18 15:40) · © 2026 bellocloud.com</footer>
+<footer><a href="../index.html">All guides</a> · VTOL Y3 · Guide 06 · created 2026-10-18 02:10 · rev 3 (2026-10-18 19:40) · © 2026 bellocloud.com</footer>
 </main>
 </body>
 </html>

@@ -2,12 +2,9 @@
 
 [English](../../quick/ref-parameter-changes.md) · **Français** · [العربية](../../ar/quick/ref-parameter-changes.md)
 
-
-
-
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-parameter-changes.html)
 
-Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-switches.params` (la plus récente, Guide 06). **Gras** = modifié.
+Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-esc-cal.params` (la plus récente, Guide 06). **Gras** = modifié.
 
 ## Toutes les modifications
 
@@ -44,6 +41,9 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | Interrupteurs et modes | `Q_RTL_MODE` | 2 approche VTOL | **3 QRTL Always** | 06 | Retour en drone et atterrissage vertical (avant : retour en avion, puis atterrissage vertical). |
 | Interrupteurs et modes | `FLTMODE1 / FLTMODE2` | 20 QLAND / 20 QLAND | **17 QSTABILIZE / 17 QSTABILIZE** | 06 | SWC en haut = QStabilize : drone avec gaz directs. Le Pixhawk ne peut pas s'armer en QLand et y ignorait les gaz. |
 | Interrupteurs et modes | `ARMING_RUDDER` | 0 Disabled | **2 ArmOrDisarm** | 06 | Manche gauche en bas + droite 3 s arme, en bas + gauche 2 s désarme. Fonctionne avec SWA. |
+| Banc et calibration | `ARMING_SKIPCHK` | 0 | **16** (INS) | 06 | Ignore la vérification INS/AHRS pour armer à l'intérieur sans fix GPS. Sur table uniquement : remettre à **0** avant tout vol. |
+| Banc et calibration | `COMPASS_OFS_*, COMPASS_DIA_*, COMPASS_ODI_*, COMPASS_SCALE` | anciennes valeurs | nouvelles valeurs | 06 | Décalages de la boussole recalibrés (HMC5883 externe, qualité jaune). À refaire dehors pour le vert avant le premier vol. |
+| Banc et calibration | `Q_ESC_CAL` | 0 | 0 → **1** → 0 | 06 | Calibration des ESC faite (chaque ESC a appris 1000 = arrêt, 2000 = plein gaz), puis remis à 0. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmé) | 04 | GPS sur le port 1, détection automatique (u-blox M8N). Il a affiché 0 une fois car QGC avait chargé une liste incomplète ; réglé sur Auto et confirmé. |
 
 ## Réglages importants conservés de l'ancienne configuration
@@ -71,6 +71,7 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | `BARO1_GND_PRESS` | Pression atmosphérique au sol, mesurée à chaque démarrage. |
 | `STAT_*` | Statistiques : nombre de démarrages, temps de fonctionnement, temps de vol. |
 | `BRD_SD_SLOWDOWN` | Réglage de vitesse de la carte SD ajusté par la carte. |
+| `Q_M_THST_HOVER` | Gaz de vol stationnaire, appris automatiquement une fois armé (0,369 → 0,479 sur table). À vérifier avant le premier vol stationnaire. |
 
 > 💡 Après un redémarrage, QGC peut n'afficher que ~1 276 des ~1 430 paramètres. Utilisez **Parameters → Tools → Refresh** avant d'enregistrer ou de comparer.
 

@@ -2,9 +2,6 @@
 
 **English** · [Français](../fr/quick/README.md) · [العربية](../ar/quick/README.md)
 
-
-
-
 Do-this-then-that checklists for setting up the VTOL Y3. Each one takes a few minutes to read.
 Want the reasons, screenshots and logs too? Open the **[full guides in the browser](https://soufianeblog.github.io/dronev2/)**.
 

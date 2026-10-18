@@ -2,9 +2,6 @@
 
 [English](../../quick/06-outputs-servo-test.md) · **Français** · [العربية](../../ar/quick/06-outputs-servo-test.md)
 
-
-
-
 [← 04](04-radio-modes-arming.md) · [Sommaire](README.md) · Suivant : 07 ⏳ · [Guide complet](https://soufianeblog.github.io/dronev2/fr/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html)
 
 **Objectif :** chaque servo est sur la bonne sortie du Pixhawk et bouge dans le bon sens. Les moteurs viennent plus tard, **hélices retirées**.
@@ -91,28 +88,72 @@ Le Pixhawk n'alimente **pas** les broches servo depuis l'USB ni depuis le module
 
 Résultat : **SWA** en bas = armer · **SWB** en bas = retour au point de départ · **SWC** haut QStabilize / milieu QHover / bas FBWA.
 
-## H. Pourquoi les moteurs ne tournent pas encore ([étape 7](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#prearm))
+## H. Pourquoi les moteurs ne tournaient pas ([étape 7](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#prearm))
 
 Le Pixhawk refuse de s'armer tant qu'une vérification *PreArm* échoue. Lisez les messages dans QGC (écran **Fly**, texte de la barre du haut).
 
-- [x] `Hardware safety switch` → maintenez le bouton rouge (port **SWITCH**) 2 s jusqu'à voyant fixe.
+- [x] `Hardware safety switch` → maintenez le bouton rouge (port **SWITCH**) 3 s jusqu'à voyant fixe. Se reverrouille à chaque redémarrage.
 - [x] `QLand mode not armable` → Flight Mode 1/2 = QStabilize.
 - [x] `QRTL mode not armable` → gardez **SWB en haut** pour armer.
 - [x] `RC calibrating` → quittez la page **Radio**.
-- [ ] `Battery 1 low voltage failsafe` → le Pixhawk lit < 10,5 V, le chargeur indique 12,48 V. Comparez avec l'icône batterie de QGC.
-- [ ] `Compass not calibrated` → en extérieur, [Guide 03](03-orientation-calibration.md) partie E.
+- [x] `Battery 1 low voltage failsafe` → branchez la LiPo.
+- [x] `Compass not calibrated` → calibrée sur table (partie I).
+- [x] `Logging failed` → microSD formatée en FAT32 (partie I).
+- [x] `AHRS: not using configured AHRS type` → fix GPS nécessaire dehors ; sur table : `ARMING_SKIPCHK` = 16 (partie I).
 - Bips des ESC quand désarmé = normal (« en attente des gaz »).
 
-## I. Reste à faire
+## I. Lever les blocages d'armement, sur table ([Étape 8](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#blockers)) ✅ fait le 2026-10-18
 
-- [ ] La lecture batterie correspond au chargeur (12,6 V pleine)
-- [ ] Calibration de la boussole en extérieur
-- [ ] Test d'armement : SWA en bas, puis manche gauche. Les moteurs démarrent lentement, s'arrêtent au désarmement
-- [ ] Test des gaz : les 3 moteurs ensemble (le moteur arrière MAIN 8 n'a pas tourné au début)
-- [ ] Calibration des ESC si besoin
+- [ ] **1.** microSD : formatez-la en **FAT32** sur l'ordinateur (≤ 32 Go ; au-delà : exFAT), remettez-la Pixhawk éteint → `Logging failed` disparaît.
+- [ ] **2.** **Q** → **Vehicle Configuration** → **Sensors** → **Compass** → **OK** → tournez l'avion lentement dans tous les sens jusqu'à **Completed** → **Reboot Vehicle** → gardez-le immobile 30 s.
+- [ ] **3.** Barre de qualité jaune = OK sur table. À refaire dehors, loin du métal, pour le vert avant le premier vol.
+- [ ] **4.** À l'intérieur seulement : **Parameters** → `ARMING_SKIPCHK` → cochez seulement **INS** (16) → **Save**. (`AHRS: not using configured AHRS type` = attente d'un fix GPS.)
+- [ ] **5.** Branchez la LiPo → le message de tension basse disparaît.
+- [ ] **6.** Bouton de sécurité (port **SWITCH**) : clignotant = verrouillé, fixe = déverrouillé. Maintenez 3 s. Se reverrouille à chaque redémarrage.
+- [ ] **7.** QGC affiche **Ready To Fly**.
+
+> ⚠️ **Sur table uniquement :** remettez `ARMING_SKIPCHK` à **0** avant tout vol.
+
+## J. Calibration des ESC ([Étape 9](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#esc-cal)) ✅ fait le 2026-10-18
+
+Pourquoi : chaque ESC apprend 1000 µs = arrêt, 2000 µs = plein gaz. Des ESC non calibrés tournent tout seuls ou semblent morts.
+
+- [ ] **1.** Batterie **débranchée**, USB seul, **hélices retirées**.
+- [ ] **2.** **Parameters** → `Q_ESC_CAL` = **1** → **Save**.
+- [ ] **3.** **Parameters** → `ARMING_SKIPCHK` = **400** (INS 16 + Board voltage 128 + Battery level 256) → **Save**.
+- [ ] **4.** SWC **en haut** (QStabilize). Bouton de sécurité jusqu'à voyant **fixe**. SWA **en bas** → **Armed**.
+- [ ] **5.** Manche gauche **tout en haut**. Branchez la batterie → **2 bips** (plein gaz enregistré).
+- [ ] **6.** Dans les ~2 s : manche gauche **tout en bas** → **3 bips courts + 1 long** (arrêt enregistré).
+- [ ] **7.** SWA **en haut**. Rétablir : `Q_ESC_CAL` = **0**, `ARMING_SKIPCHK` = **16**.
+
+## K. Modes et basculement expliqués ([Étape 10](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#modes))
+
+| SWC | Mode | Vole comme | Moteurs avant |
+|---|---|---|---|
+| En haut | **QStabilize** | Drone | 90° vers le haut |
+| Milieu | **QHover** | Drone | 90° vers le haut |
+| En bas | **FBWA** | Avion | Basculent vers l'avant |
+
+- FBWA sur table : les moteurs basculants bougent car Q-Assist (`Q_ASSIST_SPEED` = 10 m/s) voit une vitesse air de 0 (`Transition started airspeed 0.0`). Normal.
+- Modes drone, armé : 90° plus de petits basculements de lacet jusqu'à ±10° (`Q_TILT_YAW_ANGLE`). Plus grands à bas régime (×2), plus petits à haut régime (×0,5). Désarmé : immobiles à 90°. Indispensable pour le lacet.
+- [ ] Test à la main : armé, QStabilize, gaz bas, hélices retirées. Tournez le nez à la main → les moteurs avant basculent en sens opposés.
+
+## L. Retour au point de départ avec SWB ([Étape 11](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#swb))
+
+- **SWB en bas** → QRTL (`Q_RTL_MODE` = 3) : monte à `Q_RTL_ALT` 20 m, rentre en drone au point d'armement, atterrit verticalement, se désarme.
+- **SWB en haut** → vous reprenez la main.
+- Nécessite un fix GPS (dehors). La perte du signal radio est séparée : il atterrit sur place (QLand).
+
+💾 Sauvegarde : [`params_after-esc-cal.params`](../../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0,369 → 0,479 a été appris sur table : à surveiller avant le premier vol stationnaire.
+
+## M. Reste à faire
+
+- [ ] Test des gaz (hélices retirées) : moteur arrière et deuxième moteur avant se comportent comme les autres
 - [ ] Sens de rotation de chaque moteur
-- [ ] Butées des servos de basculement : lisez **Servo Outputs** en position drone et avion, ajustez `SERVO9`/`SERVO10`
-- [ ] SWB en bas → le mode de vol affiche QRTL
+- [ ] Butées des servos de basculement (`SERVO9` 800–1940 inversé contre `SERVO10` 700–2100) : lisez **Servo Outputs** en haut et en avant, ajustez l'extrémité décalée (~10 µs ≈ 1°)
+- [ ] Refaire la boussole dehors pour le vert
+- [ ] `ARMING_SKIPCHK` = 0 avant tout vol
+- [ ] Vérification de SWB dehors : le mode de vol affiche QRTL
 
 ## ✅ Terminé quand
 
@@ -133,6 +174,11 @@ Le Pixhawk refuse de s'armer tant qu'une vérification *PreArm* échoue. Lisez l
 | Les servos se réinitialisent ou faiblissent quand ils bougent ensemble | Alimentation du rail trop faible. Utilisez un UBEC 5–6 V de 3 A ou plus. |
 | Les gaz ne font rien | Pixhawk non armé. Lisez le message PreArm (partie H). |
 | `QRTL mode not armable` | SWB est en bas. Remontez-le. |
+| `Logging failed` | Formatez la microSD en FAT32 (partie I). |
+| `AHRS: not using configured AHRS type` | Dehors : attendez un fix GPS. Sur table : `ARMING_SKIPCHK` = 16 (partie I). |
+| Les moteurs tournent tout seuls ou l'un semble mort | Calibration des ESC (partie J). |
+| Les moteurs basculants bougent en FBWA sur table | Q-Assist, normal (partie K). |
+| Les moteurs avant remuent en mode drone, armé | Basculement de lacet, normal (partie K). |
 
 ---
 © 2026 bellocloud.com

@@ -2,9 +2,6 @@
 
 **English** · [Français](../fr/quick/06-outputs-servo-test.md) · [العربية](../ar/quick/06-outputs-servo-test.md)
 
-
-
-
 [← 04](04-radio-modes-arming.md) · [Index](README.md) · Next: 07 ⏳ · [Full guide](https://soufianeblog.github.io/dronev2/guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html)
 
 **Goal:** every servo is on the right Pixhawk output and moves the right way. Motors come later, **props off**.
@@ -91,28 +88,72 @@ The Pixhawk does **not** power the servo pins from USB or the power module. Pick
 
 Result: **SWA** down = arm · **SWB** down = return home · **SWC** up QStabilize / middle QHover / down FBWA.
 
-## H. Why the motors don't spin yet ([Step 7](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#prearm))
+## H. Why the motors didn't spin ([Step 7](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#prearm))
 
 The Pixhawk refuses to arm while a *PreArm* check fails. Read the messages in QGC (**Fly** screen, top bar text).
 
-- [x] `Hardware safety switch` → hold the red button (port **SWITCH**) 2 s until solid.
+- [x] `Hardware safety switch` → hold the red button (port **SWITCH**) 3 s until solid. Locks again after every reboot.
 - [x] `QLand mode not armable` → Flight Mode 1/2 = QStabilize.
 - [x] `QRTL mode not armable` → keep **SWB up** to arm.
 - [x] `RC calibrating` → leave the **Radio** page.
-- [ ] `Battery 1 low voltage failsafe` → Pixhawk reads < 10.5 V, charger says 12.48 V. Compare with QGC's battery icon.
-- [ ] `Compass not calibrated` → outdoors, [Guide 03](03-orientation-calibration.md) part E.
+- [x] `Battery 1 low voltage failsafe` → plug the LiPo.
+- [x] `Compass not calibrated` → calibrated on the bench (part I).
+- [x] `Logging failed` → microSD formatted FAT32 (part I).
+- [x] `AHRS: not using configured AHRS type` → needs a GPS fix outdoors; bench: `ARMING_SKIPCHK` = 16 (part I).
 - ESC beeping while disarmed = normal ("waiting for throttle").
 
-## I. Still to do
+## I. Clear the arming blockers, indoor bench ([Step 8](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#blockers)) ✅ done 2026-10-18
 
-- [ ] Battery reading matches the charger (12.6 V full)
-- [ ] Compass calibration outdoors
-- [ ] Arm test: SWA down, then left stick. Motors start slow, stop on disarm
-- [ ] Throttle test: all 3 motors together (tail motor MAIN 8 did not spin at first)
-- [ ] ESC calibration if needed
+- [ ] **1.** microSD: format **FAT32** on the computer (≤ 32 GB; bigger: exFAT), put it back with the Pixhawk off → `Logging failed` gone.
+- [ ] **2.** **Q** → **Vehicle Configuration** → **Sensors** → **Compass** → **OK** → rotate the plane slowly in every direction until **Completed** → **Reboot Vehicle** → keep it still 30 s.
+- [ ] **3.** Quality bar yellow = OK for the bench. Redo outdoors, away from metal, for green before the first flight.
+- [ ] **4.** Indoors only: **Parameters** → `ARMING_SKIPCHK` → tick only **INS** (16) → **Save**. (`AHRS: not using configured AHRS type` = waiting for a GPS fix.)
+- [ ] **5.** Plug the LiPo → low-voltage message gone.
+- [ ] **6.** Safety button (port **SWITCH**): blinking = locked, solid = unlocked. Hold 3 s. Locks again after every reboot.
+- [ ] **7.** QGC shows **Ready To Fly**.
+
+> ⚠️ **Bench only:** set `ARMING_SKIPCHK` back to **0** before any flight.
+
+## J. ESC calibration ([Step 9](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#esc-cal)) ✅ done 2026-10-18
+
+Why: each ESC learns 1000 µs = stop, 2000 µs = full. Uncalibrated ESCs spin by themselves or seem dead.
+
+- [ ] **1.** Battery **unplugged**, USB only, **props off**.
+- [ ] **2.** **Parameters** → `Q_ESC_CAL` = **1** → **Save**.
+- [ ] **3.** **Parameters** → `ARMING_SKIPCHK` = **400** (INS 16 + Board voltage 128 + Battery level 256) → **Save**.
+- [ ] **4.** SWC **up** (QStabilize). Safety button until **solid**. SWA **down** → **Armed**.
+- [ ] **5.** Left stick **full up**. Plug the battery → **2 beeps** (full saved).
+- [ ] **6.** Within ~2 s: left stick **full down** → **3 short + 1 long beep** (stop saved).
+- [ ] **7.** SWA **up**. Restore: `Q_ESC_CAL` = **0**, `ARMING_SKIPCHK` = **16**.
+
+## K. Modes and tilt explained ([Step 10](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#modes))
+
+| SWC | Mode | Flies as | Front motors |
+|---|---|---|---|
+| Up | **QStabilize** | Drone | 90° up |
+| Middle | **QHover** | Drone | 90° up |
+| Down | **FBWA** | Airplane | Tilt forward |
+
+- FBWA on the bench: the tilts move because Q-Assist (`Q_ASSIST_SPEED` = 10 m/s) sees 0 airspeed (`Transition started airspeed 0.0`). Normal.
+- Drone modes, armed: 90° plus small yaw tilts up to ±10° (`Q_TILT_YAW_ANGLE`). Bigger at low throttle (×2), smaller at high (×0.5). Disarmed: still at 90°. Required for yaw.
+- [ ] Hand test: armed, QStabilize, low throttle, props off. Turn the nose by hand → front motors tilt opposite each other.
+
+## L. SWB return home ([Step 11](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#swb))
+
+- **SWB down** → QRTL (`Q_RTL_MODE` = 3): climbs to `Q_RTL_ALT` 20 m, flies home as a drone to the arming point, lands vertically, disarms.
+- **SWB up** → you take back control.
+- Needs a GPS fix (outdoors). Radio-signal loss is separate: it lands where it is (QLand).
+
+💾 Backup: [`params_after-esc-cal.params`](../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0.369 → 0.479 was learned on the bench: watch it before the first hover.
+
+## M. Still to do
+
+- [ ] Throttle test (props off): tail motor and second front motor behave like the others
 - [ ] Spin direction of each motor
-- [ ] Tilt servo ends: read **Servo Outputs** in drone and airplane position, adjust `SERVO9`/`SERVO10`
-- [ ] SWB down → flight mode shows QRTL
+- [ ] Tilt servo end points (`SERVO9` 800–1940 reversed vs `SERVO10` 700–2100): read **Servo Outputs** up and forward, adjust the off end (~10 µs ≈ 1°)
+- [ ] Redo the compass outdoors for green
+- [ ] `ARMING_SKIPCHK` = 0 before any flight
+- [ ] SWB check outdoors: flight mode shows QRTL
 
 ## ✅ Done when
 
@@ -133,6 +174,11 @@ The Pixhawk refuses to arm while a *PreArm* check fails. Read the messages in QG
 | Servos reset or brown out when moving together | Rail supply too weak. Use a 5–6 V UBEC of 3 A or more. |
 | Throttle does nothing | Pixhawk not armed. Read the PreArm message (part H). |
 | `QRTL mode not armable` | SWB is down. Put it up. |
+| `Logging failed` | Format the microSD FAT32 (part I). |
+| `AHRS: not using configured AHRS type` | Outdoors: wait for a GPS fix. Bench: `ARMING_SKIPCHK` = 16 (part I). |
+| Motors spin by themselves or one seems dead | ESC calibration (part J). |
+| Tilts move in FBWA on the bench | Q-Assist, normal (part K). |
+| Front motors wiggle in drone mode when armed | Yaw tilt, normal (part K). |
 
 ---
 © 2026 bellocloud.com

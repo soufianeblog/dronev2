@@ -4,9 +4,6 @@
 
 [English](../../quick/ref-flysky-settings.md) · [Français](../../fr/quick/ref-flysky-settings.md) · **العربية**
 
-
-
-
 [الفهرس](README.md) · [الصفحة الكاملة](https://soufianeblog.github.io/dronev2/ar/guides/ref-flysky-settings.html)
 
 تم **تغيير إعدادين فقط**. وتم فحص 9 شاشات أخرى وكانت صحيحة أصلًا.

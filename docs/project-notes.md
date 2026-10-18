@@ -2,9 +2,6 @@
 
 **English** · [Français](../fr/docs/project-notes.md) · [العربية](../ar/docs/project-notes.md)
 
-
-
-
 Internal notes for this project: how we work, verified facts, the full progress log and open questions.
 The public overview is the [README](../README.md).
 
@@ -334,6 +331,16 @@ The public overview is the [README](../README.md).
 - 2026-10-18: User applied (verified in backups/params_after-switches.params): FlySky Aux channels Channel 7 = SwB; RC7_OPTION=4 (SWB down = RTL); Q_RTL_MODE=3 (QRTL always); FLTMODE1/2=17 (SWC up = QSTABILIZE, arming allowed, direct throttle); ARMING_RUDDER=2 (left stick down+right 3 s arms, down+left 2 s disarms). SERVO9/10 safe tilt limits not yet changed.
 
 - 2026-10-18: Bench test reports: front motors spun once, tail motor (MAIN8) never; after battery re-plug none spin; throttle and stick arming do nothing (likely not armed: safety switch / PreArm). Open: does the kit's red safety switch exist on the SWITCH port (BRD_SAFETY_DEFLT=1 locks outputs without it)? Front tilt ranges differ (SERVO9 800–1940 rev, SERVO10 700–2100); user sees one tilt off by a few degrees, software not hardware (swap test). Waiting for PreArm messages + which side/position is off.
+
+- 2026-10-18 18:50: Arming blockers cleared step by step: microSD formatted (FAT32) → "Logging failed" gone; compass calibrated (external HMC5883, quality yellow → redo outdoors for green before first flight) + reboot → "Compass not calibrated" gone; ARMING_SKIPCHK=16 (skip INS/AHRS check, indoor bench only, set back to 0 before flight) → "AHRS: not using configured AHRS type" skipped; battery plugged → low-voltage gone. Only "Hardware safety switch" left. Next: ESC calibration (Q_ESC_CAL=1) because some motors spin while disarmed and others don't.
+
+- 2026-10-18 19:10: ESC calibration done with Q_ESC_CAL=1 (battery unplugged, USB only, props off; ARMING_SKIPCHK=400 temporarily = INS 16 + Board voltage 128 + Battery level 256; SWC up QStabilize, safety solid, SWA down = Armed, left stick full up, plug battery → 2 beeps, stick full down within ~2 s → 3 short + 1 long). Restored Q_ESC_CAL=0 and ARMING_SKIPCHK=16. Motors now mostly consistent; tail / second front motor still to confirm with a throttle test.
+
+- 2026-10-18 19:20: Explained: tilts move in FBWA on the bench because Q-Assist (Q_ASSIST_SPEED=10 m/s) sees 0 airspeed and brings the VTOL motors in ("Transition started airspeed 0.0"), normal. Drone modes armed: motors at 90° + yaw tilt up to ±10° (Q_TILT_YAW_ANGLE, VectoredYaw), scaled by hover_throttle/throttle (×2 at low throttle, ×0.5 at high) so it looks big on the bench; disarmed = still at 90°. Hand test: rotate nose → front motors tilt opposite.
+
+- 2026-10-18 19:30: Explained SWB: down = QRTL (Q_RTL_MODE=3): climb to Q_RTL_ALT 20 m, fly home as a drone to the arming point, land vertically, disarm; up = take back control. Needs GPS fix. Radio failsafe separate (currently QLand where it is).
+
+- 2026-10-18 19:40: Backup backups/params_after-esc-cal.params saved and diffed vs params_after-switches: ARMING_SKIPCHK 0→16, new compass calibration (COMPASS_OFS/DIA/ODI/SCALE), gyro offsets, Q_M_THST_HOVER 0.369→0.479 (learned on the bench while armed; watch it, may need ~0.37 before first hover), Q_ESC_CAL confirmed 0. Guide 06 rev 3 written (Steps 8–11).
 
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.
