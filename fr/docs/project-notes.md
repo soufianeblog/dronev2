@@ -342,6 +342,16 @@ La présentation publique est le [README](../README.md).
 
 - 2026-10-18 21:00 : Problème ouvert, en cours de recherche : armé en mode drone, à gaz bas les moteurs avant ne sont pas à 90°, à gaz élevés ils reviennent à 90° (attendu : toujours 90°). Certain : basculement de base commandé vertical en QStabilize/QHover (Q_FWD_THR_USE = 0) ; basculement de lacet (vectored yaw) multiplié par gaz de vol stationnaire/gaz (×2 bas, ×0,5 haut) = principal suspect, non confirmé. Guide 06 rév. 4 rédigé (étapes 12–13, liste de vérification avant vol).
 
+- 2026-10-18 21:20 : Résultat de la recherche (code, docs et forum ArduPilot 4.7.2) : en QSTABILIZE/QHOVER les deux basculements sont commandés verticaux ; seul le basculement de lacet différentiel (±Q_TILT_YAW_ANGLE) les bouge, ×2 à gaz bas ; les gains de vitesse de lacet étaient bien au-dessus des valeurs par défaut (P 1,2 / I 0,6 / D 0,15 contre 0,18 / 0,018 / 0). Décalages des gyroscopes à 0 dans params_after-tilt-changes → l'avion a bougé au démarrage.
+
+- 2026-10-18 21:30 : Gains de lacet confirmés aux valeurs par défaut d'ArduPilot dans `params_now.params` (Q_A_RAT_YAW_P/I/D 0,18/0,018/0, FF 0,1). Décalages des gyroscopes de nouveau valides (avion immobile au démarrage).
+
+- 2026-10-18 22:00 : Recherche approfondie (code ArduPilot 4.7.2). A : armé sur table, le Pixhawk essaie d'équilibrer un avion immobile, donc les sorties moteurs s'écartent (lignes 5/6/8 = 1835/1150/1664) : normal, juger les moteurs un par un plus tard. B : SWA n'agit qu'au basculement ; si armé au manche (ARMING_RUDDER 2), SWA déjà en haut ne fait rien ; proposé ARMING_RUDDER 0 (décision de l'utilisateur en attente). C : après désarmement, les ESC reçoivent 1000 µs et peuvent tressauter ; proposé Q_M_SAFE_DISARM 1 (en attente). Le moteur arrière tourne en FBWA sur table car la transition ne se termine qu'au-dessus de la vitesse air minimale (GPS nécessaire) ; Q_ASSIST_SPEED 10 → 5 (conseil ArduPilot sans capteur de vitesse air). Q_M_THST_HOVER réappris sur table (0,32 → 0,57 → 0,51) : mettre ≈0,37 avant le premier vol stationnaire.
+
+- 2026-10-18 22:30 : `params_latest1.params` : FLTMODE2/3/5 étaient devenus Manual (0), probablement par accident. Corrigé dans Flight Modes (1–2 QSTABILIZE, 3–4 QHOVER, 5–6 FBWA), vérifié dans `params_latest2.params` (= dernière sauvegarde).
+
+- 2026-10-18 22:40 : Cause du basculement : les deux servos de basculement fonctionnent à l'envers (QStabilize : commande verticale ligne 9 ≈ 1843 / ligne 10 ≈ 852 mais moteurs vers l'avant ; FBWA : moteurs qui se redressent avec les gaz). Correction : Servo Outputs ligne 9 décocher Reversed (SERVO9_REVERSED 1 → 0), ligne 10 cocher Reversed (SERVO10_REVERSED 0 → 1). 22:45 : appliqué par l'utilisateur, les 3 modes corrects (SWC haut/milieu = vertical, bas = avant). Pas encore dans une sauvegarde ; ajustement des butées facultatif. Guide 06 rév. 5 rédigé (étapes 13–15).
+
 ### Questions ouvertes
 - ✅ Paramètres Q_ : simplement le téléchargement anticipé de QGC. Toujours faire Refresh ~30 s après le démarrage avant de modifier/enregistrer.
 - ✅ Entrée radio résolue (option B : i6X Output mode PWM, encodeur conservé). Facultatif plus tard : option A (retirer l'encodeur, PPM/CH1 direct → RC IN) pour moins de fils/points de défaillance.

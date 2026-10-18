@@ -136,7 +136,7 @@ Why: each ESC learns 1000 µs = stop, 2000 µs = full. Uncalibrated ESCs spin by
 | Middle | **QHover** | Drone | 90° up |
 | Down | **FBWA** | Airplane | Tilt forward |
 
-- FBWA on the bench: the tilts move because Q-Assist (`Q_ASSIST_SPEED` = 10 m/s) sees 0 airspeed (`Transition started airspeed 0.0`). Normal.
+- FBWA on the bench: the switch to airplane mode (transition) starts (`Transition started airspeed 0.0`) but never completes without GPS/airspeed. The tilt follows the throttle (up to `Q_TILT_MAX` 70°) and the tail motor keeps running. Normal (part P). `Q_ASSIST_SPEED` is now **5** (was 10).
 - Drone modes, armed: 90° plus small yaw tilts up to ±5° (`Q_TILT_YAW_ANGLE`, was ±10°, part N). Bigger at low throttle (×2), smaller at high (×0.5). Disarmed: still at 90°. Required for yaw.
 - [ ] Hand test: armed, QStabilize, low throttle, props off. Turn the nose by hand → front motors tilt opposite each other.
 
@@ -155,39 +155,75 @@ Seen: `Throttle failsafe on`, `RC Short/Long Failsafe: switched to QLand`, `Radi
 - [ ] **3.** At the end: unplug the plane **first**, **then** transmitter off.
 - [ ] **4.** If it happened: radio back → `Throttle failsafe off` / `RC Long Failsafe Cleared` → **SWC middle**, then back **up** → QStabilize.
 
-## N. Front tilt servos in drone mode ([Step 13](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#tilt)) ⚠️ open issue
+## N. Front tilt servos ([Step 13](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#tilt)) ✅ solved: they worked backwards
 
-Changed on the vehicle (**Q** → **Vehicle Configuration** → **Parameters**), saved in [`params_after-tilt-changes.params`](../backups/params_after-tilt-changes.params):
+Changed earlier, saved in [`params_after-tilt-changes.params`](../backups/params_after-tilt-changes.params): `SERVO9_MAX` 1940 → **1900**, `SERVO10_MIN` 700 → **800**, `SERVO10_MAX` 2100 → **2000**, `Q_TILT_YAW_ANGLE` 10 → **5**, `Q_M_THST_HOVER` 0.479 → **0.37**.
 
-| Parameter | Old | New |
-|---|---|---|
-| `SERVO9_MAX` (front left, reversed) | 1940 | **1900** (MIN 800 unchanged) |
-| `SERVO10_MIN` (front right) | 700 | **800** |
-| `SERVO10_MAX` (front right) | 2100 | **2000** |
-| `Q_TILT_YAW_ANGLE` | 10 | **5** (smaller steering tilt) |
-| `Q_M_THST_HOVER` | 0.479 | **0.37** (bench-learned value reset) |
+- What the Pixhawk should do (ArduPilot 4.7.2 code): QStabilize/QHover = both tilts **vertical**, only the yaw steering tilt moves them (±`Q_TILT_YAW_ANGLE`, up to ×2 at low throttle). FBWA on the bench = transition never completes; tilt follows throttle up to `Q_TILT_MAX` 70°.
+- **Cause (22:40):** both tilt servos worked backwards. QStabilize: "vertical" command (row 9 ≈ 1843, row 10 ≈ 852) but motors pointed forward. FBWA: motors rose toward vertical with throttle.
 
-- [x] Disarmed, QStabilize: **Q** → **Vehicle Configuration** → **Servo Outputs** → row 9 = **1847**, row 10 = **857** = the Pixhawk's "vertical" command for both (mirror values). Both motors straight up.
-- ~10 µs ≈ 1°. Front left "up" end = `SERVO9_MAX` (reversed). Front right "up" end = `SERVO10_MIN`.
-- **Open issue:** armed in drone modes, low throttle → front motors not at 90°; high throttle → back to 90°. Expected: always 90°. Being researched (ArduPilot code + docs); the fix will be added here. Cause not confirmed.
-- Known: in QStabilize/QHover the base tilt is commanded vertical (`Q_FWD_THR_USE` = 0). The vectored-yaw tilt is scaled by hover throttle ÷ throttle (×2 low, ×0.5 high): main suspect.
+- [x] **1.** **Q** → **Vehicle Configuration** → **Servo Outputs**.
+- [x] **2.** Row **9**: untick **Reversed** (`SERVO9_REVERSED` 1 → 0).
+- [x] **3.** Row **10**: tick **Reversed** (`SERVO10_REVERSED` 0 → 1).
+- [x] **4.** Check: SWC **up** and **middle** = motors straight up, SWC **down** = forward. ✅ confirmed.
+- [ ] **5.** Optional: fine-tune the vertical and forward end points (~10 µs ≈ 1°).
+- [ ] **6.** **Parameters** → **Tools** → **Refresh** → **Tools** → **Save to file** → new backup.
 
-💾 Backup: [`params_after-esc-cal.params`](../backups/params_after-esc-cal.params). `Q_M_THST_HOVER` 0.369 → 0.479 was learned on the bench: watch it before the first hover. Newer backup with the part N changes: [`params_after-tilt-changes.params`](../backups/params_after-tilt-changes.params).
+Yaw gains back to ArduPilot defaults (old ones far too high), saved in [`params_now.params`](../backups/params_now.params): `Q_A_RAT_YAW_P` 1.2 → **0.18**, `Q_A_RAT_YAW_I` 0.6 → **0.018**, `Q_A_RAT_YAW_D` 0.15 → **0**, FF stays 0.1. Tune later from flight logs.
 
-## O. Still to do
+💾 Backups: [`params_now.params`](../backups/params_now.params) (yaw defaults, valid gyro offsets) → [`params_latest1.params`](../backups/params_latest1.params) (had Manual slots, `Q_ASSIST_SPEED` 5) → [`params_latest2.params`](../backups/params_latest2.params) (slots fixed) = **latest**. Tilt reversal not in a backup yet.
 
-- [ ] Throttle test (props off): tail motor and second front motor behave like the others
+## O. Flight-mode slots fixed ([Step 14](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#fltmodes)) ✅
+
+In `params_latest1.params` Flight Mode 2, 3, 5 had become **Manual** (0), probably by accident. Manual = raw airplane mode, no stabilisation.
+
+- [x] **Q** → **Vehicle Configuration** → **Flight Modes**:
+
+  | Slot | CH6 PWM (µs) | Mode | SWC |
+  |---|---|---|---|
+  | 1 | 0–1230 | **QStabilize** | Up |
+  | 2 | 1231–1360 | **QStabilize** | |
+  | 3 | 1361–1490 | **QHover** | |
+  | 4 | 1491–1620 | **QHover** | Middle |
+  | 5 | 1621–1749 | **FBWA** | |
+  | 6 | 1750+ | **FBWA** | Down |
+
+- [x] Verified in `params_latest2.params`: SWC up / middle / down = slots 1 / 4 / 6.
+
+## P. Desk-test behaviours explained ([Step 15](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#desk))
+
+| You see | Why → what to do |
+|---|---|
+| a. Armed on the desk, one motor high, one almost stopped (rows 5/6/8 = 1835/1150/1664) | The Pixhawk tries to balance a plane that can't move. Normal. Judge motors one at a time later (motor test). |
+| b. SWA already up does nothing | Armed by the left stick (`ARMING_RUDDER` = 2). SWA only acts when flipped: down, then up. Planned: `ARMING_RUDDER` → **0** (SWA only), your decision. |
+| c. A motor twitches/creeps after disarm | Disarmed = 1000 µs "stop", an ESC can still twitch. Planned: `Q_M_SAFE_DISARM` → **1** (no signal; ESC may beep, harmless; servos unaffected). Pending. |
+| d. Tail motor runs in FBWA on the desk | Transition only completes above minimum airspeed (GPS outdoors). Stops in real flight. `Q_ASSIST_SPEED` 10 → **5**. Bench check: disarm in a Q mode, switch to FBWA disarmed, arm in FBWA → tail should stay off. |
+| e. Gyro offsets 0 in a backup | Plane moved at startup. Keep still ~15 s until **ArduPilot Ready**. |
+| f. `Q_M_THST_HOVER` changes (0.32 → 0.57 → 0.51) | Learned on the desk. Set ≈ **0.37** just before the first hover. |
+
+## Q. Still to do
+
+- [ ] Save a new backup with the tilt fix (part N)
+- [ ] Optional: fine-tune tilt end points
+- [ ] Bench check: arm in FBWA → tail motor stays off (part P d)
+- [ ] Decide `ARMING_RUDDER` = 0 (SWA only)
+- [ ] `Q_M_SAFE_DISARM` = 1
+- [ ] Motor test, one motor at a time (props off)
 - [ ] Spin direction of each motor
-- [ ] Resolve the tilt-vs-throttle issue (part N)
-- [x] Save a new backup after the tilt changes → `params_after-tilt-changes.params`
 - [ ] Redo the compass outdoors for green
-- [ ] `ARMING_SKIPCHK` = 0 before any flight
 - [ ] SWB check outdoors: flight mode shows QRTL
+- [ ] `ARMING_SKIPCHK` = 0 before any flight
+- [x] Tilt direction fixed (row 9 Reversed off, row 10 on)
+- [x] Flight-mode slots fixed → `params_latest2.params`
+- [x] Yaw gains at defaults → `params_now.params`
 
-## P. Pre-flight checklist ([details](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#preflight))
+## R. Pre-flight checklist ([details](../guides/guide-06_2026-10-18_0210_outputs-and-servo-test.html#preflight))
 
 - [ ] `ARMING_SKIPCHK` back to **0**
 - [ ] `Q_M_THST_HOVER` ≈ **0.37** before the first hover (the Pixhawk relearns it)
+- [ ] `Q_ASSIST_SPEED` = **5**
+- [ ] Tilts: SWC up = straight up, SWC down = forward
+- [ ] Plane still ~15 s after power-up (**ArduPilot Ready**)
 - [ ] Compass redone outdoors, **green**
 - [ ] Transmitter **on first**, then the plane
 - [ ] Safety button **solid**
@@ -216,10 +252,13 @@ Changed on the vehicle (**Q** → **Vehicle Configuration** → **Parameters**),
 | `Logging failed` | Format the microSD FAT32 (part I). |
 | `AHRS: not using configured AHRS type` | Outdoors: wait for a GPS fix. Bench: `ARMING_SKIPCHK` = 16 (part I). |
 | Motors spin by themselves or one seems dead | ESC calibration (part J). |
-| Tilts move in FBWA on the bench | Q-Assist, normal (part K). |
+| Tilts move / tail motor runs in FBWA on the bench | Transition can't complete on the desk, normal (parts K, P). |
 | Front motors wiggle in drone mode when armed | Yaw tilt, normal (part K). |
 | `Radio failsafe on`, `QLand mode not armable` at power-up | Transmitter was off. Transmitter on first, then SWC middle → up (part M). |
-| Front motors not at 90° at low throttle when armed | Open issue, being researched (part N). |
+| Motors point forward in QStabilize, rise in FBWA | Tilt servos backwards: flip **Reversed** on rows 9 and 10 (part N). |
+| One motor high, one almost stopped, armed on the desk | Normal balancing (part P). |
+| SWA up doesn't disarm | Armed by stick: flip SWA down then up (part P). |
+| Flight mode shows Manual | Flight Mode slots wrong (part O). |
 
 ---
 © 2026 bellocloud.com

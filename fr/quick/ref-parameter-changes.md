@@ -4,7 +4,7 @@
 
 [Sommaire](README.md) · [Page complète](https://soufianeblog.github.io/dronev2/fr/guides/ref-parameter-changes.html)
 
-Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_after-tilt-changes.params` (la plus récente, Guide 06 rév. 4). **Gras** = modifié.
+Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuration, juste après la mise à jour du firmware) → `backups/params_latest2.params` (la plus récente, Guide 06 rév. 5). **Gras** = modifié.
 
 ## Toutes les modifications
 
@@ -49,6 +49,10 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | Servos de basculement | `SERVO10_MAX` | 2100 | **2000** | 06 | Basculement avant droit : extrémité « avant ». |
 | Servos de basculement | `Q_TILT_YAW_ANGLE` | 10° | **5°** | 06 | Basculement de direction (VectoredYaw) plus petit en modes drone. |
 | Servos de basculement | `Q_M_THST_HOVER` | 0,479 | **0,37** | 06 | Gaz de vol stationnaire : la valeur apprise sur table a été remise à zéro ; le Pixhawk la réapprend en vol. |
+| Servos de basculement | `SERVO9_REVERSED / SERVO10_REVERSED` | 1 / 0 | **0 / 1** (pas encore dans une sauvegarde) | 06 | Correction du sens de basculement : les deux servos fonctionnaient à l'envers (moteurs vers l'avant en QStabilize, qui se redressaient en FBWA). Ligne 9 Reversed décoché, ligne 10 coché ; les 3 modes confirmés corrects. La prochaine sauvegarde l'inclura. |
+| Gains de lacet | `Q_A_RAT_YAW_P / I / D` | 1,2 / 0,6 / 0,15 | **0,18 / 0,018 / 0** | 06 | Gains de vitesse de lacet remis aux valeurs par défaut d'ArduPilot (anciens beaucoup trop élevés). `Q_A_RAT_YAW_FF` reste 0,1. Réglage fin plus tard à partir des journaux de vol. |
+| Interrupteurs et modes | `Q_ASSIST_SPEED` | 10 m/s | **5 m/s** | 06 | Vitesse sous laquelle les moteurs VTOL aident en mode avion. Conseil ArduPilot sans capteur de vitesse air : 5 m/s sous la vitesse air minimale. |
+| Interrupteurs et modes | `FLTMODE2 / FLTMODE3 / FLTMODE5` | 17 / 18 / 5 | 0 Manual → **17 / 18 / 5** (rétablis) | 06 | Les emplacements 2, 3, 5 étaient devenus Manual (avion brut, sans stabilisation) par accident dans `params_latest1` ; rétablis dans `params_latest2`. SWC en haut / milieu / en bas = emplacements 1 / 4 / 6. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmé) | 04 | GPS sur le port 1, détection automatique (u-blox M8N). Il a affiché 0 une fois car QGC avait chargé une liste incomplète ; réglé sur Auto et confirmé. |
 
 ## Réglages importants conservés de l'ancienne configuration
@@ -76,7 +80,7 @@ Comparaison : `backups/params_after-guide02_4.7.2.params` (ancienne configuratio
 | `BARO1_GND_PRESS` | Pression atmosphérique au sol, mesurée à chaque démarrage. |
 | `STAT_*` | Statistiques : nombre de démarrages, temps de fonctionnement, temps de vol. |
 | `BRD_SD_SLOWDOWN` | Réglage de vitesse de la carte SD ajusté par la carte. |
-| `Q_M_THST_HOVER` | Gaz de vol stationnaire, appris automatiquement une fois armé (0,369 → 0,479 sur table, puis remis à la main à 0,37 dans le Guide 06). À vérifier avant le premier vol stationnaire. |
+| `Q_M_THST_HOVER` | Gaz de vol stationnaire, appris automatiquement une fois armé (0,369 → 0,479 sur table, remis à la main à 0,37 dans le Guide 06, réappris depuis : 0,32 → 0,57 → 0,51 maintenant). Mettre ≈ 0,37 juste avant le premier vol stationnaire. |
 
 > 💡 Après un redémarrage, QGC peut n'afficher que ~1 276 des ~1 430 paramètres. Utilisez **Parameters → Tools → Refresh** avant d'enregistrer ou de comparer.
 

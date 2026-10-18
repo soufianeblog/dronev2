@@ -348,6 +348,16 @@ The public overview is the [README](../README.md).
 
 - 2026-10-18 21:00: Open issue, under research: armed in drone modes, at low throttle the front motors are not at 90°, at high throttle they return to 90° (expected: always 90°). Known for certain: base tilt commanded vertical in QStabilize/QHover (Q_FWD_THR_USE = 0); vectored-yaw tilt scaled by hover-throttle/throttle (×2 low, ×0.5 high) = main suspect, not confirmed. Guide 06 rev 4 written (Steps 12–13, pre-flight checklist).
 
+- 2026-10-18 21:20: Research result (ArduPilot 4.7.2 code + docs + forum): in QSTABILIZE/QHOVER both tilts are commanded vertical; only differential yaw tilt (±Q_TILT_YAW_ANGLE) moves them, scaled ×2 at low throttle; yaw rate gains were far above defaults (P 1.2 / I 0.6 / D 0.15 vs 0.18 / 0.018 / 0). User reports changing Q_A_RAT_YAW_P/I/D to defaults (to verify in next backup). Gyro offsets 0 in params_after-tilt-changes → plane moved during boot; keep still ~10 s after power-up.
+
+- 2026-10-18 21:30: Yaw gains confirmed at ArduPilot defaults in `params_now.params` (Q_A_RAT_YAW_P/I/D 0.18/0.018/0, FF 0.1). Gyro offsets valid again (keep the plane still at boot).
+
+- 2026-10-18 22:00: Deep investigation (ArduPilot 4.7.2 code). A: armed on the desk the Pixhawk tries to balance a plane that can't move, so motor outputs spread (rows 5/6/8 = 1835/1150/1664): normal, judge motors one at a time later. B: SWA only acts on a flip; if armed by stick (ARMING_RUDDER 2) SWA already up does nothing; proposed ARMING_RUDDER 0 (pending user decision). C: after disarm ESCs get 1000 µs and can twitch; proposed Q_M_SAFE_DISARM 1 (pending). Tail motor runs in FBWA on the desk because the transition only completes above minimum airspeed (needs GPS); Q_ASSIST_SPEED 10 → 5 (ArduPilot advice without airspeed sensor). Q_M_THST_HOVER keeps being learned on the desk (0.32 → 0.57 → 0.51): set ≈0.37 before the first hover.
+
+- 2026-10-18 22:30: `params_latest1.params`: FLTMODE2/3/5 had become Manual (0), likely by accident. Fixed in Flight Modes (1–2 QSTABILIZE, 3–4 QHOVER, 5–6 FBWA), verified in `params_latest2.params` (= latest backup).
+
+- 2026-10-18 22:40: Tilt root cause: both tilt servos work backwards (QStabilize: vertical command row 9 ≈ 1843 / row 10 ≈ 852 but motors point forward; FBWA: motors rise toward vertical with throttle). Fix: Servo Outputs row 9 untick Reversed (SERVO9_REVERSED 1 → 0), row 10 tick Reversed (SERVO10_REVERSED 0 → 1). 22:45: user applied it, all 3 modes correct (SWC up/middle = up, down = forward). Not yet in a backup; end-point fine-tune optional. Guide 06 rev 5 written (Steps 13–15).
+
 ### Open questions
 - ✅ Q_ params: just QGC's early download. Always Refresh ~30 s after boot before editing/saving.
 - ✅ Radio input solved (option B: i6X Output mode PWM, encoder kept). Optional later: option A (remove encoder, direct PPM/CH1 → RC IN) for fewer wires/failure points.

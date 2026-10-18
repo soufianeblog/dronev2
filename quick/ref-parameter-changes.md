@@ -4,7 +4,7 @@
 
 [Index](README.md) · [Full page](https://soufianeblog.github.io/dronev2/guides/ref-parameter-changes.html)
 
-Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_after-tilt-changes.params` (latest, Guide 06 rev 4). **Bold** = changed.
+Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after the firmware update) → `backups/params_latest2.params` (latest, Guide 06 rev 5). **Bold** = changed.
 
 ## Every change
 
@@ -49,6 +49,10 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | Tilt servos | `SERVO10_MAX` | 2100 | **2000** | 06 | Front right tilt: 'forward' end. |
 | Tilt servos | `Q_TILT_YAW_ANGLE` | 10° | **5°** | 06 | Smaller steering tilt (VectoredYaw) in drone modes. |
 | Tilt servos | `Q_M_THST_HOVER` | 0.479 | **0.37** | 06 | Hover throttle: the value learned on the bench was reset; the Pixhawk relearns it in flight. |
+| Tilt servos | `SERVO9_REVERSED / SERVO10_REVERSED` | 1 / 0 | **0 / 1** (not yet in a backup) | 06 | Tilt direction fix: both tilt servos worked backwards (motors forward in QStabilize, rising in FBWA). Row 9 Reversed unticked, row 10 ticked; all 3 modes confirmed correct. Next backup will include it. |
+| Yaw gains | `Q_A_RAT_YAW_P / I / D` | 1.2 / 0.6 / 0.15 | **0.18 / 0.018 / 0** | 06 | Yaw rate gains back to ArduPilot defaults (old values far too high). `Q_A_RAT_YAW_FF` stays 0.1. Tune later from flight logs. |
+| Switches & modes | `Q_ASSIST_SPEED` | 10 m/s | **5 m/s** | 06 | Speed below which the VTOL motors help in airplane modes. ArduPilot advice without an airspeed sensor: 5 m/s below minimum airspeed. |
+| Switches & modes | `FLTMODE2 / FLTMODE3 / FLTMODE5` | 17 / 18 / 5 | 0 Manual → **17 / 18 / 5** (restored) | 06 | Slots 2, 3, 5 had become Manual (raw airplane, no stabilisation) by accident in `params_latest1`; restored in `params_latest2`. SWC up / middle / down = slots 1 / 4 / 6. |
 | GPS | `GPS1_TYPE` | 1 Auto | 1 Auto (confirmed) | 04 | GPS on port 1, auto-detect (u-blox M8N). It showed 0 once because QGC had loaded an incomplete list; set to Auto and confirmed. |
 
 ## Important settings kept from the old setup
@@ -76,7 +80,7 @@ Compared: `backups/params_after-guide02_4.7.2.params` (old setup, right after th
 | `BARO1_GND_PRESS` | Ground air pressure, measured at every boot. |
 | `STAT_*` | Statistics: boot count, run time, flight time. |
 | `BRD_SD_SLOWDOWN` | SD-card speed setting adjusted by the board. |
-| `Q_M_THST_HOVER` | Hover throttle, learned automatically while armed (0.369 → 0.479 on the bench, then reset by hand to 0.37 in Guide 06). Check it before the first hover. |
+| `Q_M_THST_HOVER` | Hover throttle, learned automatically while armed (0.369 → 0.479 on the bench, reset by hand to 0.37 in Guide 06, relearned since: 0.32 → 0.57 → 0.51 now). Set ≈ 0.37 just before the first hover. |
 
 > 💡 After a reboot, QGC may list only ~1,276 of the ~1,430 parameters. Use **Parameters → Tools → Refresh** before saving or comparing.
 
